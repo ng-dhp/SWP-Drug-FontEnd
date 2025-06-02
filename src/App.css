@@ -1,23 +1,23 @@
-/* App.css */
-
 
 body {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   margin: 0;
-
   background-color: #f8f9fa;
   color: #333;
 }
 
 
 /* Navbar */
+
 nav {
   background-color: #0b318f;
   color: white;
   padding: 1rem 2rem;
+
   display: flex;
   justify-content: space-between;
   align-items: center;
+
 }
 
 nav a {
@@ -119,6 +119,7 @@ nav button:hover {
 .fade-in {
   opacity: 1;
   transition: opacity 0.5s ease-in;
+
 }
 
 .fade-out {
@@ -131,6 +132,7 @@ nav button:hover {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 1.5rem;
+
 }
 
 .khungtinhnang > div {
@@ -145,6 +147,7 @@ nav button:hover {
   transform: scale(1.05);
   box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
 }
+
 
 .khungtinhnang h4 {
   margin-top: 0.5rem;
@@ -197,7 +200,6 @@ nav button:hover {
 
 /* Footer */
 footer {
-
   background: #e9ecef;
   color: #555;
   text-align: center;
@@ -223,5 +225,6 @@ footer a:hover {
     font-size: 0.9rem;
   }
 }
+
 
 
