@@ -24,7 +24,9 @@ export default function App() {
                     <a href="#">Khóa học</a>
                     <a href="#">Chiến dịch</a>
                     <a href="#">Dashboard</a>
+                     <button className="login">Login</button>
                   </nav>
+
                 </div>
               </header>
 
@@ -46,21 +48,13 @@ export default function App() {
                       Bắt đầu đánh giá nguy cơ
                     </Link>
                   </motion.div>
-
-                  <motion.div
-                    className="md:w-1/2"
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6 }}
-                  >
-                    <img
-                      src="https://img.freepik.com/free-vector/addiction-abstract-concept-illustration_335657-3627.jpg"
-                      alt="Prevention illustration"
-                      className="anh"
-                    />
-                  </motion.div>
                 </div>
               </section>
+
+              <img className="anh"
+                src="https://i.imgur.com/uOvU87n.jpeg"
+                alt="Prevention illustration"
+              />
 
               {/* Features Section */}
               <section className="py-20 bg-white">
