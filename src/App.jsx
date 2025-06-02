@@ -1,10 +1,12 @@
 
 import React from "react";
+
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import KhaoSat from "./page/Khaosat";
 import TuVan from "./page/tuvan";
 import AppContent from "./appContent";
 import KhoaHoc from "./page/Khoahoc.jsx"; // ✅ import file mới
+
 
 export default function App() {
   return (
@@ -17,8 +19,10 @@ export default function App() {
 
         <Route path="/khoahoc" element={<KhoaHoc />} />
 
+
       </Routes>
     </Router>
   );
 }
+
 

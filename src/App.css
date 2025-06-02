@@ -1,8 +1,10 @@
 /* App.css */
 
+
 body {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   margin: 0;
+
   background-color: #f8f9fa;
   color: #333;
 }
@@ -195,6 +197,7 @@ nav button:hover {
 
 /* Footer */
 footer {
+
   background: #e9ecef;
   color: #555;
   text-align: center;
@@ -220,4 +223,5 @@ footer a:hover {
     font-size: 0.9rem;
   }
 }
+
 

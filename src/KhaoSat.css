@@ -1,0 +1,108 @@
+/* KhaoSat.css */
+.khaosat-container {
+  max-width: 600px;
+  margin: 2rem auto;
+  background: #fff;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.khaosat-title {
+  text-align: center;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #1d4ed8;
+  margin-bottom: 1.5rem;
+}
+
+.survey-tabs {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.survey-tabs button {
+  background: #e0e7ff;
+  border: none;
+  padding: 0.5rem 1rem;
+  margin: 0 0.25rem;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.survey-tabs button.active {
+  background: #1d4ed8;
+  color: #fff;
+}
+
+.survey-tabs button:hover {
+  background: #3b82f6;
+  color: #fff;
+}
+
+.survey-form h2 {
+  font-size: 1.25rem;
+  color: #1e3a8a;
+  margin-bottom: 1rem;
+}
+
+.question-block {
+  margin-bottom: 1rem;
+}
+
+.question-block label {
+  display: block;
+  margin-bottom: 0.25rem;
+  color: #334155;
+  font-weight: 500;
+}
+
+.question-block input {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.5rem;
+  outline: none;
+  transition: border 0.3s ease;
+}
+
+.question-block input:focus {
+  border-color: #3b82f6;
+}
+
+.submit-btn {
+  display: block;
+  width: 100%;
+  background: #1d4ed8;
+  color: #fff;
+  border: none;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  margin-top: 1rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.submit-btn:hover {
+  background: #2563eb;
+}
+.batdau {
+  background: #1d4ed8;
+  color: #fff;
+  border: none;
+  padding: 0.75rem 1rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  display: inline-block;
+  text-decoration: none;
+  transition: background 0.3s ease;
+}
+
+.batdau:hover {
+  background: #2563eb;
+}
