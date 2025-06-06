@@ -1,5 +1,5 @@
 import React from "react";
-import "./cssCom/Login.css"; // Để style riêng nếu muốn
+import "./cssCom/Login.css"; 
 
 export default function LoginModal({ onClose }) {
   return (

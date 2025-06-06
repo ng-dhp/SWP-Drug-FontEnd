@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { FaHeartbeat, FaUserMd, FaSchool, FaUsers } from "react-icons/fa";
@@ -6,11 +6,31 @@ import "./App.css";
 import KhaoSat from "./page/Khaosat.jsx";
 import LoginModal from "./components/Login";
 import RegisterModal from "./components/Register";
-import Navbar from "./components/navbar.jsx" 
+import Navbar from "./components/navbar.jsx";
 
 export default function App() {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
+
+  // Thêm state quản lý ảnh và hiệu ứng
+  const [currentImage, setCurrentImage] = useState("https://i.imgur.com/uOvU87n.jpeg");
+  const [fadeClass, setFadeClass] = useState("fade-in");
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setFadeClass("fade-out");
+      setTimeout(() => {
+        setCurrentImage((prev) =>
+          prev === "https://i.imgur.com/uOvU87n.jpeg"
+            ? "https://datafiles.nghean.gov.vn/nan-ubnd/2928/quantritintuc/ma-tuy-truong-hoc_01072022638136508723583066.png"
+            : "https://i.imgur.com/uOvU87n.jpeg"
+        );
+        setFadeClass("fade-in");
+      }, 500);
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <Router>
@@ -46,9 +66,10 @@ export default function App() {
                 </div>
               </section>
 
+              {/* Ảnh có hiệu ứng fade */}
               <img
-                className="anh"
-                src="https://i.imgur.com/uOvU87n.jpeg"
+                className={`anh ${fadeClass}`}
+                src={currentImage}
                 alt="Prevention illustration"
               />
 

@@ -58,10 +58,9 @@
   margin-top: 0.75rem;
 }
 .nutdangky{
-  margin-left: 109px;
-  background-color: #ccc;
-}
-.nutdangky:hover{
-  background: #12ff79cc;
-  transform: scale(1.05);
+
+  background-color: #3498db;
+  padding-left: 130px;
+  padding-right: 127px;
+  color: white;
 }

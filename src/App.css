@@ -189,11 +189,27 @@ footer a:hover {
 
 /* Ảnh chính */
 .anh {
-  width: 100%;
-  height: auto;
-  border-radius: 0.75rem;
-  max-width: 100%;
+  width: 100%; /* Chiều rộng 100% container */
+  height: 550px; /* Chiều cao cố định */
+  display: block;
+  margin: 20px auto;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  object-fit: fill; /* Kéo dài (méo) hình ảnh */
 }
+
+
+.fade-in {
+  opacity: 1;
+  transition: opacity 0.5s ease-in;
+}
+
+.fade-out {
+  opacity: 0;
+  transition: opacity 0.5s ease-out;
+}
+
+
 
 /* Nút login */
 .login {
