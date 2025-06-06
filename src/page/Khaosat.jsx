@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./KhaoSat.css";
+import "./css/khaoSat.css";
 
 export default function KhaoSat() {
   const [activeSurvey, setActiveSurvey] = useState("ASSIST");

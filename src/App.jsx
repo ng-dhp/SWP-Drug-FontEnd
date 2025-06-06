@@ -1,11 +1,17 @@
-import React from "react";
+import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { FaHeartbeat, FaUserMd, FaSchool, FaUsers } from "react-icons/fa";
 import "./App.css";
-import KhaoSat from "./Khaosat";
+import KhaoSat from "./page/Khaosat.jsx";
+import LoginModal from "./components/Login";
+import RegisterModal from "./components/Register"; 
 
 export default function App() {
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [showRegisterModal, setShowRegisterModal] = useState(false);
+
+
   return (
     <Router>
       <Routes>
@@ -24,9 +30,19 @@ export default function App() {
                     <a href="#">Khóa học</a>
                     <a href="#">Chiến dịch</a>
                     <a href="#">Dashboard</a>
-                     <button className="login">Login</button>
+                    <button
+                      className="login"
+                      onClick={() => setShowLoginModal(true)}
+                    >
+                      Đăng Nhập
+                    </button>
+                     <button
+                      className="Register"
+                      onClick={() => setShowRegisterModal(true)}
+                    >
+                      Đăng Ký
+                    </button>
                   </nav>
-
                 </div>
               </header>
 
@@ -51,7 +67,8 @@ export default function App() {
                 </div>
               </section>
 
-              <img className="anh"
+              <img
+                className="anh"
                 src="https://i.imgur.com/uOvU87n.jpeg"
                 alt="Prevention illustration"
               />
@@ -117,6 +134,15 @@ export default function App() {
                   <a href="#">Liên hệ</a>
                 </div>
               </footer>
+
+              {/* Modal Login */}
+              {showLoginModal && (
+                <LoginModal onClose={() => setShowLoginModal(false)} />
+              )}
+                 {/* Modal Register */}
+              {showRegisterModal && (
+                <RegisterModal onClose={() => setShowRegisterModal(false)} />
+              )}
             </div>
           }
         />
