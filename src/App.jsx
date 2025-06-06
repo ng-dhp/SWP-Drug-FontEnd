@@ -5,12 +5,12 @@ import { FaHeartbeat, FaUserMd, FaSchool, FaUsers } from "react-icons/fa";
 import "./App.css";
 import KhaoSat from "./page/Khaosat.jsx";
 import LoginModal from "./components/Login";
-import RegisterModal from "./components/Register"; 
+import RegisterModal from "./components/Register";
+import Navbar from "./components/navbar.jsx" 
 
 export default function App() {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
-
 
   return (
     <Router>
@@ -19,32 +19,11 @@ export default function App() {
           path="/"
           element={
             <div>
-              {/* Navbar */}
-              <header className="navbar">
-                <div className="container">
-                  <h1 className="tittle">STOP ADDICTION</h1>
-                  <nav className="nav-links">
-                    <a href="#">Trang chủ</a>
-                    <a href="#">Đánh giá</a>
-                    <a href="#">Tư vấn</a>
-                    <a href="#">Khóa học</a>
-                    <a href="#">Chiến dịch</a>
-                    <a href="#">Dashboard</a>
-                    <button
-                      className="login"
-                      onClick={() => setShowLoginModal(true)}
-                    >
-                      Đăng Nhập
-                    </button>
-                     <button
-                      className="Register"
-                      onClick={() => setShowRegisterModal(true)}
-                    >
-                      Đăng Ký
-                    </button>
-                  </nav>
-                </div>
-              </header>
+              {/* Gọi Navbar */}
+              <Navbar
+                onLogin={() => setShowLoginModal(true)}
+                onRegister={() => setShowRegisterModal(true)}
+              />
 
               {/* Hero Section */}
               <section className="hero">
@@ -135,18 +114,16 @@ export default function App() {
                 </div>
               </footer>
 
-              {/* Modal Login */}
+              {/* Modals */}
               {showLoginModal && (
                 <LoginModal onClose={() => setShowLoginModal(false)} />
               )}
-                 {/* Modal Register */}
               {showRegisterModal && (
                 <RegisterModal onClose={() => setShowRegisterModal(false)} />
               )}
             </div>
           }
         />
-
         <Route path="/khaosat" element={<KhaoSat />} />
       </Routes>
     </Router>

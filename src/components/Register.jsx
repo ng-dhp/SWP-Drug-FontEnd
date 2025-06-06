@@ -19,7 +19,7 @@ export default function RegisterModal({ onClose }) {
             <label>Mật khẩu:</label>
             <input type="password" placeholder="Mật khẩu" required />
           </div>
-          <button type="submit">Đăng Ký</button>
+          <button type="submit" className="nutdangky">Đăng Ký</button>
         </form>
         <button className="close-button" onClick={onClose}>
           Đóng

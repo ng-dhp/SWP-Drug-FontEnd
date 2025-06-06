@@ -197,19 +197,36 @@ footer a:hover {
 
 /* Nút login */
 .login {
-  background-color: #22c55e; /* xanh lá đậm hơn */
-  color: #fff;
+  background-color: #f7f7f7; /* xanh lá đậm hơn */
+  color: #090505;
   border: none;
   padding: 10px 20px;
   cursor: pointer;
-  border-radius: 4%;
+  border-radius: 8px;
   font-weight: 600;
   margin-left: 1rem;
   transition: background-color 0.3s, transform 0.2s;
+  padding-right: 15px;
+  padding-left: 15px;
 }
 
 .login:hover {
-  background-color: #16a34a;
+  background-color: #12ff79cc;
+  transform: scale(1.05);
+}
+.register {
+  background-color: #f7f7f7; /* xanh lá đậm hơn */
+  color: #090505;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 8px;
+  font-weight: 600;
+  margin-left: 5px;
+  transition: background-color 0.3s, transform 0.2s;
+}
+.register:hover {
+  background-color: #12ff79cc;
   transform: scale(1.05);
 }
 
