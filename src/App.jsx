@@ -145,7 +145,8 @@ export default function App() {
             </div>
           }
         />
-        <Route path="/khaosat" element={<KhaoSat />} />
+        <Route path="/khaosat/*" element={<KhaoSat />} />
+
       </Routes>
     </Router>
   );
