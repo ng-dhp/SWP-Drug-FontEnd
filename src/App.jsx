@@ -7,6 +7,7 @@ import KhaoSat from "./page/Khaosat.jsx";
 import LoginModal from "./components/Login";
 import RegisterModal from "./components/Register";
 import Navbar from "./components/navbar.jsx";
+import TuVan from "./page/tuvan.jsx";
 
 export default function App() {
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -85,7 +86,7 @@ export default function App() {
                     Tính năng nổi bật
                   </motion.h3>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+                  <div className="khungtinhnang">
                     {[
                       {
                         icon: <FaHeartbeat size={32} />,
@@ -124,6 +125,44 @@ export default function App() {
                   </div>
                 </div>
               </section>
+              {/* Blog Section */}
+
+              <section className="py-20 bg-gray-50">
+                <div className="max-w-6xl mx-auto px-6">
+                  <motion.h3
+                    className="text-3xl font-bold text-center text-blue-800 mb-12"
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    transition={{ duration: 0.6 }}
+                  >
+                    Blog chia sẻ kinh nghiệm
+                  </motion.h3>
+
+                  <div className="blog-grid">
+                    {[ /* dữ liệu blog */].map((blog, i) => (
+                      <motion.div
+                        key={i}
+                        className="bg-white rounded-2xl p-6 shadow hover:shadow-xl transition"
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        transition={{ delay: i * 0.1 }}
+                        viewport={{ once: true }}
+                      >
+                        <h4 className="font-semibold text-lg">{blog.title}</h4>
+                        <p className="text-sm mt-2">{blog.desc}</p>
+                        <a
+                          href={blog.link}
+                          className="inline-block mt-4 text-blue-600 hover:underline"
+                        >
+                          Đọc thêm &rarr;
+                        </a>
+                      </motion.div>
+                    ))}
+                  </div>
+                </div>
+              </section>
+
+
 
               {/* Footer */}
               <footer className="bg-gray-100 py-4 text-center">
@@ -146,6 +185,7 @@ export default function App() {
           }
         />
         <Route path="/khaosat/*" element={<KhaoSat />} />
+        <Route path="/tuvan" element={<TuVan />} />
 
       </Routes>
     </Router>
