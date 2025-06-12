@@ -1,0 +1,107 @@
+.selection-card {
+  background-color: #f0f4ff;
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.questionnaire-card {
+  background-color: #fff8f0;
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 0 10px rgb(251, 248, 248);
+}
+
+.grid-3-columns {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+.substance-card {
+  background-color: #ffffff;
+  border: 1px solid transparent;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  text-align: center;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
+  transition: border-color 0.2s, background-color 0.2s;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem;
+  color: #333;
+  user-select: none;
+}
+
+.substance-card:hover {
+  border-color: #4a90e2;
+  background-color: #f0f4ff;
+}
+
+.substance-card.selected {
+  border-color: #4a90e2;
+  background-color: #dbe9ff;
+}
+.option-button {
+  background-color: transparent;
+  color: #333;
+  font-weight: 600;
+  font-size: 1rem;
+  border: none;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+.center-button-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+}
+.question-card {
+  background-color: #ffffff;
+  padding: 16px;
+  margin-bottom: 16px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(255, 255, 255, 0.08);
+  border: 1px solid #e0e0e0;
+}
+
+.question-label {
+  font-weight: 500;
+  margin-bottom: 8px;
+  display: block;
+  color: #333;
+}
+
+.select-box {
+  width: 100%;
+  padding: 8px;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background-color: #ffffff;
+}
+.tong-diem {
+  background-color: #ffffff;
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e0e0e0;
+  margin-top: 24px;
+  margin-bottom: 24px;
+}
+
+.risk-low {
+  color: green;
+  font-weight: 600;
+}
+
+.risk-medium {
+  color: orange;
+  font-weight: 600;
+}
+
+.risk-high {
+  color: red;
+  font-weight: 600;
+}

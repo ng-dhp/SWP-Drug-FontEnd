@@ -1,0 +1,186 @@
+/* Reset & base setup */
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  min-height: 100vh; /* Ensure full viewport coverage */
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #f0f4f8; /* Consistent background */
+  color: #1f2937;
+  box-sizing: border-box;
+  overflow-x: hidden; /* Prevent horizontal scroll issues */
+}
+
+/* Wrapper covers full screen */
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+  background-color: #f0f4f8; /* Match body background */
+}
+
+/* Header */
+.header {
+  background: linear-gradient(to right, #4b6cb7, #182848);
+  color: white;
+  padding: 60px 30px; /* Increased padding for a bolder look */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Header title */
+.header-title {
+  font-size: 2.8rem; /* Slightly larger for emphasis */
+  font-weight: 800;
+  text-align: center;
+  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Header right section */
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+  transition: transform 0.2s;
+  display: flex;
+}
+
+.avatar:hover {
+  transform: scale(1.1);
+}
+
+/* Main content */
+.main-content {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem 2rem;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden; /* Prevent overflow issues */
+}
+
+/* Container with title + cards */
+.Khao-sat {
+  background-color: #ffffff;
+  padding: 2.5rem;
+  border-radius: 20px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+  max-width: 1100px;
+  width: 100%;
+  text-align: center;
+  transition: transform 0.3s ease;
+}
+
+.Khao-sat:hover {
+  transform: translateY(-5px);
+}
+
+/* Intro and note */
+.intro-text {
+  margin-top: 15px;
+  font-size: 18px;
+  color: #00050c;
+}
+
+.note {
+  font-size: 15px;
+  color: #718096;
+  margin-bottom: 25px;
+}
+
+/* Card layout */
+.survey-cards {
+  display: flex;
+  gap: 25px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 25px;
+}
+
+/* Card styling */
+.survey-card {
+  background: #f9fafb;
+  padding: 28px;
+  border-radius: 15px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  width: 100%;
+  max-width: 320px;
+  text-align: left;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+}
+
+.survey-card:hover {
+  background: #eef2f7;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Description */
+.description {
+  font-size: 15px;
+  margin-top: 12px;
+  color: #4a5568;
+}
+
+/* Button style */
+.start-button {
+  margin-top: 20px;
+  padding: 12px 20px;
+  background-color: #4b6cb7;
+  color: white;
+  font-weight: 600;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+  width: 100%;
+}
+
+.start-button:hover {
+  background-color: #182848;
+  transform: translateY(-2px);
+}
+
+/* Footer fixed bottom */
+.footer {
+  background-color: #2d3748;
+  color: #e2e8f0;
+  text-align: center;
+  padding: 20px;
+  font-size: 15px;
+  width: 100%;
+  border-top: 1px solid #4a5568;
+}
+.survey-image {
+  width: 80%;
+  max-width: 120px;
+  height: auto;
+  display: block;
+  margin: 0 auto 1rem auto;
+  object-fit: contain;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  
+}
+.survey-card h3 {
+  margin-top: 10px;
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+}

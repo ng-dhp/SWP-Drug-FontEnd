@@ -1,0 +1,222 @@
+/* App.css */
+
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  background-color: #f8f9fa;
+  color: #333;
+}
+
+
+/* Navbar */
+nav {
+  background-color: #0b318f;
+  color: white;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+nav a {
+  color: white;
+  margin-left: 1rem;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+nav a:hover {
+  text-decoration: none;
+}
+
+nav button {
+  background: white;
+  color: #0b318f;
+  border: none;
+  border-radius: 6px;
+  padding: 0.4rem 1rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+nav button:hover {
+  background: #e2e6ea;
+}
+
+/* Logo */
+.logo-link {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.logo-image {
+  width: 100px;
+  height: auto;
+  width: 100px;
+  animation: fadeInOut 2s infinite alternate ease-in-out;
+}
+
+/* Keyframes cho fade in/out */
+@keyframes fadeInOut {
+  0% {
+    opacity: 1; /* đậm */
+  }
+  100% {
+    opacity: 0.1; /* mờ dần */
+  }
+}
+
+.tittle {
+  text-align: center;
+}
+/* Hero Section */
+.hero {
+  background: linear-gradient(135deg, #0b318f, #021e4a);
+  color: white;
+  padding: 3rem 2rem;
+  text-align: center;
+  display: block;
+}
+
+.hero h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  font-weight: 700;
+}
+
+.hero p {
+  font-size: 1rem;
+  margin-bottom: 2rem;
+}
+
+.hero .batdau {
+  background: white;
+  color: #0b318f;
+  padding: 0.7rem 1.2rem;
+  border-radius: 8px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background 0.3s;
+}
+
+.hero .batdau:hover {
+  background: #e2e6ea;
+}
+
+/* Fade-in/out image */
+.anh {
+  width: 100%; /* Chiều rộng 100% container */
+  height: 550px; /* Chiều cao cố định */
+  margin: 20px auto;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  object-fit: fill; /* Kéo dài (méo) hình ảnh */
+}
+
+.fade-in {
+  opacity: 1;
+  transition: opacity 0.5s ease-in;
+}
+
+.fade-out {
+  opacity: 0;
+  transition: opacity 0.5s ease-out;
+}
+
+/* Features Section */
+.khungtinhnang {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+}
+
+.khungtinhnang > div {
+  background: #e6f0ff;
+  border-radius: 1rem;
+  padding: 1.2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.khungtinhnang > div:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+}
+
+.khungtinhnang h4 {
+  margin-top: 0.5rem;
+  font-weight: 600;
+  color: #0b318f;
+}
+
+.khungtinhnang p {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+/* Blog Section */
+.blog-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+}
+
+.blog-grid > div {
+  background: #fff;
+  border-radius: 1rem;
+  padding: 1rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.blog-grid > div:hover {
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+}
+
+.blog-grid h4 {
+  margin: 0;
+  color: #0b318f;
+}
+
+.blog-grid p {
+  font-size: 0.85rem;
+  color: #444;
+}
+
+.blog-grid a {
+  color: #0b318f;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.blog-grid a:hover {
+  text-decoration: underline;
+}
+
+/* Footer */
+footer {
+  background: #e9ecef;
+  color: #555;
+  text-align: center;
+  padding: 1rem;
+}
+
+footer a {
+  color: #0b318f;
+  margin: 0 0.5rem;
+  text-decoration: none;
+}
+
+footer a:hover {
+  text-decoration: underline;
+}
+
+/* Responsive tweaks */
+@media (max-width: 600px) {
+  .hero h2 {
+    font-size: 1.5rem;
+  }
+  .hero p {
+    font-size: 0.9rem;
+  }
+}
