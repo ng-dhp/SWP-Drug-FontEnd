@@ -1,0 +1,64 @@
+.navbar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #0b318f, #021e4a);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  color: #ffffff;
+}
+
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.logo-link img {
+  width: 130px;
+}
+
+.nav-links {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+}
+
+.auth-buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.login {
+  color: #fafcff; /* blue-600 */
+  background: #2563eb;
+  border: none;
+  cursor: pointer;
+}
+.login:hover {
+  background: #0dc362; /* blue-700 */
+}
+
+.register {
+  color: #ffffff; /* green-600 */
+  background: #2563eb;
+  border: none;
+  cursor: pointer;
+}
+.register:hover {
+  background: #0dc362; /* green-700 */
+}
+
+.nav-links a {
+  color: white;
+  text-decoration: none;
+}
+
+.nav-links a:hover {
+  color: #0dc362; /* màu xanh lá cây */
+}
+
+
