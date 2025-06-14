@@ -18,6 +18,7 @@ body {
   color: #1e40af;
   text-align: center;
   margin-bottom: 2rem;
+  padding-bottom: 50px;
 }
 
 .khoa-hoc-grid {
@@ -69,44 +70,78 @@ body {
   margin-bottom: 0.5rem;
 }
 
-/* Mô tả */
-.khoa-hoc-content p {
-  font-size: 0.95rem;
+/* Danh sách mô tả */
+.khoa-hoc-highlights {
+  margin-top: 0.75rem;
+  margin-bottom: auto;
+  padding-left: 1.2rem;
   color: #374151;
-  line-height: 1.6;
-  flex-grow: 1;
+  font-size: 0.95rem;
+  line-height: 1.5;
 }
 
-/* Nút */
-.khoa-hoc-content button {
+.khoa-hoc-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-top: 1.2rem;
-  padding: 0.6rem 1.2rem;
+  gap: 1rem; /* thêm khoảng cách giữa 2 cột */
+}
+
+.khoa-hoc-price {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1f2937;
+  white-space: nowrap; /* giữ trên 1 dòng */
+}
+
+.khoa-hoc-button {
+  padding: 0.5rem 1rem;
   background-color: #2563eb;
   color: #ffffff;
   font-weight: 500;
   border: none;
   border-radius: 9999px;
   transition: background-color 0.3s ease, box-shadow 0.2s ease;
-  align-self: start;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  white-space: nowrap; /* giữ trên 1 dòng */
 }
 
-.khoa-hoc-content button:hover {
+.khoa-hoc-button:hover {
   background-color: #1d4ed8;
   cursor: pointer;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
-
 @media (max-width: 768px) {
-  .khoa-hoc-title {
-    font-size: 2rem;
-  }
-
-  .khoa-hoc-content h3 {
-    font-size: 1.1rem;
-  }
-
-  .khoa-hoc-content p {
-    font-size: 0.9rem;
+  .khoa-hoc-grid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   }
 }
+
+@media (min-width: 1600px) {
+  .khoa-hoc-grid {
+    max-width: 90vw; /* cho co giãn thoải mái hơn ở màn hình rộng */
+  }
+}
+.back-button {
+  background: none;
+  border: none;
+  color: #1e3a8a;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: color 0.2s ease;
+}
+
+.back-button:hover {
+  color: #2563eb;
+  text-decoration: underline;
+}
+
+
+
+
