@@ -12,6 +12,8 @@ import TuVan from "./page/tuvan.jsx";
 export default function App() {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
 
   // Thêm state quản lý ảnh và hiệu ứng
   const [currentImage, setCurrentImage] = useState("https://i.imgur.com/uOvU87n.jpeg");
@@ -44,6 +46,7 @@ export default function App() {
               <Navbar
                 onLogin={() => setShowLoginModal(true)}
                 onRegister={() => setShowRegisterModal(true)}
+                isLoggedIn={isLoggedIn}
               />
 
               {/* Hero Section */}
@@ -176,7 +179,13 @@ export default function App() {
 
               {/* Modals */}
               {showLoginModal && (
-                <LoginModal onClose={() => setShowLoginModal(false)} />
+                <LoginModal
+                  onClose={() => setShowLoginModal(false)}
+                  onLoginSuccess={() => {
+                    setIsLoggedIn(true); // 👈 cập nhật trạng thái đã đăng nhập
+                    setShowLoginModal(false);
+                  }}
+                />
               )}
               {showRegisterModal && (
                 <RegisterModal onClose={() => setShowRegisterModal(false)} />
