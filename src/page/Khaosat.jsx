@@ -2,13 +2,10 @@ import React from "react";
 import { Routes, Route, Link } from "react-router-dom";
 import AssistSurvey from "./AssistSurvey";
 import CrafftSurvey from "./CrafftSurvey";
-<<<<<<< HEAD
-import "./css/Khaosat.css"; // Import CSS styles
-=======
 import "./css/Khaosat.css";
 import anh_assist from "../assets/anh_assist.png";
 import anh_crafft from "../assets/anh_crafft.png";
->>>>>>> Long
+
 
 export default function KhaoSat() {
   return (
@@ -36,16 +33,7 @@ export default function KhaoSat() {
                 <div className="survey-cards">
                   {/* ASSIST */}
                   <div className="survey-card">
-<<<<<<< HEAD
-                    <img src="/assets/assist.png" alt="Khảo sát ASSIST" className="survey-image" />
-                    <h3>ASSIST</h3>
-                    <p><strong>Đối tượng:</strong> Người trưởng thành (18 tuổi trở lên)</p>
-                    <p><strong>Thời gian:</strong> Khoảng 5-7 phút</p>
-                    <p className="description">
-                      Bài khảo sát theo tiêu chuẩn quốc tế dành cho người trưởng thành, đánh giá mức độ nguy cơ liên quan đến việc sử dụng các chất gây nghiện.
-                    </p>
-                    <Link to="assist"><button className="start-button">📋 Bắt đầu</button></Link>
-=======
+
                     <img src={anh_assist} alt="Khảo sát ASSIST" className="survey-image-top" />
                     <h3>ASSIST</h3>
                     <div className="survey-details">
@@ -61,21 +49,12 @@ export default function KhaoSat() {
                     <Link to="assist">
                       <button className="start-button">📋 Bắt đầu</button>
                     </Link>
->>>>>>> Long
+
                   </div>
 
                   {/* CRAFFT */}
                   <div className="survey-card">
-<<<<<<< HEAD
-                    <img src="/assets/craft.png" alt="Khảo sát CRAFFT" className="survey-image" />
-                    <h3>CRAFFT</h3>
-                    <p><strong>Đối tượng:</strong> Thanh thiếu niên (12–17 tuổi)</p>
-                    <p><strong>Thời gian:</strong> Khoảng 3-5 phút</p>
-                    <p className="description">
-                      Bài khảo sát được thiết kế đặc biệt cho thanh thiếu niên, giúp phát hiện sớm các hành vi nguy cơ liên quan đến sử dụng chất gây nghiện.
-                    </p>
-                    <Link to="crafft"><button className="start-button">📋 Bắt đầu</button></Link>
-=======
+
                     <img src={anh_crafft} alt="Khảo sát CRAFFT" className="survey-image-top" />
                     <h3>CRAFFT</h3>
                     <div className="survey-details">
@@ -91,7 +70,6 @@ export default function KhaoSat() {
                     <Link to="crafft">
                       <button className="start-button">📋 Bắt đầu</button>
                     </Link>
->>>>>>> Long
                   </div>
                 </div>
               </div>

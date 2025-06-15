@@ -1,23 +1,9 @@
-<<<<<<< HEAD
-/* Reset & base setup */
-=======
->>>>>>> Long
+
 html, body, #root {
   margin: 0;
   padding: 0;
   height: 100%;
   width: 100%;
-<<<<<<< HEAD
-  min-height: 100vh; /* Ensure full viewport coverage */
-  font-family: 'Segoe UI', sans-serif;
-  background-color: #f0f4f8; /* Consistent background */
-  color: #1f2937;
-  box-sizing: border-box;
-  overflow-x: hidden; /* Prevent horizontal scroll issues */
-}
-
-/* Wrapper covers full screen */
-=======
   min-height: 100vh;
   font-family: 'Segoe UI', sans-serif;
   background-color: #f0f4f8;
@@ -26,22 +12,12 @@ html, body, #root {
   overflow-x: hidden;
 }
 
->>>>>>> Long
 .wrapper {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
   width: 100%;
-<<<<<<< HEAD
-  background-color: #f0f4f8; /* Match body background */
-}
 
-/* Header */
-.header {
-  background: linear-gradient(to right, #4b6cb7, #182848);
-  color: white;
-  padding: 60px 30px; /* Increased padding for a bolder look */
-=======
   background-color: #f0f4f8;
 }
 
@@ -49,7 +25,6 @@ html, body, #root {
   background: linear-gradient(to right, #4b6cb7, #182848);
   color: white;
   padding: 60px 30px;
->>>>>>> Long
   display: flex;
   justify-content: center;
   align-items: center;
@@ -57,14 +32,8 @@ html, body, #root {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-<<<<<<< HEAD
-/* Header title */
-.header-title {
-  font-size: 2.8rem; /* Slightly larger for emphasis */
-=======
 .header-title {
   font-size: 2.8rem; 
->>>>>>> Long
   font-weight: 800;
   text-align: center;
   white-space: nowrap;
@@ -72,10 +41,6 @@ html, body, #root {
   letter-spacing: 1px;
 }
 
-<<<<<<< HEAD
-/* Header right section */
-=======
->>>>>>> Long
 .header-right {
   display: flex;
   align-items: center;
@@ -95,10 +60,7 @@ html, body, #root {
   transform: scale(1.1);
 }
 
-<<<<<<< HEAD
-/* Main content */
-=======
->>>>>>> Long
+
 .main-content {
   flex: 1;
   display: flex;
@@ -107,16 +69,10 @@ html, body, #root {
   padding: 3rem 2rem;
   width: 100%;
   box-sizing: border-box;
-<<<<<<< HEAD
-  overflow: hidden; /* Prevent overflow issues */
-}
 
-/* Container with title + cards */
-=======
   overflow: hidden; 
 }
 
->>>>>>> Long
 .Khao-sat {
   background-color: #ffffff;
   padding: 2.5rem;
@@ -132,10 +88,6 @@ html, body, #root {
   transform: translateY(-5px);
 }
 
-<<<<<<< HEAD
-/* Intro and note */
-=======
->>>>>>> Long
 .intro-text {
   margin-top: 15px;
   font-size: 18px;
@@ -148,48 +100,11 @@ html, body, #root {
   margin-bottom: 25px;
 }
 
-<<<<<<< HEAD
-/* Card layout */
-=======
->>>>>>> Long
 .survey-cards {
   display: flex;
   gap: 25px;
   justify-content: center;
   flex-wrap: wrap;
-<<<<<<< HEAD
-  margin-top: 25px;
-}
-
-/* Card styling */
-.survey-card {
-  background: #f9fafb;
-  padding: 28px;
-  border-radius: 15px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-  width: 100%;
-  max-width: 320px;
-  text-align: left;
-  box-sizing: border-box;
-  transition: all 0.3s ease;
-}
-
-.survey-card:hover {
-  background: #eef2f7;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-}
-
-/* Description */
-.description {
-  font-size: 15px;
-  margin-top: 12px;
-  color: #4a5568;
-}
-
-/* Button style */
-.start-button {
-  margin-top: 20px;
-=======
   align-items: stretch; /* ⚠️ Đảm bảo các card bằng chiều cao */
   margin-top: 25px;
   gap: 100px;
@@ -253,7 +168,6 @@ html, body, #root {
 /* Nút bắt đầu */
 .start-button {
   margin: 20px auto 24px auto;
->>>>>>> Long
   padding: 12px 20px;
   background-color: #4b6cb7;
   color: white;
@@ -262,14 +176,8 @@ html, body, #root {
   border-radius: 10px;
   cursor: pointer;
   transition: background 0.3s ease, transform 0.2s ease;
-<<<<<<< HEAD
-  width: 100%;
-}
-
-=======
   width: 85%;
   font-size: 16px;
-
   display: flex;             /* Hiển thị icon + text cùng hàng */
   justify-content: center;
   align-items: center;
@@ -278,16 +186,13 @@ html, body, #root {
 }
 
 
->>>>>>> Long
+
 .start-button:hover {
   background-color: #182848;
   transform: translateY(-2px);
 }
 
-<<<<<<< HEAD
-/* Footer fixed bottom */
-=======
->>>>>>> Long
+
 .footer {
   background-color: #2d3748;
   color: #e2e8f0;
@@ -297,25 +202,7 @@ html, body, #root {
   width: 100%;
   border-top: 1px solid #4a5568;
 }
-<<<<<<< HEAD
-.survey-image {
-  width: 80%;
-  max-width: 120px;
-  height: auto;
-  display: block;
-  margin: 0 auto 1rem auto;
-  object-fit: contain;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  
-}
-.survey-card h3 {
-  margin-top: 10px;
-  font-size: 20px;
-  font-weight: bold;
-  text-align: center;
-}
-=======
+
 .survey-details {
   padding: 0 20px;
   text-align: center;
@@ -367,4 +254,3 @@ html, body, #root {
   background-color: #a855f7;
 }
 
->>>>>>> Long
