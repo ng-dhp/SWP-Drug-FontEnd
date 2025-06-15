@@ -9,11 +9,13 @@ export default function Navbar({ onLogin, onRegister, isLoggedIn, onLogout, user
     <header className="navbar bg-white shadow-sm">
       <div className="container flex justify-between items-center px-4 py-2 mx-auto">
         {/* Logo */}
+
         <motion.div
           initial={{ opacity: 0, y: -30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
+
           <Link to="/" className="logo-link flex items-center">
             <img src={logo} alt="Logo" className="logo-image w-32" />
           </Link>
@@ -61,6 +63,5 @@ export default function Navbar({ onLogin, onRegister, isLoggedIn, onLogout, user
         </div>
       </div>
     </header>
-
   );
 }

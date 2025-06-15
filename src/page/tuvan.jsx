@@ -23,7 +23,11 @@ export default function TuVan() {
         },
     ];
 
+<<<<<<< HEAD
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+=======
+    const [isLoggedIn, setIsLoggedIn] = useState(true);
+>>>>>>> Long
     const [selectedDoctor, setSelectedDoctor] = useState(null);
     const [showLoginModal, setShowLoginModal] = useState(false);
 

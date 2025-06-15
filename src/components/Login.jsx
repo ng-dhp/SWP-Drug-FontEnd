@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useState } from "react";
 import "./cssCom/Login.css";
 
@@ -5,10 +6,17 @@ export default function LoginModal({ onClose, onLoginSuccess }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+=======
+import React from "react";
+import "./cssCom/Login.css"; // Giữ file CSS cũ
+
+export default function LoginModal({ onClose }) {
+>>>>>>> Long
   const handleGoogleLogin = () => {
     console.log("Đang đăng nhập bằng Google...");
   };
 
+<<<<<<< HEAD
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -39,10 +47,13 @@ export default function LoginModal({ onClose, onLoginSuccess }) {
     }
   };
 
+=======
+>>>>>>> Long
   return (
     <div className="modal-overlay">
       <div className="modal-content">
         <h3>Đăng nhập</h3>
+<<<<<<< HEAD
         <form onSubmit={handleSubmit}>
           <input
             type="email"
@@ -60,6 +71,11 @@ export default function LoginModal({ onClose, onLoginSuccess }) {
             onChange={(e) => setPassword(e.target.value)}
             required
           />
+=======
+        <form>
+          <input type="text" placeholder="Username" className="form-input" />
+          <input type="password" placeholder="Password" className="form-input" />
+>>>>>>> Long
           <button type="submit" className="login-button">Đăng nhập</button>
         </form>
 

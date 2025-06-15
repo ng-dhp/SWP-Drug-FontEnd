@@ -1,9 +1,13 @@
+<<<<<<< HEAD
 /* Reset & base setup */
+=======
+>>>>>>> Long
 html, body, #root {
   margin: 0;
   padding: 0;
   height: 100%;
   width: 100%;
+<<<<<<< HEAD
   min-height: 100vh; /* Ensure full viewport coverage */
   font-family: 'Segoe UI', sans-serif;
   background-color: #f0f4f8; /* Consistent background */
@@ -13,11 +17,22 @@ html, body, #root {
 }
 
 /* Wrapper covers full screen */
+=======
+  min-height: 100vh;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #f0f4f8;
+  color: #1f2937;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+>>>>>>> Long
 .wrapper {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
   width: 100%;
+<<<<<<< HEAD
   background-color: #f0f4f8; /* Match body background */
 }
 
@@ -26,6 +41,15 @@ html, body, #root {
   background: linear-gradient(to right, #4b6cb7, #182848);
   color: white;
   padding: 60px 30px; /* Increased padding for a bolder look */
+=======
+  background-color: #f0f4f8;
+}
+
+.header {
+  background: linear-gradient(to right, #4b6cb7, #182848);
+  color: white;
+  padding: 60px 30px;
+>>>>>>> Long
   display: flex;
   justify-content: center;
   align-items: center;
@@ -33,9 +57,14 @@ html, body, #root {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
+<<<<<<< HEAD
 /* Header title */
 .header-title {
   font-size: 2.8rem; /* Slightly larger for emphasis */
+=======
+.header-title {
+  font-size: 2.8rem; 
+>>>>>>> Long
   font-weight: 800;
   text-align: center;
   white-space: nowrap;
@@ -43,7 +72,10 @@ html, body, #root {
   letter-spacing: 1px;
 }
 
+<<<<<<< HEAD
 /* Header right section */
+=======
+>>>>>>> Long
 .header-right {
   display: flex;
   align-items: center;
@@ -63,7 +95,10 @@ html, body, #root {
   transform: scale(1.1);
 }
 
+<<<<<<< HEAD
 /* Main content */
+=======
+>>>>>>> Long
 .main-content {
   flex: 1;
   display: flex;
@@ -72,10 +107,16 @@ html, body, #root {
   padding: 3rem 2rem;
   width: 100%;
   box-sizing: border-box;
+<<<<<<< HEAD
   overflow: hidden; /* Prevent overflow issues */
 }
 
 /* Container with title + cards */
+=======
+  overflow: hidden; 
+}
+
+>>>>>>> Long
 .Khao-sat {
   background-color: #ffffff;
   padding: 2.5rem;
@@ -91,7 +132,10 @@ html, body, #root {
   transform: translateY(-5px);
 }
 
+<<<<<<< HEAD
 /* Intro and note */
+=======
+>>>>>>> Long
 .intro-text {
   margin-top: 15px;
   font-size: 18px;
@@ -104,12 +148,16 @@ html, body, #root {
   margin-bottom: 25px;
 }
 
+<<<<<<< HEAD
 /* Card layout */
+=======
+>>>>>>> Long
 .survey-cards {
   display: flex;
   gap: 25px;
   justify-content: center;
   flex-wrap: wrap;
+<<<<<<< HEAD
   margin-top: 25px;
 }
 
@@ -141,6 +189,71 @@ html, body, #root {
 /* Button style */
 .start-button {
   margin-top: 20px;
+=======
+  align-items: stretch; /* ⚠️ Đảm bảo các card bằng chiều cao */
+  margin-top: 25px;
+  gap: 100px;
+}
+
+.survey-card {
+  width: 100%;
+  max-width: 350px;
+  min-height: 580px; /* ✅ Đảm bảo 2 card luôn cao như nhau */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 20px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  overflow: hidden;
+  background-color: #fff;
+  transition: transform 0.3s ease;
+}
+
+.survey-card:hover {
+  transform: translateY(-4px);
+  background-color: #f6f9fc;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.1);
+}
+
+/* Ảnh nằm trên cùng card */
+.survey-image-top {
+  width: 100%;
+  height: 200px; /* ✅ Cố định chiều cao ảnh */
+  object-fit: cover;
+  display: block;
+  margin: 0 auto;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+}
+
+/* Nội dung trong card */
+.survey-card h3 {
+  margin: 16px 0 8px 0;
+  font-size: 22px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.survey-card p {
+  margin: 6px 20px;
+  font-size: 15px;
+  color: #4a5568;
+  text-align: left;
+}
+
+.description {
+  margin: 10px 20px;
+  font-size: 14px;
+  color: #4a5568;
+  text-align: justify;  /* Canh đều 2 bên */
+}
+
+
+/* Nút bắt đầu */
+.start-button {
+  margin: 20px auto 24px auto;
+>>>>>>> Long
   padding: 12px 20px;
   background-color: #4b6cb7;
   color: white;
@@ -149,15 +262,32 @@ html, body, #root {
   border-radius: 10px;
   cursor: pointer;
   transition: background 0.3s ease, transform 0.2s ease;
+<<<<<<< HEAD
   width: 100%;
 }
 
+=======
+  width: 85%;
+  font-size: 16px;
+
+  display: flex;             /* Hiển thị icon + text cùng hàng */
+  justify-content: center;
+  align-items: center;
+  gap: 8px;                  /* Khoảng cách giữa icon và chữ */
+  white-space: nowrap;      /* Ngăn chữ bị xuống dòng */
+}
+
+
+>>>>>>> Long
 .start-button:hover {
   background-color: #182848;
   transform: translateY(-2px);
 }
 
+<<<<<<< HEAD
 /* Footer fixed bottom */
+=======
+>>>>>>> Long
 .footer {
   background-color: #2d3748;
   color: #e2e8f0;
@@ -167,6 +297,7 @@ html, body, #root {
   width: 100%;
   border-top: 1px solid #4a5568;
 }
+<<<<<<< HEAD
 .survey-image {
   width: 80%;
   max-width: 120px;
@@ -184,3 +315,56 @@ html, body, #root {
   font-weight: bold;
   text-align: center;
 }
+=======
+.survey-details {
+  padding: 0 20px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.survey-summary {
+  font-size: 15px;
+  font-weight: 500;
+  color: #1f2937;
+  margin-bottom: 12px;
+  line-height: 1.5;
+  text-align: center; /* Canh giữa đoạn mô tả */
+}
+
+.survey-features {
+  list-style: none;
+  padding: 0;
+  margin: 0 auto;
+  text-align: left;
+  max-width: 260px;
+}
+
+.survey-features li {
+  position: relative;
+  padding-left: 16px;
+  margin: 8px 0;
+  font-size: 14px;
+  color: #4a5568;
+  display: flex;
+  align-items: center;
+}
+
+.survey-features li::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+.survey-features.blue li::before {
+  background-color: #3b82f6;
+}
+
+.survey-features.purple li::before {
+  background-color: #a855f7;
+}
+
+>>>>>>> Long
