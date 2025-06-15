@@ -15,32 +15,12 @@ function AppContent() {
   const [showRegisterModal, setShowRegisterModal] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  const [currentImage, setCurrentImage] = useState("https://i.imgur.com/uOvU87n.jpeg");
-  const [fadeClass, setFadeClass] = useState("fade-in");
-
   // ✅ Check login state from localStorage when component mounts
   useEffect(() => {
     const storedLogin = localStorage.getItem("isLoggedIn");
     if (storedLogin === "true") {
       setIsLoggedIn(true);
     }
-  }, []);
-
-  // ✅ Auto image fade in/out
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setFadeClass("fade-out");
-      setTimeout(() => {
-        setCurrentImage((prev) =>
-          prev === "https://i.imgur.com/uOvU87n.jpeg"
-            ? "https://datafiles.nghean.gov.vn/nan-ubnd/2928/quantritintuc/ma-tuy-truong-hoc_01072022638136508723583066.png"
-            : "https://i.imgur.com/uOvU87n.jpeg"
-        );
-        setFadeClass("fade-in");
-      }, 500);
-    }, 3000);
-
-    return () => clearInterval(interval);
   }, []);
 
   const handleLogout = () => {
@@ -77,7 +57,19 @@ function AppContent() {
         </div>
       </section>
 
-      <img className={`anh ${fadeClass}`} src={currentImage} alt="Prevention illustration" />
+      {/* Ảnh song song */}
+      <div className="square-images">
+        <img
+          className=""
+          src="https://i.imgur.com/uOvU87n.jpeg"
+          alt="Ảnh phòng chống ma túy 1"
+        />
+        <img
+          className=""
+          src="https://datafiles.nghean.gov.vn/nan-ubnd/2928/quantritintuc/ma-tuy-truong-hoc_01072022638136508723583066.png"
+          alt="Ảnh phòng chống ma túy 2"
+        />
+      </div>
 
       {/* Features Section */}
       <section className="py-20 bg-white">
@@ -92,7 +84,7 @@ function AppContent() {
           </motion.h3>
 
           <div className="khungtinhnang">
-            {[
+            {[ 
               { icon: <FaHeartbeat size={32} />, title: "Đánh giá nguy cơ", desc: "Sử dụng ASSIST, CRAFFT để phát hiện sớm." },
               { icon: <FaUserMd size={32} />, title: "Tư vấn chuyên gia", desc: "Kết nối với bác sĩ và chuyên gia tâm lý." },
               { icon: <FaSchool size={32} />, title: "Khóa học phòng ngừa", desc: "Học theo độ tuổi, nội dung sinh động dễ tiếp thu." },

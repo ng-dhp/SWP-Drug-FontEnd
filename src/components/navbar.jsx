@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import logo from "../assets/logo-removebg-preview.png";
+import logo from "../assets/logo01.png";
 import "./cssCom/navbar.css"; // Import CSS styles for the navbar
 
 export default function Navbar({ onLogin, onRegister, isLoggedIn, onLogout, userName }) {
@@ -17,9 +17,15 @@ export default function Navbar({ onLogin, onRegister, isLoggedIn, onLogout, user
           <Link to="/" className="logo-link flex items-center">
             <img src={logo} alt="Logo" className="logo-image w-32" />
           </Link>
-        </motion.div>
+                  </motion.div>
+
 
         {/* Navigation Links ở giữa */}
+                <motion.div
+          initial={{ opacity: 0, y: -30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
         <div className="nav-links">
           <Link to="/">Trang chủ</Link>
           <Link to="/khaosat">Đánh giá</Link>
@@ -28,6 +34,8 @@ export default function Navbar({ onLogin, onRegister, isLoggedIn, onLogout, user
           <Link to="/chiendich">Chiến dịch</Link>
           <Link to="/dashboard">Dashboard</Link>
         </div>
+                </motion.div>
+
 
 
         {/* Đăng nhập / Đăng ký ở bên phải */}
@@ -37,6 +45,7 @@ export default function Navbar({ onLogin, onRegister, isLoggedIn, onLogout, user
               <button className="login text-blue-600" onClick={onLogin}>
                 Đăng Nhập
               </button>
+              
               <button className="register text-green-600" onClick={onRegister}>
                 Đăng Ký
               </button>

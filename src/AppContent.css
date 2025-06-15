@@ -106,24 +106,28 @@ nav button:hover {
 }
 
 /* Fade-in/out image */
-.anh {
-  width: 100%; /* Chiều rộng 100% container */
-  height: 550px; /* Chiều cao cố định */
-  margin: 20px auto;
-  border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-  object-fit: fill; /* Kéo dài (méo) hình ảnh */
+.square-images {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  margin: 2rem 0;
 }
 
-.fade-in {
-  opacity: 1;
-  transition: opacity 0.5s ease-in;
+.square-images img {
+  width: 300px;         /* 👈 Kích thước ảnh vuông */
+  height: auto;
+  object-fit: cover;    /* 👈 Đảm bảo ảnh không méo */
+  border-radius: 1rem;  /* 👈 Bo góc */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* 👈 Bóng */
+  transition: transform 0.3s;
 }
 
-.fade-out {
-  opacity: 0;
-  transition: opacity 0.5s ease-out;
+.square-images img:hover {
+  transform: scale(1.05);
 }
+
 
 /* Features Section */
 .khungtinhnang {
