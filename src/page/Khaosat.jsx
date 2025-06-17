@@ -6,6 +6,7 @@ import "./css/Khaosat.css";
 import anh_assist from "../assets/anh_assist.png";
 import anh_crafft from "../assets/anh_crafft.png";
 
+
 export default function KhaoSat() {
   return (
     <div className="wrapper">
@@ -32,6 +33,7 @@ export default function KhaoSat() {
                 <div className="survey-cards">
                   {/* ASSIST */}
                   <div className="survey-card">
+
                     <img src={anh_assist} alt="Khảo sát ASSIST" className="survey-image-top" />
                     <h3>ASSIST</h3>
                     <div className="survey-details">
@@ -47,10 +49,12 @@ export default function KhaoSat() {
                     <Link to="assist">
                       <button className="start-button">📋 Bắt đầu</button>
                     </Link>
+
                   </div>
 
                   {/* CRAFFT */}
                   <div className="survey-card">
+
                     <img src={anh_crafft} alt="Khảo sát CRAFFT" className="survey-image-top" />
                     <h3>CRAFFT</h3>
                     <div className="survey-details">
@@ -67,6 +71,9 @@ export default function KhaoSat() {
                       <button className="start-button">📋 Bắt đầu</button>
                     </Link>
                   </div>
+                   <button className="tro-ve" onClick={() => window.location.href = "/"}>
+    🏠 Trở về màn hình chính
+  </button>
                 </div>
               </div>
             }

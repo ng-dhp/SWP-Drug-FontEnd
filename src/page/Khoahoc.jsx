@@ -126,7 +126,7 @@ export default function KhoaHoc() {
   return (
     <section className="khoa-hoc-section">
       <button className="back-button" onClick={() => navigate("/")}>
-        ← Quay về trang chủ
+        🏠 Trở về màn hình chính
       </button>
 
       <motion.h2

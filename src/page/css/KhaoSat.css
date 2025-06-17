@@ -1,3 +1,4 @@
+
 html, body, #root {
   margin: 0;
   padding: 0;
@@ -16,6 +17,7 @@ html, body, #root {
   flex-direction: column;
   min-height: 100vh;
   width: 100%;
+
   background-color: #f0f4f8;
 }
 
@@ -58,6 +60,7 @@ html, body, #root {
   transform: scale(1.1);
 }
 
+
 .main-content {
   flex: 1;
   display: flex;
@@ -66,6 +69,7 @@ html, body, #root {
   padding: 3rem 2rem;
   width: 100%;
   box-sizing: border-box;
+
   overflow: hidden; 
 }
 
@@ -174,7 +178,6 @@ html, body, #root {
   transition: background 0.3s ease, transform 0.2s ease;
   width: 85%;
   font-size: 16px;
-
   display: flex;             /* Hiển thị icon + text cùng hàng */
   justify-content: center;
   align-items: center;
@@ -183,10 +186,12 @@ html, body, #root {
 }
 
 
+
 .start-button:hover {
   background-color: #182848;
   transform: translateY(-2px);
 }
+
 
 .footer {
   background-color: #2d3748;
@@ -197,6 +202,7 @@ html, body, #root {
   width: 100%;
   border-top: 1px solid #4a5568;
 }
+
 .survey-details {
   padding: 0 20px;
   text-align: center;
@@ -246,5 +252,17 @@ html, body, #root {
 
 .survey-features.purple li::before {
   background-color: #a855f7;
+}
+.tro-ve{
+  background: #4b6cb7;
+  color: rgb(252, 251, 251);
+  padding: 10px 10px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-top: -60px;
+  
 }
 

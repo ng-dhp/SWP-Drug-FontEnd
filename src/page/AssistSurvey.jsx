@@ -2,212 +2,166 @@ import React, { useState } from 'react';
 import './css/AssistSurvey.css';
 
 const substances = [
-  { key: 'tobacco', label: 'Thuốc lá' },
-  { key: 'alcohol', label: 'Rượu' },
-  { key: 'cannabis', label: 'Cần sa' },
-  { key: 'cocaine', label: 'Cốc-ca-in' },
-  { key: 'stimulants', label: 'Thuốc kích thích' },
-  { key: 'sedatives', label: 'Thuốc an thần, gây ngủ' },
-  { key: 'inhalants', label: 'Chất hít' },
-  { key: 'opioids', label: 'Heroin và các opioid khác' },
-  { key: 'other', label: 'Khác' }
+  { key: 'tobacco', label: '1. Thuốc lá (cigarettes, xì gà, thuốc lào, v.v.)' },
+  { key: 'alcohol', label: '2. Rượu (bia, rượu vang, rượu mạnh, v.v.)' },
+  { key: 'cannabis', label: '3. Cần sa (marijuana, hashish, cần...)' },
+  { key: 'cocaine', label: '4. Cốc-ca-in (cocaine, crack)' },
+  { key: 'stimulants', label: '5. Thuốc kích thích (amphetamine, methamphetamine, ecstasy)' },
+  { key: 'sedatives', label: '6. Thuốc an thần, gây ngủ (valium, diazepam, zolpidem...)' },
+  { key: 'inhalants', label: '7. Chất hít (keo, xăng, sơn, khí gas...)' },
+  { key: 'opioids', label: '8. Heroin và các opioid khác (morphine, codeine...)' },
+  { key: 'other', label: '9. Khác' }
 ];
 
-const questionLabels = {
-  q2: 'Trong 3 tháng vừa qua, bạn đã sử dụng [CHẤT] bao nhiêu lần?',
-  q3: 'Bạn có cảm thấy thèm [CHẤT] không?',
-  q4: 'Việc sử dụng [CHẤT] có gây ra vấn đề?',
-  q5: 'Việc sử dụng [CHẤT] có ảnh hưởng đến trách nhiệm?',
-  q6: 'Người khác có lo ngại về việc sử dụng [CHẤT] không?',
-  q7: 'Bạn từng cố gắng bỏ [CHẤT] nhưng không thành công?',
-  q8: 'Bạn đã từng tiêm [CHẤT] chưa?'
+const questionList = [
+  { id: 2, text: "Tần suất sử dụng gần đây", note: "Trong 3 tháng qua...", options: ["Không bao giờ", "1–2 lần", "Hằng tháng", "Hằng tuần", "Gần như hàng ngày"] },
+  { id: 3, text: "Cảm thấy thèm chất", options: ["Không bao giờ", "1–2 lần", "Hằng tháng", "Hằng tuần", "Gần như hàng ngày"] },
+  { id: 4, text: "Gặp vấn đề với việc kiểm soát", options: ["Không bao giờ", "1–2 lần", "Hằng tháng", "Hằng tuần", "Gần như hàng ngày"] },
+  { id: 5, text: "Gây ảnh hưởng đến trách nhiệm", options: ["Không bao giờ", "1–2 lần", "Hằng tháng", "Hằng tuần", "Gần như hàng ngày"] },
+  { id: 6, text: "Người khác lo ngại", options: ["Không", "Có, trong 3 tháng qua", "Có, nhưng không trong 3 tháng qua"] },
+  { id: 7, text: "Không thể ngừng dù không muốn", options: ["Không bao giờ", "1–2 lần", "Hằng tháng", "Hằng tuần", "Gần như hàng ngày"] },
+  { id: 8, text: "Tiêm chích", highlight: true, options: ["Không bao giờ", "Có, trong 3 tháng qua", "Có, nhưng không trong 3 tháng qua"] }
+];
+
+const pointMap = {
+  "Không bao giờ": 0,
+  "Không": 0,
+  "1–2 lần": 2,
+  "Hằng tháng": 3,
+  "Hằng tuần": 4,
+  "Có, trong 3 tháng qua": 6,
+  "Gần như hàng ngày": 6,
+  "Có, nhưng không trong 3 tháng qua": 2
 };
 
-const scoreOptionsQ2toQ5 = [
-  { label: 'Không bao giờ', value: 0 },
-  { label: 'Một hoặc hai lần', value: 2 },
-  { label: 'Khoảng mỗi tháng', value: 3 },
-  { label: 'Khoảng mỗi tuần', value: 4 },
-  { label: 'Hằng ngày hoặc gần như hằng ngày', value: 6 }
-];
-
-const scoreOptionsQ6toQ7 = [
-  { label: 'Không bao giờ', value: 0 },
-  { label: 'Có, nhưng không trong 3 tháng vừa qua', value: 3 },
-  { label: 'Có, trong 3 tháng vừa qua', value: 6 }
-];
-
-const scoreOptionsQ8Binary = [
-  { label: 'Không', value: 0 },
-  { label: 'Có', value: 99 }
-];
-
 function AssistSurvey() {
-  const [selected, setSelected] = useState(null);
+  const [selectedSubstance, setSelectedSubstance] = useState(null);
   const [answers, setAnswers] = useState({});
-  const [customInput, setCustomInput] = useState('');
-  const [customLabel, setCustomLabel] = useState('');
+  const [result, setResult] = useState(null);
 
-  const handleSubstanceSelect = (key) => {
-    if (key === 'other') {
-      setCustomInput('');
-      setCustomLabel('');
+  const handleSelectSubstance = (key) => {
+    setSelectedSubstance(key);
+    setAnswers({});
+    setResult(null);
+  };
+
+  const handleAnswerChange = (qid, value) => {
+    setAnswers(prev => ({ ...prev, [qid]: value }));
+  };
+
+  const calculateScore = () => {
+    let total = 0;
+    for (const q of questionList) {
+      const ans = answers[q.id];
+      total += pointMap[ans] || 0;
     }
-    setSelected(key);
+    return total;
   };
 
-  const handleAnswerChange = (substance, question, value) => {
-    setAnswers(prev => ({
-      ...prev,
-      [substance]: {
-        ...prev[substance],
-        [question]: parseInt(value)
-      }
-    }));
+  const getRiskLevel = (score) => {
+    if (score <= 3) return "Nguy cơ thấp";
+    if (score <= 26) return "Nguy cơ trung bình";
+    return "Nguy cơ cao";
   };
 
-  const getTotalScore = (substance) => {
-    const a = answers[substance] || {};
-    if (a.q8 === 99) return 99;
-    const baseScore = (a.q2 || 0) + (a.q3 || 0) + (a.q4 || 0) + (a.q5 || 0) + (a.q6 || 0) + (a.q7 || 0);
-    return baseScore;
+  const handleFinish = () => {
+    const score = calculateScore();
+    const risk = getRiskLevel(score);
+    setResult({ score, risk });
   };
 
-  const getRiskLevel = (substance) => {
-    const total = getTotalScore(substance);
-    if (total === 99) return 'Nguy cơ cao';
-    if (substance === 'alcohol') {
-      if (total <= 10) return 'Thấp';
-      if (total <= 26) return 'Trung bình';
-      return 'Nguy cơ cao';
-    } else {
-      if (total <= 3) return 'Thấp';
-      if (total <= 26) return 'Trung bình';
-      return 'Nguy cơ cao';
-    }
+  const handleReset = () => {
+    setAnswers({});
+    setResult(null);
+    setSelectedSubstance(null);
   };
 
   return (
-    <div className="survey-wrapper">
-      {!selected && (
-        <div className="container">
-          <div className="selection-card">
-            <h2 className="header">Khảo sát ASSIST</h2>
-            <p className="subtext">Câu 1 – Trong suốt cuộc đời, bạn đã từng sử dụng các chất nào?</p>
-            <div className="grid-3-columns">
-              {substances.map(s => (
-                <div
-                  key={s.key}
-                  className={`substance-card ${selected === s.key ? 'selected' : ''}`}
-                  onClick={() => handleSubstanceSelect(s.key)}
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') handleSubstanceSelect(s.key);
-                  }}
+    <div className="assist-survey-container">
+      <div className="survey-box">
+  <h2 className="question-title">Khảo sát ASSIST</h2>
+  <p className="question-sub">
+    Công cụ sàng lọc sử dụng chất gây nghiện cho người lớn (18 tuổi trở lên).
+  </p>
+
+  {!selectedSubstance ? (
+
+          <>
+            <div className="step">Bước 1: Chọn chất đã sử dụng</div>
+            <h2 className="question-title">Câu 1 - Đã từng sử dụng gì?</h2>
+            <p className="question-sub">
+              Trong suốt cuộc đời của bạn, bạn đã từng sử dụng các loại chất nào dưới đây (không tính dùng vì lý do y tế)?
+              <br />
+              <span className="note">(Chọn một chất để bắt đầu đánh giá)</span>
+            </p>
+
+            <div className="checkbox-list">
+              {substances.map(sub => (
+                <button
+                  key={sub.key}
+                  className="substance-button"
+                  onClick={() => handleSelectSubstance(sub.key)}
                 >
-                  <span className="option-label">{s.label}</span>
-                </div>
+                  {sub.label}
+                </button>
               ))}
             </div>
+          </>
+        ) : (
+          <>
+            <div className="step">Bước 2: Đánh giá mức độ sử dụng</div>
+            <h2 className="question-title">
+              Câu hỏi về: {substances.find(s => s.key === selectedSubstance)?.label}
+            </h2>
 
-            {/* Nút quay về đặt dưới và căn giữa */}
-            <div className="center-button-wrapper">
-              <button
-                className="secondary-button"
-                onClick={() => window.history.back()}
-              >
-                ← Quay về
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {selected === 'other' && !customLabel && (
-        <div className="input-container">
-          <h2 className="header">Vui lòng nhập tên chất bạn đã sử dụng</h2>
-          <input
-            type="text"
-            className="input-text"
-            placeholder="Nhập tên chất..."
-            value={customInput}
-            onChange={(e) => setCustomInput(e.target.value)}
-          />
-          <button
-            className="primary-button"
-            disabled={!customInput.trim()}
-            onClick={() => setCustomLabel(customInput.trim())}
-          >
-            Tiếp tục
-          </button>
-          <div className="text-center">
-            <button
-              className="secondary-button"
-              onClick={() => setSelected(null)}
-            >
-              Quay lại chọn chất khác
-            </button>
-          </div>
-        </div>
-      )}
-
-      {selected && (selected !== 'other' || customLabel) && (
-        <div className="container">
-          <div className="questionnaire-card">
-            <h2 className="header">Câu hỏi dành cho: {selected === 'other' ? customLabel : substances.find(s => s.key === selected)?.label}</h2>
-
-            {(() => {
-              const label = selected === 'other' ? customLabel : substances.find(s => s.key === selected)?.label;
-              const includeQ8 = !['tobacco', 'alcohol'].includes(selected);
-              const questions = includeQ8 ? ["q2", "q3", "q4", "q5", "q6", "q7", "q8"] : ["q2", "q3", "q4", "q5", "q6", "q7"];
-
-              return questions.map(q => (
-                <div key={q} className="question-card">
-                  <label className="question-label">
-                    {questionLabels[q].replace('[CHẤT]', label)}
-                  </label>
-                  <select
-                    className="select-box"
-                    value={answers[selected]?.[q] || ''}
-                    onChange={e => handleAnswerChange(selected, q, e.target.value)}
-                  >
-                    <option value="">Chọn</option>
-                    {(q === 'q8' ? scoreOptionsQ8Binary : q.startsWith('q2') || q === 'q3' || q === 'q4' || q === 'q5'
-                      ? scoreOptionsQ2toQ5
-                      : scoreOptionsQ6toQ7).map(opt => (
-                        <option key={opt.value} value={opt.value}>{opt.label}</option>
+            {!result ? (
+              <>
+                {questionList.map(q => (
+                  <div key={q.id} className={`survey-question ${q.highlight ? 'highlight-question' : ''}`}>
+                    <p><strong>Câu {q.id} - {q.text}</strong></p>
+                    {q.note && <p className="note">{q.note}</p>}
+                    <div className="radio-group">
+                      {q.options.map((opt, idx) => (
+                        <label key={idx} className="radio-item">
+                          <input
+                            type="radio"
+                            name={`q${q.id}`}
+                            value={opt}
+                            checked={answers[q.id] === opt}
+                            onChange={() => handleAnswerChange(q.id, opt)}
+                          />
+                          {opt}
+                        </label>
                       ))}
-                  </select>
-                </div>
-              ));
-            })()}
-
-            <div className="tong-diem">
-              <p className="font-semibold">Tổng điểm: {getTotalScore(selected)}</p>
-              <p>
-                Mức nguy cơ:{' '}
-                <span className={
-                  getRiskLevel(selected) === 'Nguy cơ cao' ? 'risk-high'
-                    : getRiskLevel(selected) === 'Trung bình' ? 'risk-medium'
-                      : 'risk-low'
-                }>
-                  {getRiskLevel(selected)}
-                </span>
-              </p>
-            </div>
-
-            <div className="text-center">
-              <button
-                className="secondary-button"
-                onClick={() => setSelected(null)}
-              >
-                Quay lại chọn chất khác
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+                    </div>
+                  </div>
+                ))}
+                <button className="submit-button" onClick={handleFinish}>
+                  Hoàn thành →
+                </button>
+              </>
+            ) : (
+              <div className="result-box">
+                <h3>Kết quả đánh giá</h3>
+                <p><strong>Tổng điểm:</strong> {result.score}</p>
+                <p><strong>Mức độ nguy cơ:</strong> {result.risk}</p>
+                {result.risk === "Nguy cơ cao" && (
+                  <p className="note warning">⚠️ Bạn nên tìm tư vấn từ chuyên gia càng sớm càng tốt.</p>
+                )}
+                <button className="submit-button" onClick={handleReset}>
+                  ← Trở về chọn chất khác
+                </button>
+                <br />
+                 <button className="tro-ve" onClick={() => window.location.href = "/"}>
+    <li>🏠 Trở về màn hình chính</li>
+  </button>
+ 
+              </div>
+              
+            )}
+          </>
+        )}
+      </div>
     </div>
   );
 }
