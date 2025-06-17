@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-
+import "./cssCom/OTPModal.css";
 export default function OTPModal({ email, onVerify, onClose }) {
   const [otp, setOtp] = useState("");
   const [error, setError] = useState("");
@@ -20,7 +20,7 @@ export default function OTPModal({ email, onVerify, onClose }) {
       });
 
       if (response.ok) {
-        onVerify(); // callback khi xác thực thành công
+        onVerify();
       } else {
         const data = await response.json();
         setError(data.message || "Mã OTP không đúng");
@@ -32,19 +32,28 @@ export default function OTPModal({ email, onVerify, onClose }) {
   };
 
   return (
-    <div className="modal-overlay">
-      <div className="modal">
+    <div className="otp-backdrop">
+      <div className="otp-modal">
         <h3>Xác minh OTP</h3>
-        <p>Chúng tôi đã gửi mã OTP tới email: <strong>{email}</strong></p>
+        <p>
+          Mã OTP đã được gửi đến email:{" "}
+          <strong>{email}</strong>
+        </p>
         <input
           type="text"
           placeholder="Nhập mã OTP"
           value={otp}
           onChange={(e) => setOtp(e.target.value)}
         />
-        {error && <p className="error">{error}</p>}
-        <button onClick={handleVerify}>Xác minh</button>
-        <button onClick={onClose} className="close-button">Đóng</button>
+        {error && <p className="otp-error">{error}</p>}
+        <div className="otp-buttons">
+          <button className="verify-btn" onClick={handleVerify}>
+            Xác minh
+          </button>
+          <button className="close-btn" onClick={onClose}>
+            Đóng
+          </button>
+        </div>
       </div>
     </div>
   );
