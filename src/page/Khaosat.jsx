@@ -71,6 +71,9 @@ export default function KhaoSat() {
                       <button className="start-button">📋 Bắt đầu</button>
                     </Link>
                   </div>
+                   <button className="tro-ve" onClick={() => window.location.href = "/"}>
+    🏠 Trở về màn hình chính
+  </button>
                 </div>
               </div>
             }

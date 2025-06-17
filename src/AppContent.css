@@ -115,18 +115,27 @@ nav button:hover {
   margin: 2rem 0;
 }
 
+.square-images {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  flex-wrap: wrap;
+  padding: 20px 0;
+}
+
 .square-images img {
-  width: 300px;         /* 👈 Kích thước ảnh vuông */
-  height: auto;
-  object-fit: cover;    /* 👈 Đảm bảo ảnh không méo */
-  border-radius: 1rem;  /* 👈 Bo góc */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* 👈 Bóng */
+  width: 350px;
+  height: 380px;
+   object-fit: contain;     /* 🟢 ảnh sẽ cắt để vừa khung */
+  border-radius: 1rem;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s;
 }
 
 .square-images img:hover {
-  transform: scale(1.05);
+  transform: scale(1.03);
 }
+
 
 
 /* Features Section */
