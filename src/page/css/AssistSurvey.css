@@ -1,107 +1,190 @@
-.selection-card {
-  background-color: #f0f4ff;
-  border-radius: 1rem;
-  padding: 2rem;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+/* AssistSurvey.css */
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: #f8fafc;
+  margin: 0;
+  padding: 0;
 }
 
-.questionnaire-card {
-  background-color: #fff8f0;
-  border-radius: 1rem;
-  padding: 2rem;
-  box-shadow: 0 0 10px rgb(251, 248, 248);
-}
-
-.grid-3-columns {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.5rem;
-}
-
-.substance-card {
-  background-color: #ffffff;
-  border: 1px solid transparent;
-  border-radius: 1rem;
-  padding: 1.5rem;
-  text-align: center;
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
-  transition: border-color 0.2s, background-color 0.2s;
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 1rem;
-  color: #333;
-  user-select: none;
-}
-
-.substance-card:hover {
-  border-color: #4a90e2;
-  background-color: #f0f4ff;
-}
-
-.substance-card.selected {
-  border-color: #4a90e2;
-  background-color: #dbe9ff;
-}
-.option-button {
-  background-color: transparent;
-  color: #333;
-  font-weight: 600;
-  font-size: 1rem;
-  border: none;
-  width: 100%;
-  height: 100%;
-  cursor: pointer;
-}
-.center-button-wrapper {
+.assist-survey-container {
   display: flex;
   justify-content: center;
-  margin-top: 2rem;
-}
-.question-card {
-  background-color: #ffffff;
-  padding: 16px;
-  margin-bottom: 16px;
-  border-radius: 12px;
-  box-shadow: 0 2px 6px rgba(255, 255, 255, 0.08);
-  border: 1px solid #e0e0e0;
+  align-items: center;
+  padding: 40px 16px;
+  min-height: 100vh;
 }
 
-.question-label {
-  font-weight: 500;
-  margin-bottom: 8px;
-  display: block;
-  color: #333;
-}
-
-.select-box {
+.survey-box {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  max-width: 720px;
   width: 100%;
-  padding: 8px;
-  font-size: 1rem;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  background-color: #ffffff;
+  padding: 32px;
 }
-.tong-diem {
-  background-color: #ffffff;
-  padding: 16px;
-  border-radius: 12px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-  border: 1px solid #e0e0e0;
-  margin-top: 24px;
+
+.step {
+  color: #4f46e5;
+  font-weight: 1000;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.question-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.question-sub {
+  font-size: 16px;
+  color: #374151;
   margin-bottom: 24px;
+  text-align: center;
 }
 
-.risk-low {
-  color: green;
-  font-weight: 600;
+.note {
+  color: #3b82f6;
+  font-size: 14px;
 }
 
-.risk-medium {
-  color: orange;
-  font-weight: 600;
+.checkbox-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 32px;
 }
 
-.risk-high {
-  color: red;
-  font-weight: 600;
+.checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 16px;
+  background: #f1f5f9;
+  padding: 12px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.checkbox-item:hover {
+  background: #e2e8f0;
+}
+
+.checkbox-item input[type="checkbox"] {
+  transform: scale(1.2);
+}
+
+.submit-button {
+  background: #3b82f6;
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-bottom: 20px;
+}
+
+.submit-button:hover {
+  background: #2563eb;
+}
+.substance-button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: #f1f5f9;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 16px;
+  color: #1f2937; /* <-- thêm dòng này */
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.survey-question {
+  background: #f9fafb;
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 20px;
+  border-left: 4px solid #3b82f6;
+}
+
+.highlight-question {
+  background: #fef2f2;
+  border-left-color: #dc2626;
+}
+
+.radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.radio-item {
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+/* Nút chọn chất dạng button */
+.substance-button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: #f1f5f9;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.substance-button:hover {
+  background: #e2e8f0;
+  transform: translateY(-1px);
+}
+
+/* Hộp kết quả */
+.result-box {
+  background: #f1f5f9;
+  padding: 24px;
+  border-radius: 12px;
+  border: 1px solid #cbd5e1;
+  margin-top: 24px;
+  text-align: center;
+}
+
+.result-box h3 {
+  font-size: 20px;
+  margin-bottom: 12px;
+}
+
+.result-box p {
+  font-size: 16px;
+  margin: 8px 0;
+}
+
+.result-box .note.warning {
+  color: #dc2626;
+  font-weight: bold;
+  font-size: 15px;
+  margin-top: 16px;
+}
+.tro-ve{
+  background: #3b82f6;
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-top: 30px;
 }

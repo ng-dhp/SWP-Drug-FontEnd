@@ -17,6 +17,8 @@ function CrafftSurvey() {
     T: false
   });
 
+  const [showPartB, setShowPartB] = useState(false); // ✅ Flag để hiện phần B
+
   const handlePartAChange = (e) => {
     const { name, value } = e.target;
     setPartA(prev => ({ ...prev, [name]: value }));
@@ -27,56 +29,71 @@ function CrafftSurvey() {
     setPartB(prev => ({ ...prev, [name]: checked }));
   };
 
-  const anyUse = Object.values(partA).some(value => parseInt(value) > 0);
+  const handleNext = () => {
+    const anyUse = Object.values(partA).some(value => parseInt(value) > 0);
+    if (anyUse) {
+      setShowPartB(true);
+    } else {
+      alert("Bạn không sử dụng chất nào. Tuy nhiên vui lòng trả lời câu hỏi B1."); // hoặc setShowPartB(true)
+      setShowPartB(true); // hoặc bạn có thể giữ nguyên Part A
+    }
+  };
+
   const score = Object.values(partB).filter(val => val).length;
 
   return (
     <div className="the-khao-sat">
       <h2 className="tieu-de">Khảo sát CRAFFT</h2>
-      <p className="tieu-de">Công cụ sàng lọc sử dụng chất gây nghiện cho thanh thiếu niên (12–21 tuổi).</p>
+      <p className="tieu-de1">Công cụ sàng lọc sử dụng chất gây nghiện cho thanh thiếu niên (12–18 tuổi).</p>
 
       {/* PHẦN A */}
-      <h3 className="tieu-de">Phần A: Tần suất sử dụng trong 12 tháng qua</h3>
-      <p className="tieu-de">(Điền số ngày, nếu không sử dụng ghi "0")</p>
+      {!showPartB && (
+        <>
+          <h3 className="tieu-de">Phần A: Tần suất sử dụng trong 12 tháng qua</h3>
+          <p className="tieu-de">(Điền số ngày, nếu không sử dụng ghi "0")</p>
 
-      <div className="cach-khoang">
-        <div className="cau-hoi">
-          <label className="tieu-de">1. Rượu (hơn vài ngụm): </label>
-          <input
-            type="number"
-            name="alcohol"
-            value={partA.alcohol}
-            onChange={handlePartAChange}
-            className="hop-chon"
-            min="0"
-          />
-        </div>
-        <div className="cau-hoi">
-          <label className="tieu-de">2. Cần sa hoặc hashish: </label>
-          <input
-            type="number"
-            name="cannabis"
-            value={partA.cannabis}
-            onChange={handlePartAChange}
-            className="hop-chon"
-            min="0"
-          />
-        </div>
-        <div className="cau-hoi">
-          <label className="tieu-de">3. Bất kỳ chất nào khác để cảm thấy “phê”: </label>
-          <input
-            type="number"
-            name="otherDrugs"
-            value={partA.otherDrugs}
-            onChange={handlePartAChange}
-            className="hop-chon"
-            min="0"
-          />
-        </div>
-      </div>
+          <div className="cach-khoang">
+            <div className="cau-hoi">
+              <label className="tieu-de">1. Rượu (hơn vài ngụm): </label>
+              <input
+                type="number"
+                name="alcohol"
+                value={partA.alcohol}
+                onChange={handlePartAChange}
+                className="hop-chon"
+                min="0"
+              />
+            </div>
+            <div className="cau-hoi">
+              <label className="tieu-de">2. Cần sa hoặc hashish: </label>
+              <input
+                type="number"
+                name="cannabis"
+                value={partA.cannabis}
+                onChange={handlePartAChange}
+                className="hop-chon"
+                min="0"
+              />
+            </div>
+            <div className="cau-hoi">
+              <label className="tieu-de">3. Bất kỳ chất nào khác để cảm thấy “phê”: </label>
+              <input
+                type="number"
+                name="otherDrugs"
+                value={partA.otherDrugs}
+                onChange={handlePartAChange}
+                className="hop-chon"
+                min="0"
+              />
+            </div>
+          </div>
+
+          <button className="btn-tiep-theo" onClick={handleNext}>Tiếp tục</button>
+        </>
+      )}
 
       {/* PHẦN B */}
-      {(anyUse || score > 0) && (
+      {showPartB && (
         <>
           <h3 className="tieu-de">Phần B: Câu hỏi CRAFFT</h3>
           <p className="tieu-de">Trong 12 tháng vừa qua:</p>
@@ -108,26 +125,23 @@ function CrafftSurvey() {
             </label>
           </div>
 
-          {/* Đánh giá kết quả */}
           <div className="hop-diem">
-            <p className="tieu-de">Kết quả đánh giá:</p>
-            <p>Tổng điểm: {score}</p>
-            <p>
-              Mức nguy cơ:{' '}
-              <span className={
-                score >= 2 ? 'nguy-co-cao' : 'nguy-co-thap'
-              }>
-                {score >= 2 ? 'Nguy cơ cao' : 'Nguy cơ thấp'}
-              </span>
-            </p>
-          </div>
-        </>
-      )}
+  <p className="tieu-de">Kết quả đánh giá:</p>
+  <p>Tổng điểm: {score}</p>
+  <p>
+    Mức nguy cơ:{' '}
+    <span className={score >= 2 ? 'nguy-co-cao' : 'nguy-co-thap'}>
+      {score >= 2 ? 'Nguy cơ cao' : 'Nguy cơ thấp'}
+    </span>
+  </p>
+  
+</div>
+ {/* Nút trở về trang chủ */}
+  <button className="btn-tiep-theo" onClick={() => window.location.href = "/"}>
+    🏠 Trở về màn hình chính
+  </button>
 
-      {!anyUse && score === 0 && (
-        <div className="nguy-co-trung-binh">
-          Bạn không sử dụng chất nào trong 12 tháng qua. Vui lòng trả lời câu hỏi B1.
-        </div>
+        </>
       )}
     </div>
   );

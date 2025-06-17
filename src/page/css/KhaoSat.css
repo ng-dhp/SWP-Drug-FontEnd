@@ -253,4 +253,16 @@ html, body, #root {
 .survey-features.purple li::before {
   background-color: #a855f7;
 }
+.tro-ve{
+  background: #4b6cb7;
+  color: rgb(252, 251, 251);
+  padding: 10px 10px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-top: -60px;
+  
+}
 
