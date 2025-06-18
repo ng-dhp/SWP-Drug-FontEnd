@@ -1,21 +1,43 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import './css/ChienDich.css';
+import chungtayImage from "../assets/anh_tuchoi.png"; // Thay bằng đường dẫn thực tế
+import phongchongImage from "../assets/anh_tuchoi.png"; // Thay bằng đường dẫn thực tế
 
 const ChienDich = () => {
   const navigate = useNavigate();
 
   return (
     <div className="event-page">
-      <button className="back-button" onClick={() => navigate('/')}>
+      <motion.button
+        className="back-button"
+        onClick={() => navigate('/')}
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
         ← Quay lại
-      </button>
+      </motion.button>
       <header className="event-header">
-        <h1>Chiến Dịch Tuyên Truyền</h1>
+        <motion.h1
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+        >
+          Chiến Dịch Tuyên Truyền
+        </motion.h1>
       </header>
 
       <div className="event-container">
-        <div className="event-card">
+        <motion.div
+          className="event-card"
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          viewport={{ once: true }}
+        >
+          <img src={chungtayImage} alt="Chung tay không ma túy" className="event-image" />
           <h2>Chiến dịch: Chung tay vì cộng đồng không ma túy</h2>
           <p className="event-topic">📌 Chủ đề: Nâng cao nhận thức cộng đồng</p>
           <p className="event-date">📅 Thời gian: 20/06/2025 - 22/06/2025</p>
@@ -26,9 +48,16 @@ const ChienDich = () => {
             🎯 Mô tả: Chiến dịch bao gồm các buổi hội thảo, trưng bày, và giao lưu nhằm tăng cường ý thức cộng đồng về tác hại của chất gây nghiện.
           </p>
           <button className="join-button">Tham gia</button>
-        </div>
+        </motion.div>
 
-        <div className="event-card">
+        <motion.div
+          className="event-card"
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
+          viewport={{ once: true }}
+        >
+          <img src={phongchongImage} alt="Phòng chống ma túy tại trường học" className="event-image" />
           <h2>Chiến dịch: Phòng chống ma túy tại trường học</h2>
           <p className="event-topic">📌 Chủ đề: Giáo dục học sinh tránh xa ma túy</p>
           <p className="event-date">📅 Thời gian: 25/06/2025 - 27/06/2025</p>
@@ -39,7 +68,7 @@ const ChienDich = () => {
             🎯 Mô tả: Buổi nói chuyện chuyên đề kết hợp hoạt động nhóm cho học sinh nhằm nâng cao kỹ năng phòng chống ma túy.
           </p>
           <button className="join-button">Tham gia</button>
-        </div>
+        </motion.div>
       </div>
     </div>
   );
