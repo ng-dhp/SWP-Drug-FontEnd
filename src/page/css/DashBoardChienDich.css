@@ -1,0 +1,57 @@
+.dashboard-campaign-container {
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    max-width: 800px;
+    margin: 20px auto;
+  }
+  
+  .dashboard-campaign-container h2 {
+    color: #0b318f;
+    margin-bottom: 15px;
+    font-size: 1.8rem;
+    text-align: center;
+  }
+  
+  .campaign-list {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .campaign-item {
+    margin-bottom: 15px;
+    padding: 15px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .campaign-item span {
+    display: block;
+    color: #555;
+  }
+  
+  .campaign-item span strong {
+    color: #0b318f;
+  }
+  
+  .back-button {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #0b318f;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+    text-align: center;
+    display: block;
+    max-width: 150px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  .back-button:hover {
+    background-color: #021e4a;
+  }

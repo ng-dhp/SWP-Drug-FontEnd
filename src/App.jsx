@@ -7,6 +7,7 @@ import KhoaHoc from "./page/Khoahoc.jsx"; // ✅ import file mới
 import ChienDich from "./page/ChienDich";
 import Dashboard from "./page/DashBoard";
 import DashboardSurvey from "./page/DashBoardSurvey";
+import DashboardChienDich from "./page/DashBoardChienDich";
 
 export default function App() {
   return (
@@ -19,6 +20,7 @@ export default function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/khoahoc" element={<KhoaHoc />} />
         <Route path="/dashboard-survey" element={<DashboardSurvey />} />
+        <Route path="/dashboard-campaign" element={<DashboardChienDich />} />
       </Routes>
     </Router>
   );

@@ -165,7 +165,7 @@ export default function RegisterModal({ onClose }) {
             onVerify={() => {
               alert("Xác minh thành công!");
               setShowOtpModal(false);
-              navigate("/login", { state: { message: "Đăng ký và xác minh thành công!" } });
+              navigate("/", { state: { message: "Đăng ký và xác minh thành công!" } });
             }}
             onClose={() => setShowOtpModal(false)}
           />
