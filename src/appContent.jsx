@@ -113,57 +113,100 @@ function AppContent() {
           </div>
         </motion.div>
       </section>
+
       <section class="service-section">
+        <div className="hero-tag">⚡ Dịch vụ Chuyên nghiệp</div>
+
         <div class="service-header">
           <h2>
             Dịch vụ <strong>Hỗ trợ</strong> <br />
             Phòng ngừa <strong>Ma túy</strong>
           </h2>
           <p>
-            Hệ thống cung cấp giải pháp toàn diện từ giáo dục, đánh giá đến tư
-            vấn chuyên sâu nhằm hỗ trợ cộng đồng phòng ngừa ma túy hiệu quả.
+            Chúng tôi cung cấp các dịch vụ toàn diện để hỗ trợ cộng đồng trong
+            việc phòng ngừa và giáo dục về tác hại của ma túy
           </p>
         </div>
 
         <div class="service-grid">
           <div class="service-card service-blue">
-            <h4>📘 Khóa học Trực tuyến</h4>
-            <ul>
-              <li>Phân loại theo độ tuổi</li>
-              <li>Danh cho học sinh, phụ huynh, giáo viên</li>
-              <li>Có cấp chứng chỉ sau khi hoàn thành</li>
-            </ul>
-            <Link to="/khoahoc">Tìm hiểu thêm →</Link>
+            <div className="icon-wrapper">📘</div>
+            <h4> Khóa học Trực tuyến</h4>
+            <p className="service-subtitle">
+              Các khóa đào tạo về nhận thức ma túy, kỹ năng phòng tránh và từ
+              chối
+            </p>
+            <li>Phân loại theo độ tuổi</li>
+            <li>Danh cho học sinh, phụ huynh, giáo viên</li>
+            <li>Có cấp chứng chỉ sau khi hoàn thành</li>
+
+            <Link to="/khoahoc" className="learn-more-btn">
+              Tìm hiểu thêm →
+            </Link>
           </div>
 
           <div class="service-card service-green">
-            <h4>🧪 Đánh giá Rủi ro</h4>
-            <ul>
-              <li>Các bộ công cụ như ASSIST, CRAFFT</li>
-              <li>Kết quả riêng tư, bảo mật</li>
-              <li>Đề xuất phương án can thiệp</li>
-            </ul>
-             <Link to="/khaosat">Tìm hiểu thêm →</Link>
+            <div className="icon-wrapper">🧪</div>
+            <h4>Đánh giá Rủi ro</h4>
+            <p className="service-subtitle">
+              Khảo sát trắc nghiệm ASSIST, CRAFFT để xác định mức độ nguy cơ
+            </p>
+            <li>Các bộ công cụ như ASSIST, CRAFFT</li>
+            <li>Kết quả riêng tư, bảo mật</li>
+            <li>Đề xuất phương án can thiệp</li>
+
+            <Link to="/khaosat" className="learn-more-btn">
+              Tìm hiểu thêm →
+            </Link>
           </div>
 
           <div class="service-card service-purple">
-            <h4>💬 Tư vấn Chuyên viên</h4>
-            <ul>
-              <li>Chuyên viên có kinh nghiệm</li>
-              <li>Đặt lịch linh hoạt online/offline</li>
-              <li>Hỗ trợ 24/7 và tháo gỡ tâm lý</li>
-            </ul>
-             <Link to="/tuvan">Tìm hiểu thêm →</Link>
+            <div className="icon-wrapper">💬</div>
+            <h4> Tư vấn Chuyên viên</h4>
+            <p className="service-subtitle">
+              Đặt lịch hẹn trực tuyến với chuyên viên tư vấn có kinh nghiệm
+            </p>
+            <li>Chuyên viên có kinh nghiệm</li>
+            <li>Đặt lịch linh hoạt online/offline</li>
+            <li>Hỗ trợ 24/7 và tháo gỡ tâm lý</li>
+
+            <Link to="/tuvan" className="learn-more-btn">
+              Tìm hiểu thêm →
+            </Link>
           </div>
 
           <div class="service-card service-yellow">
-            <h4>🌍 Chương trình Cộng đồng</h4>
-            <ul>
-              <li>Giáo dục phòng ngừa tại trường, địa phương</li>
-              <li>Đào tạo tuyên truyền viên</li>
-              <li>Kết nối mạng lưới qua thiết bị số</li>
-            </ul>
-            <a href="#">Tìm hiểu thêm →</a>
+            <div className="icon-wrapper">🌍</div>
+            <h4>Chương trình Cộng đồng</h4>
+            <p className="service-subtitle">
+              Quản lý các chương trình truyền thông và giáo dục cộng đồng
+            </p>
+            <li>Giáo dục phòng ngừa tại trường, địa phương</li>
+            <li>Đào tạo tuyên truyền viên</li>
+            <li>Kết nối mạng lưới qua thiết bị số</li>
+
+            <a href="#" className="learn-more-btn">
+              Tìm hiểu thêm →
+            </a>
+          </div>
+        </div>
+        <div className="highlight-wrapper">
+          <div className="highlight-item">
+            <div className="highlight-icon blue">⏰</div>
+            <h3>Hỗ trợ 24/7</h3>
+            <p>Luôn sẵn sàng hỗ trợ bạn mọi lúc, mọi nơi</p>
+          </div>
+
+          <div className="highlight-item">
+            <div className="highlight-icon green">🎓</div>
+            <h3>Chuyên viên Có kinh nghiệm</h3>
+            <p>Đội ngũ chuyên viên được đào tạo bài bản</p>
+          </div>
+
+          <div className="highlight-item">
+            <div className="highlight-icon purple">👥</div>
+            <h3>Cộng đồng Hỗ trợ</h3>
+            <p>Kết nối với cộng đồng những người cùng chung mục tiêu</p>
           </div>
         </div>
       </section>
