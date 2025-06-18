@@ -16,7 +16,7 @@ export default function App() {
     <Router>
       <Routes>
       <Route path="/" element={<AppContent />} />
-        <Route path="/khaosat" element={<KhaoSat />} />
+        <Route path="/khaosat/*" element={<KhaoSat />} />
         <Route path="/tuvan" element={<TuVan />} />
         <Route path="/chiendich" element={<ChienDich />} />
 
