@@ -1,4 +1,3 @@
-// AppContent.jsx
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -6,7 +5,7 @@ import { FaHeartbeat, FaUserMd, FaSchool, FaUsers } from "react-icons/fa";
 import Navbar from "./components/navbar";
 import LoginModal from "./components/Login";
 import RegisterModal from "./components/Register";
-import "./AppContent.css"; // ✅ Import CSS styles
+import "./AppContent.css";
 
 function AppContent() {
   const navigate = useNavigate();
@@ -15,7 +14,6 @@ function AppContent() {
   const [showRegisterModal, setShowRegisterModal] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  // ✅ Check login state from localStorage when component mounts
   useEffect(() => {
     const storedLogin = localStorage.getItem("isLoggedIn");
     if (storedLogin === "true") {
@@ -37,6 +35,7 @@ function AppContent() {
 
   return (
     <div>
+      {/* Navbar */}
       <Navbar
         onLogin={() => setShowLoginModal(true)}
         onRegister={() => setShowRegisterModal(true)}
@@ -44,70 +43,175 @@ function AppContent() {
         onLogout={handleLogout}
       />
 
-      {/* Hero Section */}
+      {/* Hero Section (nền xanh + khung tính năng) */}
       <section className="hero">
-        <div className="container hero-content">
-          <motion.div initial={{ opacity: 0, y: -30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-            <h2 className="h2-chungtay">Chung tay vì một cộng đồng không chất gây nghiện</h2>
-            <p className="p-nentang">
-              Nền tảng hỗ trợ đánh giá, tư vấn và giáo dục nhằm ngăn ngừa sử dụng chất gây nghiện, đặc biệt ở giới trẻ.
-            </p>
-            <Link to="/khaosat" className="batdau">Bắt đầu đánh giá nguy cơ</Link>
-          </motion.div>
-        </div>
-      </section>
+        <motion.div
+          initial={{ opacity: 0, y: -30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          <div className="hero-tag">
+            🌟 Hệ thống hỗ trợ phòng ngừa ma túy hàng đầu
+          </div>
+          <h2>
+            Cùng nhau <span>Phòng ngừa</span> Ma túy
+          </h2>
+          <p>
+            Hệ thống hỗ trợ cộng đồng với các khóa học trực tuyến, đánh giá rủi
+            ro, tư vấn chuyên viên và chương trình giáo dục phòng ngừa ma túy
+            hiệu quả.
+          </p>
+          <div className="button-group">
+            <Link to="/khaosat" className="batdau">
+              Đánh giá rủi ro →
+            </Link>
+            <Link to="/tuvan" className="batdau">
+              ❤️ Liên hệ Tư vấn
+            </Link>
+          </div>
 
-      {/* Ảnh song song */}
-      <div className="square-images">
-        <img
-          className=""
-          src="https://i.imgur.com/uOvU87n.jpeg"
-          alt="Ảnh phòng chống ma túy 1"
-        />
-        <img
-          className=""
-          src="https://datafiles.nghean.gov.vn/nan-ubnd/2928/quantritintuc/ma-tuy-truong-hoc_01072022638136508723583066.png"
-          alt="Ảnh phòng chống ma túy 2"
-        />
-      </div>
-
-      {/* Features Section */}
-      <section className="py-20 bg-white">
-        <div className="max-w-6xl mx-auto px-6">
-          <motion.h3
-            className="text-3xl font-bold text-center text-blue-800 mb-12"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ duration: 0.6 }}
-          >
-            Tính năng nổi bật
-          </motion.h3>
-
-          <div className="khungtinhnang">
-            {[ 
-              { icon: <FaHeartbeat size={32} />, title: "Đánh giá nguy cơ", desc: "Sử dụng ASSIST, CRAFFT để phát hiện sớm." },
-              { icon: <FaUserMd size={32} />, title: "Tư vấn chuyên gia", desc: "Kết nối với bác sĩ và chuyên gia tâm lý." },
-              { icon: <FaSchool size={32} />, title: "Khóa học phòng ngừa", desc: "Học theo độ tuổi, nội dung sinh động dễ tiếp thu." },
-              { icon: <FaUsers size={32} />, title: "Chương trình cộng đồng", desc: "Lan tỏa nhận thức qua chiến dịch, truyền thông." },
-            ].map((item, i) => (
+          {/* Khung tính năng */}
+          <div className="khungtinhnang mt-10">
+            {[
+              {
+                icon: <FaSchool size={36} color="#1e40af" />,
+                title: "Khóa học Trực tuyến",
+                desc: "Nội dung phân theo độ tuổi: học sinh, sinh viên, phụ huynh, giáo viên",
+              },
+              {
+                icon: <FaHeartbeat size={36} color="#1e40af" />,
+                title: "Đánh giá Rủi ro",
+                desc: "Khảo sát ASSIST, CRAFFT để xác định mức độ nguy cơ sử dụng ma túy",
+              },
+              {
+                icon: <FaUserMd size={36} color="#1e40af" />,
+                title: "Tư vấn Chuyên viên",
+                desc: "Đặt lịch hẹn trực tuyến với các chuyên viên tư vấn có kinh nghiệm",
+              },
+              {
+                icon: <FaUsers size={36} color="#1e40af" />,
+                title: "Giáo dục Cộng đồng",
+                desc: "Chương trình truyền thông và giáo dục cộng đồng về ma túy",
+              },
+            ].map((item, index) => (
               <motion.div
-                key={i}
-                className="bg-blue-50 rounded-2xl p-6 shadow hover:shadow-xl hover:scale-105 transition text-center"
+                key={index}
+                className="rounded-2xl bg-white p-6 shadow-md hover:shadow-lg transition text-center"
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.1 }}
+                transition={{ delay: index * 0.1 }}
                 viewport={{ once: true }}
+                whileHover={{ scale: 1.05, y: -4 }}
               >
-                <div>{item.icon}</div>
-                <h4 className="font-semibold mt-2">{item.title}</h4>
-                <p className="text-sm mt-1">{item.desc}</p>
+                <div className="mb-3 flex justify-center">{item.icon}</div>
+                <h4 className="text-lg font-semibold text-blue-900">
+                  {item.title}
+                </h4>
+                <p className="text-sm text-gray-700 mt-1">{item.desc}</p>
               </motion.div>
             ))}
+          </div>
+        </motion.div>
+      </section>
+
+      <section class="service-section">
+        <div className="hero-tag">⚡ Dịch vụ Chuyên nghiệp</div>
+
+        <div class="service-header">
+          <h2>
+            Dịch vụ <strong>Hỗ trợ</strong> <br />
+            Phòng ngừa <strong>Ma túy</strong>
+          </h2>
+          <p>
+            Chúng tôi cung cấp các dịch vụ toàn diện để hỗ trợ cộng đồng trong
+            việc phòng ngừa và giáo dục về tác hại của ma túy
+          </p>
+        </div>
+
+        <div class="service-grid">
+          <div class="service-card service-blue">
+            <div className="icon-wrapper">📘</div>
+            <h4> Khóa học Trực tuyến</h4>
+            <p className="service-subtitle">
+              Các khóa đào tạo về nhận thức ma túy, kỹ năng phòng tránh và từ
+              chối
+            </p>
+            <li>Phân loại theo độ tuổi</li>
+            <li>Danh cho học sinh, phụ huynh, giáo viên</li>
+            <li>Có cấp chứng chỉ sau khi hoàn thành</li>
+
+            <Link to="/khoahoc" className="learn-more-btn">
+              Tìm hiểu thêm →
+            </Link>
+          </div>
+
+          <div class="service-card service-green">
+            <div className="icon-wrapper">🧪</div>
+            <h4>Đánh giá Rủi ro</h4>
+            <p className="service-subtitle">
+              Khảo sát trắc nghiệm ASSIST, CRAFFT để xác định mức độ nguy cơ
+            </p>
+            <li>Các bộ công cụ như ASSIST, CRAFFT</li>
+            <li>Kết quả riêng tư, bảo mật</li>
+            <li>Đề xuất phương án can thiệp</li>
+
+            <Link to="/khaosat" className="learn-more-btn">
+              Tìm hiểu thêm →
+            </Link>
+          </div>
+
+          <div class="service-card service-purple">
+            <div className="icon-wrapper">💬</div>
+            <h4> Tư vấn Chuyên viên</h4>
+            <p className="service-subtitle">
+              Đặt lịch hẹn trực tuyến với chuyên viên tư vấn có kinh nghiệm
+            </p>
+            <li>Chuyên viên có kinh nghiệm</li>
+            <li>Đặt lịch linh hoạt online/offline</li>
+            <li>Hỗ trợ 24/7 và tháo gỡ tâm lý</li>
+
+            <Link to="/tuvan" className="learn-more-btn">
+              Tìm hiểu thêm →
+            </Link>
+          </div>
+
+          <div class="service-card service-yellow">
+            <div className="icon-wrapper">🌍</div>
+            <h4>Chương trình Cộng đồng</h4>
+            <p className="service-subtitle">
+              Quản lý các chương trình truyền thông và giáo dục cộng đồng
+            </p>
+            <li>Giáo dục phòng ngừa tại trường, địa phương</li>
+            <li>Đào tạo tuyên truyền viên</li>
+            <li>Kết nối mạng lưới qua thiết bị số</li>
+
+            <a href="#" className="learn-more-btn">
+              Tìm hiểu thêm →
+            </a>
+          </div>
+        </div>
+        <div className="highlight-wrapper">
+          <div className="highlight-item">
+            <div className="highlight-icon blue">⏰</div>
+            <h3>Hỗ trợ 24/7</h3>
+            <p>Luôn sẵn sàng hỗ trợ bạn mọi lúc, mọi nơi</p>
+          </div>
+
+          <div className="highlight-item">
+            <div className="highlight-icon green">🎓</div>
+            <h3>Chuyên viên Có kinh nghiệm</h3>
+            <p>Đội ngũ chuyên viên được đào tạo bài bản</p>
+          </div>
+
+          <div className="highlight-item">
+            <div className="highlight-icon purple">👥</div>
+            <h3>Cộng đồng Hỗ trợ</h3>
+            <p>Kết nối với cộng đồng những người cùng chung mục tiêu</p>
           </div>
         </div>
       </section>
 
-      {/* Blog Section */}
+      {/* Blog chia sẻ */}
       <section className="py-20 bg-gray-50">
         <div className="max-w-6xl mx-auto px-6">
           <motion.h3
@@ -119,25 +223,26 @@ function AppContent() {
             Blog chia sẻ kinh nghiệm
           </motion.h3>
 
-          <div className="blog-grid">
-            {/* blog items map here */}
-          </div>
+          <div className="blog-grid">{/* Có thể thêm bài viết ở đây */}</div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-100 py-4 text-center">
+      <footer>
         <p>&copy; 2025 Tổ chức Phòng chống Sử dụng Chất Gây Nghiện</p>
-        <div className="space-x-4 mt-4">
+        <div>
           <a href="https://www.facebook.com/duyminecry">Facebook</a>
           <a href="#">YouTube</a>
           <a href="#">Liên hệ</a>
         </div>
       </footer>
 
-      {/* Modals */}
+      {/* Login/Register Modals */}
       {showLoginModal && (
-        <LoginModal onClose={() => setShowLoginModal(false)} onLoginSuccess={handleLoginSuccess} />
+        <LoginModal
+          onClose={() => setShowLoginModal(false)}
+          onLoginSuccess={handleLoginSuccess}
+        />
       )}
       {showRegisterModal && (
         <RegisterModal onClose={() => setShowRegisterModal(false)} />
