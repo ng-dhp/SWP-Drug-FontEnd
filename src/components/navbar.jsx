@@ -1,44 +1,53 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import logo from "../assets/logo01.png";
 import "./cssCom/navbar.css"; // Import CSS styles for the navbar
 
 export default function Navbar({ onLogin, onRegister, isLoggedIn, onLogout, userName }) {
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
   return (
     <header className="navbar bg-white shadow-sm">
       <div className="container flex justify-between items-center px-4 py-2 mx-auto">
         {/* Logo */}
-
         <motion.div
           initial={{ opacity: 0, y: -30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-
           <Link to="/" className="logo-link flex items-center">
             <img src={logo} alt="Logo" className="logo-image w-32" />
           </Link>
-                  </motion.div>
-
+        </motion.div>
 
         {/* Navigation Links ở giữa */}
-                <motion.div
+        <motion.div
           initial={{ opacity: 0, y: -30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-        <div className="nav-links">
-          <Link to="/">Trang chủ</Link>
-          <Link to="/khaosat">Đánh giá</Link>
-          <Link to="/tuvan">Tư vấn</Link>
-          <Link to="/khoahoc">Khóa học</Link>
-          <Link to="/chiendich">Chiến dịch</Link>
-          <Link to="/dashboard">Dashboard</Link>
-        </div>
-                </motion.div>
-
-
+          <div className="nav-links">
+            <Link to="/">Trang chủ</Link>
+            <Link to="/khaosat">Đánh giá</Link>
+            <Link to="/tuvan">Tư vấn</Link>
+            <Link to="/khoahoc">Khóa học</Link>
+            <Link to="/chiendich">Chiến dịch</Link>
+            <div
+              className="dropdown"
+              onMouseEnter={() => setIsDropdownOpen(true)}
+              onMouseLeave={() => setIsDropdownOpen(false)}
+            >
+              <Link to="/dashboard" className="dropdown-toggle">Dashboard</Link>
+              {isDropdownOpen && (
+                <div className="dropdown-menu">
+                  <Link to="/dashboard-survey">Dashboard Survey</Link>
+                  <Link to="/dashboard-campaign">Dashboard Chiến dịch</Link>
+                </div>
+              )}
+            </div>
+          </div>
+        </motion.div>
 
         {/* Đăng nhập / Đăng ký ở bên phải */}
         <div className="auth-buttons flex items-center space-x-3">
@@ -47,7 +56,6 @@ export default function Navbar({ onLogin, onRegister, isLoggedIn, onLogout, user
               <button className="login text-blue-600" onClick={onLogin}>
                 Đăng Nhập
               </button>
-              
               <button className="register text-green-600" onClick={onRegister}>
                 Đăng Ký
               </button>

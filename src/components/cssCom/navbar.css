@@ -34,23 +34,29 @@
 }
 
 .login {
-  color: #fafcff; /* blue-600 */
+  color: #fafcff;
   background: #2563eb;
   border: none;
   cursor: pointer;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
 }
+
 .login:hover {
-  background: #0dc362; /* blue-700 */
+  background: #0dc362;
 }
 
 .register {
-  color: #ffffff; /* green-600 */
+  color: #ffffff;
   background: #2563eb;
   border: none;
   cursor: pointer;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
 }
+
 .register:hover {
-  background: #0dc362; /* green-700 */
+  background: #0dc362;
 }
 
 .nav-links a {
@@ -59,7 +65,44 @@
 }
 
 .nav-links a:hover {
-  color: #0dc362; /* màu xanh lá cây */
+  color: #0dc362;
 }
 
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
 
+.dropdown-toggle {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  background-color: #0b318f;
+  min-width: 200px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+  border: 1px solid #ffffff; /* Border trắng */
+  border-radius: 4px;
+  padding: 8px 0;
+}
+
+.dropdown:hover .dropdown-menu {
+  display: block;
+}
+
+.dropdown-menu a {
+  color: white;
+  padding: 10px 16px;
+  text-decoration: none;
+  display: block;
+  text-align: left;
+}
+
+.dropdown-menu a:hover {
+  background-color: #021e4a;
+}
