@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import "./cssCom/Login.css";
 
@@ -6,11 +5,10 @@ export default function LoginModal({ onClose, onLoginSuccess }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-
   const handleGoogleLogin = () => {
     console.log("Đang đăng nhập bằng Google...");
+    // Implement Google OAuth2 login if needed
   };
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -19,9 +17,9 @@ export default function LoginModal({ onClose, onLoginSuccess }) {
       const response = await fetch("http://localhost:8080/api/v1.0/login", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password })
+        body: JSON.stringify({ email, password }), // Adjust if backend expects 'username'
       });
 
       const data = await response.json();
@@ -29,12 +27,17 @@ export default function LoginModal({ onClose, onLoginSuccess }) {
       if (response.ok) {
         console.log("Đăng nhập thành công:", data);
 
-        // Gọi hàm callback khi đăng nhập thành công
-        onLoginSuccess?.();  // gọi nếu được truyền vào
+        // Store token and email in localStorage
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("userEmail", data.email);
 
-        onClose(); // đóng modal
+        // Gọi hàm callback khi đăng nhập thành công
+        onLoginSuccess?.(); // Gọi nếu được truyền vào
+
+        onClose(); // Đóng modal
       } else {
-        alert(data.message || "Đăng nhập thất bại");
+        console.error("Đăng nhập thất bại:", data.message);
+        alert(data.message || "Đăng nhập thất bại. Vui lòng kiểm tra email và mật khẩu.");
       }
     } catch (error) {
       console.error("Lỗi đăng nhập:", error);
