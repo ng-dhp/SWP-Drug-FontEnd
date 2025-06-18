@@ -1,16 +1,18 @@
 .dashboard-campaign-container {
-    padding: 20px;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    max-width: 800px;
-    margin: 20px auto;
+    padding: 25px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    max-width: 900px;
+    margin: 30px auto;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
   
   .dashboard-campaign-container h2 {
     color: #0b318f;
-    margin-bottom: 15px;
-    font-size: 1.8rem;
+    margin-bottom: 20px;
+    font-size: 2.2rem;
     text-align: center;
+    font-weight: 600;
   }
   
   .campaign-list {
@@ -19,39 +21,67 @@
   }
   
   .campaign-item {
-    margin-bottom: 15px;
-    padding: 15px;
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+  }
+  
+  .campaign-item:hover {
+    background-color: #f0f4f8;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
   
   .campaign-item span {
     display: block;
-    color: #555;
+    color: #666;
+    margin-bottom: 5px;
   }
   
   .campaign-item span strong {
     color: #0b318f;
+    font-weight: 500;
   }
   
-  .back-button {
+  .campaign-detail-button {
     display: inline-block;
-    margin-top: 20px;
-    padding: 10px 20px;
+    margin-top: 10px;
+    padding: 8px 16px;
     background-color: #0b318f;
     color: white;
     text-decoration: none;
-    border-radius: 5px;
-    transition: background-color 0.3s;
-    text-align: center;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+  }
+  
+  .campaign-detail-button:hover {
+    background-color: #021e4a;
+    transform: translateY(-1px);
+  }
+  
+  .back-button {
     display: block;
-    max-width: 150px;
+    margin-top: 30px;
+    padding: 12px 24px;
+    background-color: #0b318f;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    text-align: center;
+    max-width: 180px;
     margin-left: auto;
     margin-right: auto;
+    font-weight: 500;
+    transition: all 0.3s ease;
   }
   
   .back-button:hover {
     background-color: #021e4a;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
   }

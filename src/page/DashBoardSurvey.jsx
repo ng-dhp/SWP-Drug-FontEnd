@@ -17,11 +17,11 @@ const DashboardSurvey = () => {
   );
 
   return (
-    <div className="dashboard-container">
-      <h2>Dashboard Survey</h2>
-      <p className="participant-count">Total Participants: {participantCount}</p>
+    <div className="dashboard-survey-container">
+      <h2 className="dashboard-survey-title">Dashboard Survey</h2>
+      <p className="dashboard-survey-participant-count">Total Participants: {participantCount}</p>
 
-      <div className="search-container">
+      <div className="dashboard-survey-search-container">
         <input
           type="text"
           placeholder="Search by user name..."
@@ -30,17 +30,20 @@ const DashboardSurvey = () => {
         />
       </div>
 
-      <ul className="user-list">
+      <ul className="dashboard-survey-user-list">
         {filteredUsers.map((user, index) => (
-          <li key={index} className="user-item">
+          <li key={index} className="dashboard-survey-user-item">
             <span><strong>Name:</strong> {user.name}</span><br />
             <span><strong>Score:</strong> {user.score} / 27</span><br />
             <span><strong>Date:</strong> {user.date}</span>
+            <Link to={`/survey-detail/${user.name}`} className="dashboard-survey-detail-button">
+              View Details
+            </Link>
           </li>
         ))}
       </ul>
 
-      <Link to="/dashboard" className="back-button">
+      <Link to="/dashboard" className="dashboard-survey-back-button">
         Back to Dashboard
       </Link>
     </div>
