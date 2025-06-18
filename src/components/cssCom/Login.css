@@ -36,6 +36,7 @@
   border-radius: 4px;
   width: 100%;
   margin-top: 0.5rem;
+  
 }
 
 .close-button {
@@ -56,7 +57,7 @@
 .google-login-button {
   display: flex;
   align-items: center;
-  background-color: #e3e8e9;
+  background-color: #3498db;
   color: white;
   border: none;
   border-radius: 6px;
@@ -67,12 +68,42 @@
   justify-content: center;
 }
 
-.google-login-button:hover {
-  background-color: #45585c;
-}
 
 .google-logo {
   width: 60px;
   height: 30px;
   margin-right: 8px;
+}
+.forgot-password-container {
+  margin-top: 10px;
+  text-align: right;
+}
+
+.forgot-password-button {
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 0;
+  text-align: center;
+}
+
+.forgot-password-button  {
+  padding-right: 94px;
+}
+.modal-content h3{
+  text-align: center;
+}
+.register-container {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.register-button {
+  color: #1d4ed8;
+  font-weight: bold;
+  background: none;
+  border: none;
+  cursor: pointer;
 }

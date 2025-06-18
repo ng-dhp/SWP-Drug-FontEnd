@@ -163,13 +163,15 @@ export default function RegisterModal({ onClose }) {
           <OTPModal
             email={email}
             onVerify={() => {
-              alert("Xác minh thành công!");
-              setShowOtpModal(false);
-              navigate("/", { state: { message: "Đăng ký và xác minh thành công!" } });
+              alert("✅ Xác minh thành công!");
+              setShowOtpModal(false);      // Đóng OTP modal
+              onClose();                   // Đóng Register modal
+              onVerifiedSuccess?.();       // ✅ Gọi mở lại LoginModal từ AppContent
             }}
             onClose={() => setShowOtpModal(false)}
           />
         )}
+
       </div>
     </div>
   );
