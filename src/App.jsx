@@ -8,6 +8,7 @@ import ChienDich from "./page/ChienDich";
 import Dashboard from "./page/DashBoard";
 import DashboardSurvey from "./page/DashBoardSurvey";
 import DashboardChienDich from "./page/DashBoardChienDich";
+import FeedbackForm from "./page/FeedbackForm.jsx";
 
 export default function App() {
   return (
@@ -21,6 +22,7 @@ export default function App() {
         <Route path="/khoahoc" element={<KhoaHoc />} />
         <Route path="/dashboard-survey" element={<DashboardSurvey />} />
         <Route path="/dashboard-campaign" element={<DashboardChienDich />} />
+        <Route path="/feedbackform" element={<FeedbackForm/>}></Route>
       </Routes>
     </Router>
   );

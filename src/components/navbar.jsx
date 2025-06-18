@@ -72,10 +72,11 @@ export default function Navbar({ onLogin, onRegister, isLoggedIn, onLogout }) {
         >
           <div className="nav-links">
             <Link to="/">Trang chủ</Link>
-            <Link to="/khaosat">Đánh giá</Link>
+            <Link to="/khaosat">Khảo sát</Link>
             <Link to="/tuvan">Tư vấn</Link>
             <Link to="/khoahoc">Khóa học</Link>
             <Link to="/chiendich">Chiến dịch</Link>
+            <Link to="/feedbackform">Đánh giá</Link>
 
             <div
               className="dropdown"
