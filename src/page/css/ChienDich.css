@@ -1,0 +1,115 @@
+.event-page {
+    padding: 2rem;
+    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+    min-height: 100vh;
+    font-family: 'Arial', sans-serif;
+  }
+  
+  .back-button {
+    background-color: #2563eb;
+    color: #fff;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+    margin-bottom: 1.5rem;
+    display: inline-flex;
+    align-items: center;
+  }
+  
+  .back-button:hover {
+    background-color: #1d4ed8;
+    transform: translateX(-2px);
+  }
+  
+  .event-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+  
+  .event-header h1 {
+    font-size: 2.5rem;
+    color: #1e3a8a;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  
+  .event-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2.5rem;
+    justify-content: center;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .event-card {
+    background: linear-gradient(145deg, #ffffff 0%, #f9fafb 100%);
+    padding: 24px;
+    border-radius: 16px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+    width: 350px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
+  }
+  
+  .event-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  }
+  
+  .event-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-bottom: 15px;
+  }
+  
+  .event-card h2 {
+    font-size: 1.6rem;
+    color: #1a202c;
+    margin-bottom: 12px;
+    font-weight: 600;
+  }
+  
+  .event-card p {
+    margin: 8px 0;
+    font-size: 1.1rem;
+    color: #2d3748;
+    line-height: 1.5;
+  }
+  
+  .event-topic,
+  .event-date,
+  .event-time,
+  .event-location,
+  .event-host {
+    font-weight: 500;
+  }
+  
+  .event-description {
+    font-size: 1rem;
+    color: #4a5568;
+    margin-top: 10px;
+  }
+  
+  .join-button {
+    margin-top: 1.5rem;
+    padding: 12px 20px;
+    background: linear-gradient(90deg, #2563eb 0%, #1d4ed8 100%);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease, background 0.2s ease;
+  }
+  
+  .join-button:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(90deg, #1d4ed8 0%, #1e40af 100%);
+  }
