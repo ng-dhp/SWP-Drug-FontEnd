@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -6,6 +7,8 @@ import "./cssCom/navbar.css";
 
 export default function Navbar({ onLogin, onRegister, isLoggedIn, onLogout }) {
   const [fullName, setFullName] = useState("");
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
 
   useEffect(() => {
     if (isLoggedIn) {
@@ -48,7 +51,6 @@ export default function Navbar({ onLogin, onRegister, isLoggedIn, onLogout }) {
       setFullName(""); // Clear fullName when not logged in
     }
   }, [isLoggedIn, onLogout]);
-
   return (
     <header className="navbar bg-white shadow-sm">
       <div className="container flex justify-between items-center px-4 py-2 mx-auto">
@@ -63,7 +65,6 @@ export default function Navbar({ onLogin, onRegister, isLoggedIn, onLogout }) {
           </Link>
         </motion.div>
 
-        {/* Navigation */}
         <motion.div
           initial={{ opacity: 0, y: -30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -75,11 +76,24 @@ export default function Navbar({ onLogin, onRegister, isLoggedIn, onLogout }) {
             <Link to="/tuvan">Tư vấn</Link>
             <Link to="/khoahoc">Khóa học</Link>
             <Link to="/chiendich">Chiến dịch</Link>
-            <Link to="/dashboard">Dashboard</Link>
+
+            <div
+              className="dropdown"
+              onMouseEnter={() => setIsDropdownOpen(true)}
+              onMouseLeave={() => setIsDropdownOpen(false)}
+            >
+              <Link to="/dashboard" className="dropdown-toggle">Dashboard</Link>
+              {isDropdownOpen && (
+                <div className="dropdown-menu">
+                  <Link to="/dashboard-survey">Dashboard Survey</Link>
+                  <Link to="/dashboard-campaign">Dashboard Chiến dịch</Link>
+                </div>
+              )}
+            </div>
           </div>
         </motion.div>
 
-        {/* Đăng nhập / Đăng ký */}
+        {/* Đăng nhập / Đăng ký ở bên phải */}
         <div className="auth-buttons flex items-center space-x-3">
           {!isLoggedIn ? (
             <>
