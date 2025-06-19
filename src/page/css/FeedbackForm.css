@@ -4,12 +4,12 @@
   background: #ffffffaf;
   padding: 40px;
   border-radius: 12px;
-  box-shadow: 0 0 30px rgba(0,0,0,0.05);
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.05);
   font-family: 'Arial', sans-serif;
   text-align: center;
 }
 
-.highlight {
+.feedback-form .highlight {
   color: #6C63FF;
 }
 
@@ -18,14 +18,14 @@
   margin-bottom: 20px;
 }
 
-.form-group {
+.feedback-form .form-group {
   display: block;
   margin-bottom: 15px;
 }
 
-input,
-select,
-textarea {
+.feedback-form input,
+.feedback-form select,
+.feedback-form textarea {
   display: block;
   width: 100%;
   padding: 12px;
@@ -34,14 +34,15 @@ textarea {
   border-radius: 6px;
   font-size: 14px;
   box-sizing: border-box;
+  font-family: 'Arial', sans-serif;
 }
 
-textarea {
+.feedback-form textarea {
   min-height: 100px;
   resize: vertical;
 }
 
-button {
+.feedback-form button {
   background: linear-gradient(to right, #6C63FF, #9F7AEA);
   color: #fff;
   padding: 12px 24px;
@@ -50,28 +51,29 @@ button {
   border-radius: 6px;
   cursor: pointer;
   transition: background 0.3s;
+  font-family: 'Arial', sans-serif;
 }
 
-button:hover {
+.feedback-form button:hover {
   background: #5a54d1;
 }
 
-.stars {
+.feedback-form .stars {
   font-size: 24px;
   margin-bottom: 10px;
 }
 
-.star {
+.feedback-form .star {
   cursor: pointer;
   color: #ccc;
   transition: color 0.2s;
 }
 
-.star.selected {
+.feedback-form .star.selected {
   color: #FFD700;
 }
 
-.rating-label {
+.feedback-form .rating-label {
   display: block;
   margin: 10px 0 5px;
   font-weight: bold;
@@ -84,7 +86,7 @@ button:hover {
   padding: 20px;
   background: #f7f9fc;
   border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.05);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
   font-family: 'Arial', sans-serif;
 }
 
