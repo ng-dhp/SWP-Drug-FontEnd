@@ -56,7 +56,7 @@ function AppContent() {
           <h2>
             Cùng nhau <span>Phòng ngừa</span> Ma túy
           </h2>
-          <p>
+         <p className="hero-description">
             Hệ thống hỗ trợ cộng đồng với các khóa học trực tuyến, đánh giá rủi
             ro, tư vấn chuyên viên và chương trình giáo dục phòng ngừa ma túy
             hiệu quả.
@@ -133,12 +133,12 @@ function AppContent() {
             <div className="icon-wrapper">📘</div>
             <h4> Khóa học Trực tuyến</h4>
             <p className="service-subtitle">
-              Các khóa đào tạo về nhận thức ma túy, kỹ năng phòng tránh và từ
-              chối
+              Các khóa đào tạo về nhận thức ma túy, kỹ năng phòng tránh và từ chối
             </p>
-            <li>Phân loại theo độ tuổi</li>
-            <li>Danh cho học sinh, phụ huynh, giáo viên</li>
-            <li>Có cấp chứng chỉ sau khi hoàn thành</li>
+            <li>Nội dung phân theo độ tuổi</li>
+            <li>Học sinh, sinh viên, phụ huynh</li>
+            <li>Giáo viên và người làm việc với trẻ</li>
+            <li>Chứng chỉ hoàn thành</li>
 
             <Link to="/khoahoc" className="learn-more-btn">
               Tìm hiểu thêm →
@@ -151,9 +151,10 @@ function AppContent() {
             <p className="service-subtitle">
               Khảo sát trắc nghiệm ASSIST, CRAFFT để xác định mức độ nguy cơ
             </p>
-            <li>Các bộ công cụ như ASSIST, CRAFFT</li>
-            <li>Kết quả riêng tư, bảo mật</li>
-            <li>Đề xuất phương án can thiệp</li>
+            <li>Bài khảo sát ASSIST</li>
+            <li>Bài khảo sát CRAFFT</li>
+            <li>Đề xuất hành động phù hợp</li>
+            <li>Kết quả nhanh chóng</li>
 
             <Link to="/khaosat" className="learn-more-btn">
               Tìm hiểu thêm →
@@ -164,11 +165,12 @@ function AppContent() {
             <div className="icon-wrapper">💬</div>
             <h4> Tư vấn Chuyên viên</h4>
             <p className="service-subtitle">
-              Đặt lịch hẹn trực tuyến với chuyên viên tư vấn có kinh nghiệm
+             Đặt lịch hẹn trực tuyến với chuyên viên tư vấn có kinh nghiệm
             </p>
-            <li>Chuyên viên có kinh nghiệm</li>
-            <li>Đặt lịch linh hoạt online/offline</li>
-            <li>Hỗ trợ 24/7 và tháo gỡ tâm lý</li>
+            <li>Chuyên viên có bằng cấp</li>
+            <li>Đặt lịch linh hoạt</li>
+            <li>Tư vấn chuyên nghiệp</li>
+            <li>Hỗ trợ 24/7</li>
 
             <Link to="/tuvan" className="learn-more-btn">
               Tìm hiểu thêm →
@@ -181,15 +183,17 @@ function AppContent() {
             <p className="service-subtitle">
               Quản lý các chương trình truyền thông và giáo dục cộng đồng
             </p>
-            <li>Giáo dục phòng ngừa tại trường, địa phương</li>
-            <li>Đào tạo tuyên truyền viên</li>
-            <li>Kết nối mạng lưới qua thiết bị số</li>
+            <li>Chương trình giáo dục</li>
+            <li>Hoạt động cộng đồng</li>
+            <li>Khảo sát trước/sau</li>
+            <li>Đánh giá hiệu quả</li>
 
             <a href="#" className="learn-more-btn">
               Tìm hiểu thêm →
             </a>
           </div>
         </div>
+
         <div className="highlight-wrapper">
           <div className="highlight-item">
             <div className="highlight-icon blue">⏰</div>
@@ -211,19 +215,88 @@ function AppContent() {
         </div>
       </section>
 
-      {/* Blog chia sẻ */}
-      <section className="py-20 bg-gray-50">
-        <div className="max-w-6xl mx-auto px-6">
+      {/* blog chia sẽ kinh nghiệm */}
+      <section className="blog-section">
+           <div className="blog-header-center">
+    <div className="hero-tag">💡 Chia sẻ Kinh nghiệm Thực tế</div>
+  </div>
+  <div className="blog-container">
+ 
           <motion.h3
-            className="text-3xl font-bold text-center text-blue-800 mb-12"
+            className="blog-heading"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             transition={{ duration: 0.6 }}
           >
-            Blog chia sẻ kinh nghiệm
+            Blog & Chia sẻ Kinh nghiệm
           </motion.h3>
-
-          <div className="blog-grid">{/* Có thể thêm bài viết ở đây */}</div>
+          <p className="blog-description">
+            Các bài viết chuyên sâu, kinh nghiệm thực tế và hướng dẫn từ các
+            chuyên gia trong lĩnh vực phòng ngừa ma túy
+          </p>
+          <div className="blog-grid">
+            {[
+              {
+                role: "Phụ huynh",
+                title: (
+                  <>
+                    10 Dấu hiệu Nhận biết Thanh thiếu niên
+                    <span className="break-line">
+                      Có nguy cơ Sử dụng Ma túy
+                    </span>
+                  </>
+                ),
+                desc: "Hướng dẫn phụ huynh và giáo viên nhận biết sớm các dấu hiệu cảnh báo để can thiệp kịp thời.",
+                author: "Bs. Nguyễn Văn A",
+                date: "15/12/2024",
+                time: "5 phút đọc",
+              },
+              {
+                role: "Học sinh",
+                title: (
+                  <>
+                    Kỹ năng Từ chối Áp lực Bạn bè trong
+                    <span className="break-line">
+                      Việc Sử dụng Chất kích thích
+                    </span>
+                  </>
+                ),
+                desc: "Những kỹ năng thiết thực giúp học sinh, sinh viên tự tin từ chối lời mời sử dụng ma túy.",
+                author: "ThS. Trần Thị B",
+                date: "12/12/2024",
+                time: "7 phút đọc",
+              },
+              {
+                role: "Giáo viên",
+                title: (
+                  <>
+                    Vai trò của Giáo viên trong Phòng ngừa
+                    <span className="break-line">Ma túy tại Trường học</span>
+                  </>
+                ),
+                desc: "Chiến lược và phương pháp giúp giáo viên xây dựng môi trường học tập an toàn, lành mạnh.",
+                author: "PGS.TS. Lê Văn C",
+                date: "10/12/2024",
+                time: "8 phút đọc",
+              },
+            ].map((item, index) => (
+              <div className="blog-card" key={index}>
+                <div className="blog-role-badge">{item.role}</div>
+                <div className="blog-title">{item.title}</div>
+                <p className="blog-desc">{item.desc}</p>
+                <div className="blog-meta">
+                  <span>👤 {item.author}</span>
+                  <span>📅 {item.date}</span>
+                </div>
+                <div className="blog-footer">
+                  <span className="blog-time">⏱ {item.time}</span>
+                  <a href="#" className="blog-readmore">
+                    Đọc tiếp →
+                  </a>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
