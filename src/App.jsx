@@ -9,6 +9,9 @@ import Dashboard from "./page/DashBoard";
 import DashboardSurvey from "./page/DashBoardSurvey";
 import DashboardChienDich from "./page/DashBoardChienDich";
 import FeedbackForm from "./page/FeedbackForm.jsx";
+import Profile from "./components/profile.jsx"; // ✅ import file mới
+import Navbar from "./components/navbar"; // 👈 Thêm Navbar vào App.js
+
 
 export default function App() {
   return (
@@ -23,6 +26,8 @@ export default function App() {
         <Route path="/dashboard-survey" element={<DashboardSurvey />} />
         <Route path="/dashboard-campaign" element={<DashboardChienDich />} />
         <Route path="/feedbackform" element={<FeedbackForm/>}></Route>
+        <Route path="/profile" element={<Profile />} />
+
       </Routes>
     </Router>
   );

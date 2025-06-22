@@ -1,14 +1,23 @@
-
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { FaUserCircle } from "react-icons/fa"; // 👈 ICON hồ sơ
 import logo from "../assets/logo01.png";
 import "./cssCom/navbar.css";
 
 export default function Navbar({ onLogin, onRegister, isLoggedIn, onLogout }) {
   const [fullName, setFullName] = useState("");
+  const [roleName, setRoleName] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
+  // Bản dịch tên role sang tiếng Việt
+  const roleMap = {
+    Admin: "Quản trị viên",
+    User: "Người dùng",
+    Consultant: "Tư vấn viên",
+    Manager: "Quản lý",
+    Staff: "Nhân viên",
+  };
 
   useEffect(() => {
     if (isLoggedIn) {
@@ -16,8 +25,8 @@ export default function Navbar({ onLogin, onRegister, isLoggedIn, onLogout }) {
       console.log("🔑 Token hiện tại:", token);
 
       if (!token) {
-        console.log("No token found, skipping profile fetch");
-        onLogout?.(); // Trigger logout if token is missing
+        console.log("Không tìm thấy token, thoát...");
+        onLogout?.();
         return;
       }
 
@@ -34,7 +43,7 @@ export default function Navbar({ onLogin, onRegister, isLoggedIn, onLogout }) {
             if (res.status === 401) {
               localStorage.removeItem("token");
               localStorage.removeItem("userEmail");
-              onLogout?.(); // Clear state and trigger logout
+              onLogout?.();
             }
             throw new Error("Lỗi khi lấy thông tin người dùng");
           }
@@ -43,14 +52,17 @@ export default function Navbar({ onLogin, onRegister, isLoggedIn, onLogout }) {
         .then((data) => {
           console.log("✅ Dữ liệu nhận được:", data);
           setFullName(data.fullName || data.email || "Người dùng");
+          setRoleName(data.roleName || "");
         })
         .catch((err) => {
           console.error("❌ Lỗi lấy profile:", err);
         });
     } else {
-      setFullName(""); // Clear fullName when not logged in
+      setFullName("");
+      setRoleName("");
     }
   }, [isLoggedIn, onLogout]);
+
   return (
     <header className="navbar bg-white shadow-sm">
       <div className="container flex justify-between items-center px-4 py-2 mx-auto">
@@ -65,6 +77,7 @@ export default function Navbar({ onLogin, onRegister, isLoggedIn, onLogout }) {
           </Link>
         </motion.div>
 
+        {/* Các liên kết điều hướng */}
         <motion.div
           initial={{ opacity: 0, y: -30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -94,7 +107,7 @@ export default function Navbar({ onLogin, onRegister, isLoggedIn, onLogout }) {
           </div>
         </motion.div>
 
-        {/* Đăng nhập / Đăng ký ở bên phải */}
+        {/* Thông tin người dùng hoặc nút đăng nhập */}
         <div className="auth-buttons flex items-center space-x-3">
           {!isLoggedIn ? (
             <>
@@ -107,9 +120,18 @@ export default function Navbar({ onLogin, onRegister, isLoggedIn, onLogout }) {
             </>
           ) : (
             <>
-              <span className="text-blue-800">
-                Xin chào, {fullName || "Người dùng"}
-              </span>
+              {/* 👇 Link đến trang profile với icon và thông tin */}
+              <Link
+                to="/profile"
+                className="user-role"
+                style={{ alignItems: "center", fontWeight: 500 }}
+              >
+                <span className="user-role">
+                  Xin chào, {fullName} {roleName && `(${roleMap[roleName] || roleName.toUpperCase()})`}
+                </span>
+              </Link>
+
+
               <button className="logout text-red-500" onClick={onLogout}>
                 Đăng xuất
               </button>

@@ -1,0 +1,39 @@
+.profile-container {
+  padding: 30px 0;
+  background: #f3f4f6;
+  min-height: 100vh;
+}
+
+.tittle-thongtin {
+  font-size: 28px;
+  font-weight: bold;
+  color: #1e3a8a;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.thongtin {
+  max-width: 600px;
+  margin: 0 auto;
+  background-color: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 30px 40px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  font-size: 18px;
+  line-height: 1.8;
+  color: #1f2937;
+  list-style: none;
+}
+
+.thongtin li {
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+}
+
+.thongtin li strong {
+  min-width: 180px;
+  display: inline-block;
+  color: #111827;
+}
