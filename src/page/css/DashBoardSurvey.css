@@ -1,0 +1,118 @@
+.dashboard-survey-container {
+    padding: 25px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    max-width: 900px;
+    margin: 30px auto;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .dashboard-survey-title {
+    color: #0b318f;
+    margin-bottom: 20px;
+    font-size: 2.2rem;
+    text-align: center;
+    font-weight: 600;
+  }
+  
+  .dashboard-survey-participant-count {
+    margin-bottom: 25px;
+    font-size: 1.2rem;
+    color: #444;
+    text-align: center;
+    background-color: #f0f4f8;
+    padding: 10px;
+    border-radius: 6px;
+    display: inline-block;
+  }
+  
+  .dashboard-survey-search-container {
+    margin: 25px 0;
+    text-align: center;
+  }
+  
+  .dashboard-survey-search-container input {
+    padding: 10px;
+    width: 300px;
+    border: 2px solid #0b318f;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+  }
+  
+  .dashboard-survey-search-container input:focus {
+    border-color: #021e4a;
+    box-shadow: 0 0 8px rgba(11, 49, 143, 0.4);
+    outline: none;
+  }
+  
+  .dashboard-survey-user-list {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .dashboard-survey-user-item {
+    margin-bottom: 20px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+  }
+  
+  .dashboard-survey-user-item:hover {
+    background-color: #f0f4f8;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .dashboard-survey-user-item span {
+    display: block;
+    color: #666;
+    margin-bottom: 5px;
+  }
+  
+  .dashboard-survey-user-item span strong {
+    color: #0b318f;
+    font-weight: 500;
+  }
+  
+  .dashboard-survey-detail-button {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 8px 16px;
+    background-color: #0b318f;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+  }
+  
+  .dashboard-survey-detail-button:hover {
+    background-color: #021e4a;
+    transform: translateY(-1px);
+  }
+  
+  .dashboard-survey-back-button {
+    display: block;
+    margin-top: 30px;
+    padding: 12px 24px;
+    background-color: #0b318f;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    text-align: center;
+    max-width: 180px;
+    margin-left: auto;
+    margin-right: auto;
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+  
+  .dashboard-survey-back-button:hover {
+    background-color: #021e4a;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  }
