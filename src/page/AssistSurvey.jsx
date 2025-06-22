@@ -40,6 +40,15 @@ function AssistSurvey() {
   const [fetchedQuestions, setFetchedQuestions] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Các chất nguy cơ cao cần để hiển thị câu 8
+  const selectedRiskySubstances = ["cocaine", "stimulants", "sedatives", "opioids"];
+
+  // Kiểm tra xem có chọn chất nguy cơ cao ở câu 1 không
+  const shouldShowQuestion8 = () => {
+    const selected = answers[1];
+    return selectedRiskySubstances.includes(selected);
+  };
+
   useEffect(() => {
     const fetchSurvey = async () => {
       try {
@@ -143,31 +152,36 @@ function AssistSurvey() {
           <p>Đang tải câu hỏi...</p>
         ) : !result ? (
           <>
-            {fetchedQuestions.map((q) => (
-              <div key={q.questionId} className="survey-question">
-                <p>
-                  <strong>
-                    Câu {q.questionId} - {q.questionText}
-                  </strong>
-                </p>
-                <div className="radio-group">
-                  {getOptions(q.questionId).map((opt, idx) => (
-                    <label key={idx} className="radio-item">
-                      <input
-                        type="radio"
-                        name={`q${q.questionId}`}
-                        value={opt.value}
-                        checked={answers[q.questionId] === opt.value}
-                        onChange={() =>
-                          handleAnswerChange(q.questionId, opt.value)
-                        }
-                      />
-                      {opt.label}
-                    </label>
-                  ))}
+            {fetchedQuestions.map((q) => {
+              // Ẩn câu số 8 nếu không thỏa điều kiện
+              if (q.questionId === 8 && !shouldShowQuestion8()) return null;
+
+              return (
+                <div key={q.questionId} className="survey-question">
+                  <p>
+                    <strong>
+                      Câu {q.questionId} - {q.questionText}
+                    </strong>
+                  </p>
+                  <div className="radio-group">
+                    {getOptions(q.questionId).map((opt, idx) => (
+                      <label key={idx} className="radio-item">
+                        <input
+                          type="radio"
+                          name={`q${q.questionId}`}
+                          value={opt.value}
+                          checked={answers[q.questionId] === opt.value}
+                          onChange={() =>
+                            handleAnswerChange(q.questionId, opt.value)
+                          }
+                        />
+                        {opt.label}
+                      </label>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
             <button className="submit-button" onClick={handleFinish}>
               Gửi kết quả →
             </button>
