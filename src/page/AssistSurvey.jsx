@@ -1,156 +1,134 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./css/AssistSurvey.css";
 
-const substances = [
-  { key: "tobacco", label: "1. Thuốc lá (cigarettes, xì gà, thuốc lào, v.v.)" },
-  { key: "alcohol", label: "2. Rượu (bia, rượu vang, rượu mạnh, v.v.)" },
-  { key: "cannabis", label: "3. Cần sa (marijuana, hashish, cần...)" },
-  { key: "cocaine", label: "4. Cốc-ca-in (cocaine, crack)" },
-  {
-    key: "stimulants",
-    label: "5. Thuốc kích thích (amphetamine, methamphetamine, ecstasy)",
-  },
-  {
-    key: "sedatives",
-    label: "6. Thuốc an thần, gây ngủ (valium, diazepam, zolpidem...)",
-  },
-  { key: "inhalants", label: "7. Chất hít (keo, xăng, sơn, khí gas...)" },
-  {
-    key: "opioids",
-    label: "8. Heroin và các opioid khác (morphine, codeine...)",
-  },
-  { key: "other", label: "9. Khác" },
-];
+const getOptions = (questionId) => {
+  if (questionId === 1) {
+    return [
+      { label: "Thuốc lá", value: "tabaco" },
+      { label: "Rượu", value: "alcohol" },
+      { label: "Cần sa", value: "cannabis" },
+      { label: "Cocaine", value: "cocaine" },
+      { label: "Thuốc kích thích", value: "stimulants" },
+      { label: "Thuốc an thần", value: "sedatives" },
+      { label: "Chất hít", value: "inhalants" },
+      { label: "Opioid", value: "opioids" },
+      { label: "Khác", value: "other" },
+    ];
+  }
 
-const questionList = [
-  {
-    id: 2,
-    text: "Tần suất sử dụng gần đây",
-    note: "Trong 3 tháng qua...",
-    options: [
-      "Không bao giờ",
-      "1–2 lần",
-      "Hằng tháng",
-      "Hằng tuần",
-      "Gần như hàng ngày",
-    ],
-  },
-  {
-    id: 3,
-    text: "Cảm thấy thèm chất",
-    options: [
-      "Không bao giờ",
-      "1–2 lần",
-      "Hằng tháng",
-      "Hằng tuần",
-      "Gần như hàng ngày",
-    ],
-  },
-  {
-    id: 4,
-    text: "Gặp vấn đề với việc kiểm soát",
-    options: [
-      "Không bao giờ",
-      "1–2 lần",
-      "Hằng tháng",
-      "Hằng tuần",
-      "Gần như hàng ngày",
-    ],
-  },
-  {
-    id: 5,
-    text: "Gây ảnh hưởng đến trách nhiệm",
-    options: [
-      "Không bao giờ",
-      "1–2 lần",
-      "Hằng tháng",
-      "Hằng tuần",
-      "Gần như hàng ngày",
-    ],
-  },
-  {
-    id: 6,
-    text: "Người khác lo ngại",
-    options: [
-      "Không",
-      "Có, trong 3 tháng qua",
-      "Có, nhưng không trong 3 tháng qua",
-    ],
-  },
-  {
-    id: 7,
-    text: "Không thể ngừng dù không muốn",
-    options: [
-      "Không bao giờ",
-      "1–2 lần",
-      "Hằng tháng",
-      "Hằng tuần",
-      "Gần như hàng ngày",
-    ],
-  },
-  {
-    id: 8,
-    text: "Tiêm chích",
-    highlight: true,
-    options: [
-      "Không bao giờ",
-      "Có, trong 3 tháng qua",
-      "Có, nhưng không trong 3 tháng qua",
-    ],
-  },
-];
+  if (questionId === 6 || questionId === 8) {
+    return [
+      { label: "Không", value: "NEVER" },
+      { label: "Có, trong 3 tháng qua", value: "RECENT" },
+      { label: "Có, nhưng không trong 3 tháng qua", value: "PAST" },
+    ];
+  }
 
-const pointMap = {
-  "Không bao giờ": 0,
-  Không: 0,
-  "1–2 lần": 2,
-  "Hằng tháng": 3,
-  "Hằng tuần": 4,
-  "Có, trong 3 tháng qua": 6,
-  "Gần như hàng ngày": 6,
-  "Có, nhưng không trong 3 tháng qua": 2,
+  return [
+    { label: "Không bao giờ", value: "NEVER" },
+    { label: "1–2 lần", value: "1-2" },
+    { label: "Hằng tháng", value: "MONTHLY" },
+    { label: "Hằng tuần", value: "WEEKLY" },
+    { label: "Gần như hàng ngày", value: "DAILY" },
+  ];
 };
 
 function AssistSurvey() {
-  const [selectedSubstance, setSelectedSubstance] = useState(null);
   const [answers, setAnswers] = useState({});
   const [result, setResult] = useState(null);
+  const [surveyId, setSurveyId] = useState(null);
+  const [fetchedQuestions, setFetchedQuestions] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const handleSelectSubstance = (key) => {
-    setSelectedSubstance(key);
-    setAnswers({});
-    setResult(null);
-  };
+  useEffect(() => {
+    const fetchSurvey = async () => {
+      try {
+        const res = await fetch(
+          "http://localhost:8080/api/v1.0/survey-template/start?templateId=1",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+
+        const data = await res.json();
+        setSurveyId(data.surveyId);
+        setFetchedQuestions(data.answers);
+      } catch (err) {
+        console.error("Lỗi khi lấy khảo sát:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchSurvey();
+  }, []);
 
   const handleAnswerChange = (qid, value) => {
     setAnswers((prev) => ({ ...prev, [qid]: value }));
   };
 
-  const calculateScore = () => {
-    let total = 0;
-    for (const q of questionList) {
-      const ans = answers[q.id];
-      total += pointMap[ans] || 0;
+  const handleFinish = async () => {
+    const payload = {
+      answers: Object.entries(answers).map(([questionId, answerText]) => ({
+        questionId: parseInt(questionId),
+        answerText,
+      })),
+    };
+
+    try {
+      const res = await fetch(
+        `http://localhost:8080/api/v1.0/survey-template/survey/${surveyId}/submit`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify(payload),
+        }
+      );
+
+      const data = await res.json();
+      setResult({
+        score: data.totalScore,
+        risk: data.recommendation,
+      });
+    } catch (err) {
+      console.error("Lỗi gửi khảo sát:", err);
     }
-    return total;
   };
 
-  const getRiskLevel = (score) => {
-    if (score <= 3) return "Nguy cơ thấp";
-    if (score <= 26) return "Nguy cơ trung bình";
-    return "Nguy cơ cao";
-  };
-
-  const handleFinish = () => {
-    const score = calculateScore();
-    const risk = getRiskLevel(score);
-    setResult({ score, risk });
-  };
-
-  const handleReset = () => {
+  const handleReset = async () => {
     setAnswers({});
     setResult(null);
-    setSelectedSubstance(null);
+    setSurveyId(null);
+    setFetchedQuestions([]);
+    setIsLoading(true);
+
+    try {
+      const res = await fetch(
+        "http://localhost:8080/api/v1.0/survey-template/start?templateId=1",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      const data = await res.json();
+      setSurveyId(data.surveyId);
+      setFetchedQuestions(data.answers);
+    } catch (err) {
+      console.error("Lỗi khi reset khảo sát:", err);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -158,103 +136,64 @@ function AssistSurvey() {
       <div className="survey-box">
         <h2 className="question-title">Khảo sát ASSIST</h2>
         <p className="question-sub">
-          Công cụ sàng lọc sử dụng chất gây nghiện cho người lớn (18 tuổi trở
-          lên).
+          Công cụ sàng lọc sử dụng chất gây nghiện cho người lớn (18+).
         </p>
 
-        {!selectedSubstance ? (
+        {isLoading ? (
+          <p>Đang tải câu hỏi...</p>
+        ) : !result ? (
           <>
-            <div className="step">Bước 1: Chọn chất đã sử dụng</div>
-            <h2 className="question-title">Câu 1 - Đã từng sử dụng gì?</h2>
-            <p className="question-sub">
-              Trong suốt cuộc đời của bạn, bạn đã từng sử dụng các loại chất nào
-              dưới đây (không tính dùng vì lý do y tế)?
-              <br />
-              <span className="note">(Chọn một chất để bắt đầu đánh giá)</span>
-            </p>
-
-            <div className="checkbox-list">
-              {substances.map((sub) => (
-                <button
-                  key={sub.key}
-                  className="substance-button"
-                  onClick={() => handleSelectSubstance(sub.key)}
-                >
-                  {sub.label}
-                </button>
-              ))}
-            </div>
+            {fetchedQuestions.map((q) => (
+              <div key={q.questionId} className="survey-question">
+                <p>
+                  <strong>
+                    Câu {q.questionId} - {q.questionText}
+                  </strong>
+                </p>
+                <div className="radio-group">
+                  {getOptions(q.questionId).map((opt, idx) => (
+                    <label key={idx} className="radio-item">
+                      <input
+                        type="radio"
+                        name={`q${q.questionId}`}
+                        value={opt.value}
+                        checked={answers[q.questionId] === opt.value}
+                        onChange={() =>
+                          handleAnswerChange(q.questionId, opt.value)
+                        }
+                      />
+                      {opt.label}
+                    </label>
+                  ))}
+                </div>
+              </div>
+            ))}
+            <button className="submit-button" onClick={handleFinish}>
+              Gửi kết quả →
+            </button>
           </>
         ) : (
-          <>
-            <div className="step">Bước 2: Đánh giá mức độ sử dụng</div>
-            <h2 className="question-title">
-              Câu hỏi về:{" "}
-              {substances.find((s) => s.key === selectedSubstance)?.label}
-            </h2>
-
-            {!result ? (
-              <>
-                {questionList.map((q) => (
-                  <div
-                    key={q.id}
-                    className={`survey-question ${
-                      q.highlight ? "highlight-question" : ""
-                    }`}
-                  >
-                    <p>
-                      <strong>
-                        Câu {q.id} - {q.text}
-                      </strong>
-                    </p>
-                    {q.note && <p className="note">{q.note}</p>}
-                    <div className="radio-group">
-                      {q.options.map((opt, idx) => (
-                        <label key={idx} className="radio-item">
-                          <input
-                            type="radio"
-                            name={`q${q.id}`}
-                            value={opt}
-                            checked={answers[q.id] === opt}
-                            onChange={() => handleAnswerChange(q.id, opt)}
-                          />
-                          {opt}
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-                <button className="submit-button" onClick={handleFinish}>
-                  Hoàn thành →
-                </button>
-              </>
-            ) : (
-              <div className="result-box">
-                <h3>Kết quả đánh giá</h3>
-                <p>
-                  <strong>Tổng điểm:</strong> {result.score}
-                </p>
-                <p>
-                  <strong>Mức độ nguy cơ:</strong> {result.risk}
-                </p>
-                {result.risk === "Nguy cơ cao" && (
-                  <p className="note warning">
-                    ⚠️ Bạn nên tìm tư vấn từ chuyên gia càng sớm càng tốt.
-                  </p>
-                )}
-                <button className="submit-button" onClick={handleReset}>
-                  ← Trở về chọn chất khác
-                </button>
-                <br />
-                <button
-                  className="tro-ve"
-                  onClick={() => (window.location.href = "/")}
-                >
-                  🏠 Trở về màn hình chính
-                </button>
-              </div>
+          <div className="result-box">
+            <h3>Kết quả đánh giá</h3>
+            <p>
+              <strong>Tổng điểm:</strong> {result.score}
+            </p>
+            <p>
+              <strong>Mức độ nguy cơ:</strong> {result.risk}
+            </p>
+            {result.risk?.includes("cao") && (
+              <p className="note warning">
+                ⚠️ Bạn nên tìm tư vấn từ chuyên gia càng sớm càng tốt.
+              </p>
             )}
-          </>
+            <br />
+            <button
+              className="tro-ve"
+              onClick={() => (window.location.href = "/")}
+            >
+              🏠 Trở về màn hình chính
+            </button>
+          </div>
         )}
       </div>
     </div>

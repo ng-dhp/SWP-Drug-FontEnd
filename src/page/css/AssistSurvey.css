@@ -179,13 +179,12 @@ body {
   margin-top: 16px;
 }
 .tro-ve{
-  background: #3b82f6;
-  color: white;
+  background-color: #3498db;
+  color: #fff;
   padding: 12px 24px;
+  margin: 15px 5px 0;
   border: none;
-  border-radius: 8px;
-  font-size: 16px;
+  border-radius: 6px;
   cursor: pointer;
-  transition: background 0.2s;
-  margin-top: 30px;
+  font-weight: bold;
 }
