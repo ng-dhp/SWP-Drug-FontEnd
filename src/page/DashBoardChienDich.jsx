@@ -26,8 +26,8 @@ const DashboardCampaign = () => {
         ))}
       </ul>
 
-      <Link to="/dashboard" className="back-button">
-        Back to Dashboard
+      <Link to="/" className="back-button">
+        Quay lại trang chủ
       </Link>
     </div>
   );

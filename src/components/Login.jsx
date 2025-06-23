@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import ForgetPass from "./ForgetPass";
-import Register from "./Register"; // ✅ import Register
+import Register from "./Register";
 import "./cssCom/Login.css";
 
 export default function LoginModal({ onClose, onLoginSuccess }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showForgetPass, setShowForgetPass] = useState(false);
-  const [showRegister, setShowRegister] = useState(false); // ✅ state mở đăng ký
+  const [showRegister, setShowRegister] = useState(false);
 
   const handleGoogleLogin = () => {
     console.log("Đang đăng nhập bằng Google...");
@@ -41,9 +41,15 @@ export default function LoginModal({ onClose, onLoginSuccess }) {
     }
   };
 
+  const handleOverlayClick = (e) => {
+    if (e.target.classList.contains("modal-overlay")) {
+      onClose();
+    }
+  };
+
   return (
     <>
-      <div className="modal-overlay">
+      <div className="modal-overlay" onClick={handleOverlayClick}>
         <div className="modal-content">
           <h3>Đăng nhập</h3>
 
@@ -78,13 +84,12 @@ export default function LoginModal({ onClose, onLoginSuccess }) {
           </div>
 
           <div className="register-container">
-            <p>Chưa có tài khoản?</p>
             <button
               type="button"
-              className="register-button"
-              onClick={() => setShowRegister(true)} // ✅ mở modal đăng ký
+              className="register-link"
+              onClick={() => setShowRegister(true)}
             >
-              Đăng ký
+              Chưa có tài khoản?
             </button>
           </div>
 
@@ -103,18 +108,16 @@ export default function LoginModal({ onClose, onLoginSuccess }) {
         </div>
       </div>
 
-      {/* ✅ Modal Quên mật khẩu */}
       {showForgetPass && (
-        <div className="modal-overlay">
+        <div className="modal-overlay" onClick={handleOverlayClick}>
           <div className="modal-content">
             <ForgetPass onClose={() => setShowForgetPass(false)} />
           </div>
         </div>
       )}
 
-      {/* ✅ Modal Đăng ký */}
       {showRegister && (
-        <div className="modal-overlay">
+        <div className="modal-overlay" onClick={handleOverlayClick}>
           <div className="modal-content">
             <Register onClose={() => setShowRegister(false)} />
           </div>
