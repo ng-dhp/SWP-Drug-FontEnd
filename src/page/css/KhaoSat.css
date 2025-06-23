@@ -21,32 +21,6 @@ html, body, #root {
   background-color: #f0f4f8;
 }
 
-.header {
-  background: linear-gradient(to right, #4b6cb7, #182848);
-  color: white;
-  padding: 60px 30px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-sizing: border-box;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.header-title {
-  font-size: 2.8rem; 
-  font-weight: 800;
-  text-align: center;
-  white-space: nowrap;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
 .avatar {
   width: 36px;
   height: 36px;

@@ -10,11 +10,7 @@ import anh_crafft from "../assets/anh_crafft.png";
 export default function KhaoSat() {
   return (
     <div className="wrapper">
-      {/* Header */}
-      <div className="header">
-        <div className="header-title">Hệ thống Hỗ trợ Phòng ngừa Sử dụng Ma túy</div>
-      </div>
-
+     
       <main className="main-content">
         <Routes>
           {/* Trang chính */}

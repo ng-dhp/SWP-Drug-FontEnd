@@ -1,189 +1,187 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom"; // <-- import hook điều hướng
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./css/tuvan.css";
 import LoginModal from "../components/Login";
 
 export default function TuVan() {
-    const navigate = useNavigate(); // <-- Khai báo hook điều hướng
+  const navigate = useNavigate();
+  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
+  const [fullName, setFullName] = useState("");
+  const [userId, setUserId] = useState(null);
+  const [selectedDoctor, setSelectedDoctor] = useState(null);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [consultants, setConsultants] = useState([]);
 
-    const doctors = [
-        {
-            id: 1,
-            name: "Bác sĩ Nguyễn Văn A",
-            specialty: "Tư vấn tâm lý",
-            experience: "10 năm kinh nghiệm",
-            email: "bs.nguyenA@clinic.com",
-        },
-        {
-            id: 2,
-            name: "Bác sĩ Trần Thị B",
-            specialty: "Tư vấn cai nghiện",
-            experience: "8 năm kinh nghiệm",
-            email: "bs.tranB@clinic.com",
-        },
-    ];
+  const [formData, setFormData] = useState({
+    date: "",
+    time: "",
+    message: "",
+  });
 
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+  // ✅ Lấy thông tin người dùng sau khi đăng nhập
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
 
-    const [selectedDoctor, setSelectedDoctor] = useState(null);
-    const [showLoginModal, setShowLoginModal] = useState(false);
+    fetch("http://localhost:8080/api/v1.0/profile", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Không lấy được profile");
+        return res.json();
+      })
+      .then((data) => {
+        setFullName(data.fullName || data.email || "Người dùng");
+        setUserId(data.id);
+      })
+      .catch((err) => {
+        console.error("Lỗi lấy profile:", err);
+      });
+  }, [isLoggedIn]);
 
-    const [formData, setFormData] = useState({
-        name: "",
-        email: "",
-        phone: "",
-        date: "",
-        message: "",
+  // ✅ Lấy danh sách tư vấn viên từ API
+ useEffect(() => {
+  const token = localStorage.getItem("token");
+
+  fetch("http://localhost:8080/api/v1.0/consultant/getAllConsultant", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      ...(token && { Authorization: `Bearer ${token}` }),
+    },
+  })
+    .then((res) => {
+      if (!res.ok) throw new Error("Không lấy được danh sách tư vấn viên");
+      return res.json();
+    })
+    .then((data) => {
+      setConsultants(data);
+    })
+    .catch((err) => {
+      console.error("Lỗi khi lấy danh sách tư vấn viên:", err);
     });
+}, []);
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prev) => ({
-            ...prev,
-            [name]: value,
-        }));
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!isLoggedIn) {
+      setShowLoginModal(true);
+      return;
+    }
+
+    if (!selectedDoctor) {
+      alert("❗ Vui lòng chọn bác sĩ trước khi đặt lịch!");
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Không tìm thấy token. Vui lòng đăng nhập lại.");
+      return;
+    }
+
+    const payload = {
+      date: formData.date,
+      time: formData.time + ":00",
+      status: "Scheduled",
+      location: `Phòng tư vấn với ${selectedDoctor.name}`,
+      userId: userId,
+      consultantId: selectedDoctor.consultantId,
     };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
+    try {
+      const res = await fetch("http://localhost:8080/api/v1.0/appointment/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
 
-        if (!isLoggedIn) {
-            setShowLoginModal(true);
-            return;
-        }
+      if (!res.ok) throw new Error("❌ Lỗi khi tạo lịch hẹn");
 
-        if (!selectedDoctor) {
-            alert("Vui lòng chọn bác sĩ trước khi đặt lịch!");
-            return;
-        }
+      alert("🎉 Đặt lịch thành công!");
+      setFormData({ date: "", time: "", message: "" });
+      setSelectedDoctor(null);
+    } catch (err) {
+      console.error("Lỗi đặt lịch:", err);
+      alert("❌ Lỗi: " + err.message);
+    }
+  };
 
-        alert("Bạn đã đặt lịch hẹn thành công. Tư vấn viên sẽ sớm liên hệ với bạn!");
+  return (
+    <div className="tuvan-container">
+      <h2>Trang Tư Vấn & Đặt Lịch Hẹn</h2>
 
-        // Reset form
-        setFormData({
-            name: "",
-            email: "",
-            phone: "",
-            date: "",
-            message: "",
-        });
-        setSelectedDoctor(null);
-    };
+      {isLoggedIn && <p className="greeting">👋 Xin chào, <strong>{fullName}</strong></p>}
 
-    return (
-        <div className="tuvan-container">
-            <h2>Trang Tư Vấn & Đặt Lịch Hẹn</h2>
-            <p>Chọn bác sĩ bạn muốn đặt lịch:</p>
+      <p>Chọn bác sĩ bạn muốn đặt lịch:</p>
+      <div className="doctor-list">
+        {consultants.map((doctor) => (
+          <div
+            key={doctor.consultantId}
+            className={`doctor-card ${selectedDoctor?.consultantId === doctor.consultantId ? "selected" : ""}`}
+            onClick={() => setSelectedDoctor(doctor)}
+          >
+            <h3>{doctor.name}</h3>
+            <p><strong>Chuyên ngành:</strong> {doctor.specialization}</p>
+            <p><strong>Lịch làm việc:</strong> {doctor.availability || doctor.schedule}</p>
+            <p><strong>Email:</strong> {doctor.email}</p>
+          </div>
+        ))}
+      </div>
 
-            <div className="doctor-list">
-                {doctors.map((doctor) => (
-                    <div
-                        key={doctor.id}
-                        className={`doctor-card ${selectedDoctor?.id === doctor.id ? "selected" : ""}`}
-                        onClick={() => setSelectedDoctor(doctor)}
-                    >
-                        <h3>{doctor.name}</h3>
-                        <p><strong>Chuyên ngành:</strong> {doctor.specialty}</p>
-                        <p><strong>Kinh nghiệm:</strong> {doctor.experience}</p>
-                        <p><strong>Email:</strong> {doctor.email}</p>
-                    </div>
-                ))}
-            </div>
+      <h3>Đặt Lịch Hẹn</h3>
+      <form className="tuvan-form" onSubmit={handleSubmit}>
+        <label>
+          Ngày hẹn:
+          <input type="date" name="date" value={formData.date} onChange={handleChange} required />
+        </label>
 
-            <h3>Đặt Lịch Hẹn</h3>
-            <form className="tuvan-form" onSubmit={handleSubmit}>
-                <label>
-                    Họ và Tên:
-                    <input
-                        type="text"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleChange}
-                        required
-                        placeholder="Nhập họ tên"
-                    />
-                </label>
+        <label>
+          Giờ hẹn:
+          <input type="time" name="time" value={formData.time} onChange={handleChange} required />
+        </label>
 
-                <label>
-                    Email:
-                    <input
-                        type="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        required
-                        placeholder="Nhập email"
-                    />
-                </label>
+        <label>
+          Ghi chú:
+          <textarea name="message" value={formData.message} onChange={handleChange} />
+        </label>
 
-                <label>
-                    Số điện thoại:
-                    <input
-                        type="tel"
-                        name="phone"
-                        value={formData.phone}
-                        onChange={handleChange}
-                        required
-                        placeholder="Nhập số điện thoại"
-                    />
-                </label>
+        <button type="submit" disabled={!selectedDoctor}>
+          {isLoggedIn ? "📅 Đặt Lịch Hẹn" : "Vui lòng đăng nhập trước"}
+        </button>
+      </form>
 
-                <label>
-                    Ngày hẹn:
-                    <input
-                        type="date"
-                        name="date"
-                        value={formData.date}
-                        onChange={handleChange}
-                        required
-                    />
-                </label>
+      <button className="back-home-button" onClick={() => navigate("/")}>
+        🏠 Quay lại Trang Chủ
+      </button>
 
-                <label>
-                    Ghi chú:
-                    <textarea
-                        name="message"
-                        value={formData.message}
-                        onChange={handleChange}
-                        placeholder="Ghi chú thêm (nếu có)"
-                    />
-                </label>
-
-                {!isLoggedIn ? (
-                    <button
-                        type="button"
-                        onClick={() => setShowLoginModal(true)}
-                    >
-                        Vui lòng đăng nhập trước
-                    </button>
-                ) : (
-                    <button
-                        type="submit"
-                        disabled={!selectedDoctor}
-                    >
-                        Đặt Lịch Hẹn
-                    </button>
-                )}
-            </form>
-
-            {/* Nút quay lại trang chủ */}
-            <button
-                className="back-home-button"
-                onClick={() => navigate("/")} // <-- Đường dẫn về trang chủ ("/")
-            >
-                Quay lại Trang Chủ
-            </button>
-
-            {showLoginModal && (
-                <LoginModal
-                    onClose={() => setShowLoginModal(false)}
-                    onLoginSuccess={() => {
-                        setIsLoggedIn(true);
-                        setShowLoginModal(false);
-                        alert("Đăng nhập thành công!");
-                    }}
-                />
-            )}
-        </div>
-    );
+      {showLoginModal && (
+        <LoginModal
+          onClose={() => setShowLoginModal(false)}
+          onLoginSuccess={() => {
+            setIsLoggedIn(true);
+            setShowLoginModal(false);
+            alert("✅ Đăng nhập thành công!");
+          }}
+        />
+      )}
+    </div>
+  );
 }

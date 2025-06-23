@@ -1,0 +1,48 @@
+.forget-pass-container {
+  max-width: 400px;
+  margin: 60px auto;
+  padding: 20px;
+  border-radius: 10px;
+  background-color: #fefefe;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.forget-pass-container h2 {
+  margin-bottom: 20px;
+}
+
+.form-input {
+  width: 100%;
+  padding: 10px;
+  margin: 12px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.send-otp-button {
+  width: 100%;
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.send-otp-button:hover {
+  background-color: #0056b3;
+}
+
+.back-button {
+  margin-top: 15px;
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+}
+
+.back-button:hover {
+  text-decoration: underline;
+}
