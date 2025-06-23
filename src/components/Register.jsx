@@ -1,19 +1,52 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import OTPModal from "./OTPModal"; // ✅ Import modal OTP
+import OTPModal from "./OTPModal";
 import "./cssCom/register.css";
 
 export default function RegisterModal({ onClose }) {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [yob, setYob] = useState("");
+  const [dob, setDob] = useState("");
   const [gender, setGender] = useState("");
   const [phone, setPhone] = useState("");
   const [errors, setErrors] = useState({});
-  const [showOtpModal, setShowOtpModal] = useState(false); // ✅ Mở modal OTP
+  const [showOtpModal, setShowOtpModal] = useState(false);
   const navigate = useNavigate();
+
+  const formatDateInput = (value) => {
+    // Remove non-digit characters except slashes
+    let cleaned = value.replace(/[^0-9/]/g, "");
+    
+    // Prevent input after dd/mm/yyyy (10 characters)
+    if (cleaned.length > 10) {
+      cleaned = cleaned.slice(0, 10);
+    }
+
+    // Auto-add slashes
+    if (cleaned.length > 2 && cleaned[2] !== "/") {
+      cleaned = cleaned.slice(0, 2) + "/" + cleaned.slice(2);
+    }
+    if (cleaned.length > 5 && cleaned[5] !== "/") {
+      cleaned = cleaned.slice(0, 5) + "/" + cleaned.slice(5);
+    }
+
+    // Ensure only digits and slashes at correct positions
+    if (cleaned.length <= 2) {
+      cleaned = cleaned.replace(/[^0-9]/g, "");
+    } else if (cleaned.length <= 5) {
+      cleaned = cleaned.replace(/[^0-9/]/g, "").replace(/\/\/+/g, "/");
+    } else {
+      cleaned = cleaned.replace(/[^0-9/]/g, "").replace(/\/\/+/g, "/");
+    }
+
+    return cleaned;
+  };
+
+  const handleDobChange = (e) => {
+    const formatted = formatDateInput(e.target.value);
+    setDob(formatted);
+  };
 
   const validateForm = () => {
     const newErrors = {};
@@ -27,9 +60,19 @@ export default function RegisterModal({ onClose }) {
     if (!password) newErrors.password = "Mật khẩu không được để trống";
     else if (password.length < 8) newErrors.password = "Mật khẩu phải có ít nhất 8 ký tự";
 
-    const yobNum = parseInt(yob);
-    if (!yob) newErrors.yob = "Năm sinh không được để trống";
-    else if (isNaN(yobNum) || yobNum < 1900) newErrors.yob = "Năm sinh phải từ 1900 trở lên";
+    const dobRegex = /^(0[1-9]|[12]\d|3[01])\/(0[1-9]|1[0-2])\/(19\d{2}|20\d{2})$/;
+    if (!dob) newErrors.dob = "Ngày sinh không được để trống";
+    else if (!dobRegex.test(dob)) {
+      newErrors.dob = "Ngày sinh phải có định dạng dd/mm/yyyy và hợp lệ (từ 1900)";
+    } else {
+      // Validate date logic
+      const [day, month, year] = dob.split("/").map(Number);
+      const date = new Date(year, month - 1, day);
+      const isValidDate = date.getDate() === day && date.getMonth() === month - 1 && date.getFullYear() === year;
+      if (!isValidDate || year < 1900) {
+        newErrors.dob = "Ngày sinh không hợp lệ (từ 1900)";
+      }
+    }
 
     if (!gender) newErrors.gender = "Giới tính không được để trống";
 
@@ -49,7 +92,7 @@ export default function RegisterModal({ onClose }) {
       fullName: fullName.trim(),
       email,
       password,
-      yob: parseInt(yob),
+      dob, // Send as string in dd/mm/yyyy format
       gender,
       phone,
     };
@@ -64,11 +107,11 @@ export default function RegisterModal({ onClose }) {
       });
 
       if (response.ok) {
-        setShowOtpModal(true); // ✅ Mở modal OTP
+        setShowOtpModal(true);
         setFullName("");
         setEmail("");
         setPassword("");
-        setYob("");
+        setDob("");
         setGender("");
         setPhone("");
       } else {
@@ -81,8 +124,14 @@ export default function RegisterModal({ onClose }) {
     }
   };
 
+  const handleOverlayClick = (e) => {
+    if (e.target.classList.contains("modal-overlay")) {
+      onClose();
+    }
+  };
+
   return (
-    <div className="modal-overlay">
+    <div className="modal-overlay" onClick={handleOverlayClick}>
       <div className="modal">
         <h2>Đăng Ký</h2>
 
@@ -121,14 +170,16 @@ export default function RegisterModal({ onClose }) {
           </div>
 
           <div className="form-group">
-            <label>Năm sinh:</label>
+            <label>Ngày sinh:</label>
             <input
-              type="number"
-              value={yob}
-              onChange={(e) => setYob(e.target.value)}
+              type="text"
+              placeholder="dd/mm/yyyy"
+              value={dob}
+              onChange={handleDobChange}
+              maxLength="10"
               required
             />
-            {errors.yob && <p className="error">{errors.yob}</p>}
+            {errors.dob && <p className="error">{errors.dob}</p>}
           </div>
 
           <div className="form-group">
@@ -158,22 +209,20 @@ export default function RegisterModal({ onClose }) {
 
         <button className="close-button" onClick={onClose}>Đóng</button>
 
-        {/* ✅ OTP Modal */}
         {showOtpModal && (
-          <OTPModal
-            email={email}
-            onVerify={() => {
-              alert("✅ Xác minh thành công!");
-              setShowOtpModal(false);      // Đóng OTP modal
-              onClose();                   // Đóng Register modal
-              onVerifiedSuccess?.();       // ✅ Gọi mở lại LoginModal từ AppContent
-            }}
-            onClose={() => setShowOtpModal(false)}
-          />
+          <div className="modal-overlay" onClick={handleOverlayClick}>
+            <OTPModal
+              email={email}
+              onVerify={() => {
+                alert("✅ Xác minh thành công!");
+                setShowOtpModal(false);
+                onClose();
+              }}
+              onClose={() => setShowOtpModal(false)}
+            />
+          </div>
         )}
-
       </div>
     </div>
   );
 }
-
