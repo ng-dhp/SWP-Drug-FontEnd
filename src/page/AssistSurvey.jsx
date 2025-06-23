@@ -50,31 +50,36 @@ function AssistSurvey() {
   };
 
   useEffect(() => {
-    const fetchSurvey = async () => {
-      try {
-        const res = await fetch(
-          "http://localhost:8080/api/v1.0/survey-template/start?templateId=1",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
+  console.log("🚀 AssistSurvey mounted - gọi API chỉ 1 lần");
 
-        const data = await res.json();
-        setSurveyId(data.surveyId);
-        setFetchedQuestions(data.answers);
-      } catch (err) {
-        console.error("Lỗi khi lấy khảo sát:", err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  const fetchSurvey = async () => {
+    try {
+      const res = await fetch(
+        "http://localhost:8080/api/v1.0/survey-template/start?templateId=1",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
 
-    fetchSurvey();
-  }, []);
+      const data = await res.json();
+      console.log("✅ Fetched survey:", data);
+
+      setSurveyId(data.surveyId);
+      setFetchedQuestions(data.answers);
+    } catch (err) {
+      console.error("❌ Lỗi khi lấy khảo sát:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  fetchSurvey();
+}, []); // ✅ đảm bảo chỉ chạy một lần duy nhất khi component mount
+
 
   const handleAnswerChange = (qid, value) => {
     setAnswers((prev) => ({ ...prev, [qid]: value }));
