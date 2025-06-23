@@ -5,7 +5,7 @@ import TuVan from "./page/tuvan";
 import AppContent from "./appContent";
 import KhoaHoc from "./page/Khoahoc.jsx"; // ✅ import file mới
 import ChienDich from "./page/ChienDich";
-import Dashboard from "./page/DashBoard";
+
 import DashboardSurvey from "./page/DashBoardSurvey";
 import DashboardChienDich from "./page/DashBoardChienDich";
 import FeedbackForm from "./page/FeedbackForm.jsx";
@@ -21,7 +21,7 @@ export default function App() {
         <Route path="/khaosat/*" element={<KhaoSat />} />
         <Route path="/tuvan" element={<TuVan />} />
         <Route path="/chiendich" element={<ChienDich />} />
-        <Route path="/dashboard" element={<Dashboard />} />
+        
         <Route path="/khoahoc" element={<KhoaHoc />} />
         <Route path="/dashboard-survey" element={<DashboardSurvey />} />
         <Route path="/dashboard-campaign" element={<DashboardChienDich />} />

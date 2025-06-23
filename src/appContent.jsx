@@ -188,9 +188,9 @@ function AppContent() {
             <li>Khảo sát trước/sau</li>
             <li>Đánh giá hiệu quả</li>
 
-            <a href="#" className="learn-more-btn">
+            <Link to="/Chiendich" className="learn-more-btn">
               Tìm hiểu thêm →
-            </a>
+            </Link>
           </div>
         </div>
 

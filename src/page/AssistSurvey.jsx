@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./css/AssistSurvey.css";
 
+// Các lựa chọn cho từng câu hỏi
 const getOptions = (questionId) => {
   if (questionId === 1) {
     return [
@@ -33,12 +34,29 @@ const getOptions = (questionId) => {
   ];
 };
 
+// Map giá trị thành nhãn tiếng Việt
+const substanceMap = {
+  tabaco: "Thuốc lá",
+  alcohol: "Rượu",
+  cannabis: "Cần sa",
+  cocaine: "Cocaine",
+  stimulants: "Thuốc kích thích",
+  sedatives: "Thuốc an thần",
+  inhalants: "Chất hít",
+  opioids: "Opioid",
+  other: "Khác",
+};
+
+const getSubstanceLabel = (value) => substanceMap[value] || value;
+
 function AssistSurvey() {
   const [answers, setAnswers] = useState({});
   const [result, setResult] = useState(null);
   const [surveyId, setSurveyId] = useState(null);
   const [fetchedQuestions, setFetchedQuestions] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  const selectedRiskySubstances = ["cocaine", "stimulants", "sedatives", "opioids"];
 
   useEffect(() => {
     const fetchSurvey = async () => {
@@ -53,7 +71,6 @@ function AssistSurvey() {
             },
           }
         );
-
         const data = await res.json();
         setSurveyId(data.surveyId);
         setFetchedQuestions(data.answers);
@@ -68,15 +85,42 @@ function AssistSurvey() {
   }, []);
 
   const handleAnswerChange = (qid, value) => {
-    setAnswers((prev) => ({ ...prev, [qid]: value }));
+    if (qid === 1) {
+      const selected = answers[1] || [];
+      const newSelected = selected.includes(value)
+        ? selected.filter((v) => v !== value)
+        : [...selected, value];
+      setAnswers((prev) => ({ ...prev, [1]: newSelected }));
+    } else {
+      setAnswers((prev) => ({ ...prev, [qid]: value }));
+    }
   };
-
-  const handleFinish = async () => {
+const handleFinish = async () => {
     const payload = {
-      answers: Object.entries(answers).map(([questionId, answerText]) => ({
-        questionId: parseInt(questionId),
-        answerText,
-      })),
+      answers: [
+        // 👉 Thêm câu 1 (danh sách chất đã chọn)
+        ...(answers[1]
+          ? [
+              {
+                questionId: 1,
+                substance: null,
+                answerText: answers[1].join(","),
+              },
+            ]
+          : []),
+
+        // 👉 Các câu còn lại
+        ...Object.entries(answers)
+          .filter(([key]) => key !== "1")
+          .map(([questionKey, answerText]) => {
+            const [questionId, substance] = questionKey.split("-");
+            return {
+              questionId: parseInt(questionId),
+              substance: substance || null,
+              answerText,
+            };
+          }),
+      ],
     };
 
     try {
@@ -143,31 +187,77 @@ function AssistSurvey() {
           <p>Đang tải câu hỏi...</p>
         ) : !result ? (
           <>
-            {fetchedQuestions.map((q) => (
-              <div key={q.questionId} className="survey-question">
-                <p>
-                  <strong>
-                    Câu {q.questionId} - {q.questionText}
-                  </strong>
-                </p>
-                <div className="radio-group">
-                  {getOptions(q.questionId).map((opt, idx) => (
-                    <label key={idx} className="radio-item">
-                      <input
-                        type="radio"
-                        name={`q${q.questionId}`}
-                        value={opt.value}
-                        checked={answers[q.questionId] === opt.value}
-                        onChange={() =>
-                          handleAnswerChange(q.questionId, opt.value)
-                        }
-                      />
-                      {opt.label}
-                    </label>
-                  ))}
-                </div>
-              </div>
-            ))}
+            {fetchedQuestions.map((q) => {
+              if (q.questionId === 1) {
+                return (
+                  <div key={q.questionId} className="survey-question">
+                    <p>
+                      <strong>
+                        Câu {q.questionId} - {q.questionText}
+                      </strong>
+                    </p>
+                    <div className="checkbox-group">
+                      {getOptions(1).map((opt, idx) => (
+<label key={idx} className="checkbox-item">
+                          <input
+                            type="checkbox"
+                            name={`q${q.questionId}`}
+                            value={opt.value}
+                            checked={answers[1]?.includes(opt.value)}
+                            onChange={() => handleAnswerChange(1, opt.value)}
+                          />
+                          {opt.label}
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                );
+              }
+
+              if (q.questionId !== 1 && answers[1]?.length > 0) {
+                return answers[1].map((sub) => {
+                  if (q.questionId === 8 && !selectedRiskySubstances.includes(sub))
+                    return null;
+
+                  return (
+                    <div key={`${q.questionId}-${sub}`} className="survey-question">
+                      <p>
+                        <strong>
+                          Câu {q.questionId} -{" "}
+                          {q.questionText.replace(
+                            "chất đó",
+                            `chất ${getSubstanceLabel(sub)}`
+                          )}
+                        </strong>
+                      </p>
+                      <div className="radio-group">
+                        {getOptions(q.questionId).map((opt, i) => (
+                          <label key={i} className="radio-item">
+                            <input
+                              type="radio"
+                              name={`q${q.questionId}-${sub}`}
+                              value={opt.value}
+                              checked={
+                                answers[`${q.questionId}-${sub}`] === opt.value
+                              }
+                              onChange={() =>
+                                handleAnswerChange(
+                                  `${q.questionId}-${sub}`,
+                                  opt.value
+                                )
+                              }
+                            />
+                            {opt.label}
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                });
+              }
+
+              return null;
+            })}
             <button className="submit-button" onClick={handleFinish}>
               Gửi kết quả →
             </button>
@@ -184,13 +274,10 @@ function AssistSurvey() {
             {result.risk?.includes("cao") && (
               <p className="note warning">
                 ⚠️ Bạn nên tìm tư vấn từ chuyên gia càng sớm càng tốt.
-              </p>
+</p>
             )}
             <br />
-            <button
-              className="tro-ve"
-              onClick={() => (window.location.href = "/")}
-            >
+            <button className="tro-ve" onClick={() => (window.location.href = "/")}>
               🏠 Trở về màn hình chính
             </button>
           </div>

@@ -78,8 +78,8 @@ const DashboardSurvey = () => {
         </>
       )}
 
-      <Link to="/dashboard" className="dashboard-survey-back-button">
-        Quay lại trang chính
+      <Link to="/" className="dashboard-survey-back-button">
+        Quay lại trang chủ
       </Link>
     </div>
   );

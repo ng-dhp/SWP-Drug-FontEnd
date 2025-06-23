@@ -96,7 +96,7 @@ export default function Navbar({ onLogin, onRegister, isLoggedIn, onLogout }) {
               onMouseEnter={() => setIsDropdownOpen(true)}
               onMouseLeave={() => setIsDropdownOpen(false)}
             >
-              <Link to="/dashboard" className="dropdown-toggle">Dashboard</Link>
+              <span className="dropdown-toggle">Dashboard</span>
               {isDropdownOpen && (
                 <div className="dropdown-menu">
                   <Link to="/dashboard-survey">Dashboard Survey</Link>
