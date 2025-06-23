@@ -57,7 +57,7 @@
 .google-login-button {
   display: flex;
   align-items: center;
-  background-color: #3498db;
+  background-color: #0395f6;
   color: white;
   border: none;
   border-radius: 6px;
@@ -89,8 +89,8 @@
   text-align: center;
 }
 
-.forgot-password-button  {
-  padding-right: 94px;
+.forgot-password-button:hover {
+  background-color: white
 }
 .modal-content h3{
   text-align: center;

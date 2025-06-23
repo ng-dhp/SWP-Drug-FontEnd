@@ -1,146 +1,169 @@
-import React, { useState } from 'react';
-import './css/CrafftSurvey.css';
+import React, { useEffect, useState } from "react";
+import "./css/CrafftSurvey.css";
 
 function CrafftSurvey() {
-  const [partA, setPartA] = useState({
-    alcohol: '',
-    cannabis: '',
-    otherDrugs: ''
-  });
+  const [surveyId, setSurveyId] = useState(null);
+  const [questions, setQuestions] = useState([]);
+  const [answers, setAnswers] = useState({});
+  const [result, setResult] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [showPartB, setShowPartB] = useState(false);
 
-  const [partB, setPartB] = useState({
-    C: false,
-    R: false,
-    A: false,
-    F1: false,
-    F2: false,
-    T: false
-  });
+  // Gọi API lấy khảo sát CRAFFT
+  useEffect(() => {
+    const fetchSurvey = async () => {
+      try {
+        const res = await fetch(
+          "http://localhost:8080/api/v1.0/survey-template/start?templateId=2",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+        const data = await res.json();
+        setSurveyId(data.surveyId);
+        setQuestions(data.answers);
+      } catch (err) {
+        console.error("Lỗi tải khảo sát CRAFFT:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-  const [showPartB, setShowPartB] = useState(false); // ✅ Flag để hiện phần B
+    fetchSurvey();
+  }, []);
 
-  const handlePartAChange = (e) => {
-    const { name, value } = e.target;
-    setPartA(prev => ({ ...prev, [name]: value }));
+  // Kiểm tra xem có câu nào trong phần A được chọn "YES"
+  useEffect(() => {
+    const hasYesInPartA = [9, 10, 11].some(
+      (qid) => answers[qid] === "YES"
+    );
+    setShowPartB(hasYesInPartA);
+  }, [answers]);
+
+  const handleAnswerChange = (qid, value) => {
+    setAnswers((prev) => ({ ...prev, [qid]: value }));
   };
 
-  const handlePartBChange = (e) => {
-    const { name, checked } = e.target;
-    setPartB(prev => ({ ...prev, [name]: checked }));
-  };
+  const handleSubmit = async () => {
+    const payload = {
+      answers: Object.entries(answers).map(([questionId, answerText]) => ({
+        questionId: parseInt(questionId),
+        answerText,
+      })),
+    };
 
-  const handleNext = () => {
-    const anyUse = Object.values(partA).some(value => parseInt(value) > 0);
-    if (anyUse) {
-      setShowPartB(true);
-    } else {
-      alert("Bạn không sử dụng chất nào. Tuy nhiên vui lòng trả lời câu hỏi B1."); // hoặc setShowPartB(true)
-      setShowPartB(true); // hoặc bạn có thể giữ nguyên Part A
+    try {
+      const res = await fetch(
+        `http://localhost:8080/api/v1.0/survey-template/survey/${surveyId}/submit`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify(payload),
+        }
+      );
+
+      const data = await res.json();
+      setResult({
+        totalScore: data.totalScore,
+        recommendation: data.recommendation,
+      });
+    } catch (err) {
+      console.error("Lỗi gửi khảo sát:", err);
     }
   };
 
-  const score = Object.values(partB).filter(val => val).length;
+  const handleReset = () => {
+    window.location.reload();
+  };
 
   return (
     <div className="the-khao-sat">
       <h2 className="tieu-de">Khảo sát CRAFFT</h2>
-      <p className="tieu-de1">Công cụ sàng lọc sử dụng chất gây nghiện cho thanh thiếu niên (12–18 tuổi).</p>
+      <p className="tieu-de1">
+        Công cụ sàng lọc sử dụng chất gây nghiện cho thanh thiếu niên (12–18 tuổi).
+      </p>
 
-      {/* PHẦN A */}
-      {!showPartB && (
+      {isLoading ? (
+        <p>Đang tải câu hỏi...</p>
+      ) : result ? (
+        <div className="result-box">
+          <p className="tieu-de">Kết quả đánh giá:</p>
+          <p><strong>Tổng điểm:</strong> {result.totalScore}</p>
+          <p>
+            <strong>Mức nguy cơ:</strong>{" "}
+            <span className={result.totalScore >= 2 ? "nguy-co-cao" : "nguy-co-thap"}>
+              {result.recommendation}
+            </span>
+          </p>
+          <br />
+          <button className="btn-tiep-theo" onClick={() => (window.location.href = "/")}>
+            🏠 Trở về màn hình chính
+          </button>
+        </div>
+      ) : (
         <>
-          <h3 className="tieu-de">Phần A: Tần suất sử dụng trong 12 tháng qua</h3>
-          <p className="tieu-de">(Điền số ngày, nếu không sử dụng ghi "0")</p>
+          {/* Phần A */}
+          <h3 className="tieu-de">Phần A: Trong 12 tháng qua</h3>
+          {questions
+            .filter((q) => [9, 10, 11].includes(q.questionId))
+            .map((q) => (
+              <div key={q.questionId} className="survey-question">
+                <p><strong>{q.questionText}</strong></p>
+                <div className="radio-group">
+                  {["NEVER", "YES"].map((val) => (
+                    <label key={val} className="radio-item">
+                      <input
+                        type="radio"
+                        name={`q${q.questionId}`}
+                        value={val}
+                        checked={answers[q.questionId] === val}
+                        onChange={() => handleAnswerChange(q.questionId, val)}
+                      />
+                      {val === "NEVER" ? "Không" : "Có"}
+                    </label>
+                  ))}
+                </div>
+              </div>
+            ))}
 
-          <div className="cach-khoang">
-            <div className="cau-hoi">
-              <label className="tieu-de">1. Rượu (hơn vài ngụm): </label>
-              <input
-                type="number"
-                name="alcohol"
-                value={partA.alcohol}
-                onChange={handlePartAChange}
-                className="hop-chon"
-                min="0"
-              />
-            </div>
-            <div className="cau-hoi">
-              <label className="tieu-de">2. Cần sa hoặc hashish: </label>
-              <input
-                type="number"
-                name="cannabis"
-                value={partA.cannabis}
-                onChange={handlePartAChange}
-                className="hop-chon"
-                min="0"
-              />
-            </div>
-            <div className="cau-hoi">
-              <label className="tieu-de">3. Bất kỳ chất nào khác để cảm thấy “phê”: </label>
-              <input
-                type="number"
-                name="otherDrugs"
-                value={partA.otherDrugs}
-                onChange={handlePartAChange}
-                className="hop-chon"
-                min="0"
-              />
-            </div>
-          </div>
+          {/* Phần B */}
+          {showPartB && (
+            <>
+              <h3 className="tieu-de">Phần B: Trong 12 tháng qua</h3>
+              {questions
+                .filter((q) => ![9, 10, 11].includes(q.questionId))
+                .map((q) => (
+                  <div key={q.questionId} className="survey-question">
+                    <p><strong>{q.questionText}</strong></p>
+                    <div className="radio-group">
+                      {["NEVER", "YES"].map((val) => (
+                        <label key={val} className="radio-item">
+                          <input
+                            type="radio"
+                            name={`q${q.questionId}`}
+                            value={val}
+                            checked={answers[q.questionId] === val}
+                            onChange={() => handleAnswerChange(q.questionId, val)}
+                          />
+                          {val === "NEVER" ? "Không" : "Có"}
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                ))}
 
-          <button className="btn-tiep-theo" onClick={handleNext}>Tiếp tục</button>
-        </>
-      )}
-
-      {/* PHẦN B */}
-      {showPartB && (
-        <>
-          <h3 className="tieu-de">Phần B: Câu hỏi CRAFFT</h3>
-          <p className="tieu-de">Trong 12 tháng vừa qua:</p>
-
-          <div className="cach-khoang">
-            <label className="cau-hoi">
-              <input type="checkbox" name="C" checked={partB.C} onChange={handlePartBChange} className="mr-2" />
-              C – Ngồi trong xe do người đang “phê” hoặc sử dụng rượu/lái?
-            </label>
-            <label className="cau-hoi">
-              <input type="checkbox" name="R" checked={partB.R} onChange={handlePartBChange} className="mr-2" />
-              R – Sử dụng để thư giãn, cảm thấy tốt hơn hoặc hòa nhập?
-            </label>
-            <label className="cau-hoi">
-              <input type="checkbox" name="A" checked={partB.A} onChange={handlePartBChange} className="mr-2" />
-              A – Sử dụng khi ở một mình?
-            </label>
-            <label className="cau-hoi">
-              <input type="checkbox" name="F1" checked={partB.F1} onChange={handlePartBChange} className="mr-2" />
-              F – Quên những việc đã làm khi sử dụng?
-            </label>
-            <label className="cau-hoi">
-              <input type="checkbox" name="F2" checked={partB.F2} onChange={handlePartBChange} className="mr-2" />
-              F – Bị người thân/bạn bè khuyên nên dừng?
-            </label>
-            <label className="cau-hoi">
-              <input type="checkbox" name="T" checked={partB.T} onChange={handlePartBChange} className="mr-2" />
-              T – Gặp rắc rối khi đang sử dụng?
-            </label>
-          </div>
-
-          <div className="hop-diem">
-  <p className="tieu-de">Kết quả đánh giá:</p>
-  <p>Tổng điểm: {score}</p>
-  <p>
-    Mức nguy cơ:{' '}
-    <span className={score >= 2 ? 'nguy-co-cao' : 'nguy-co-thap'}>
-      {score >= 2 ? 'Nguy cơ cao' : 'Nguy cơ thấp'}
-    </span>
-  </p>
-  
-</div>
- {/* Nút trở về trang chủ */}
-  <button className="btn-tiep-theo" onClick={() => window.location.href = "/"}>
-    🏠 Trở về màn hình chính
-  </button>
-
+              <button className="submit-button" onClick={handleSubmit}>
+                Gửi kết quả →
+              </button>
+            </>
+          )}
         </>
       )}
     </div>

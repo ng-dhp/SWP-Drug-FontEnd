@@ -1,0 +1,107 @@
+.profile-container {
+  padding: 40px 20px;
+  background: #f3f4f6;
+  min-height: 100vh;
+  font-family: "Segoe UI", sans-serif;
+}
+
+.tittle-thongtin {
+  font-size: 30px;
+  font-weight: 700;
+  color: #1d4ed8;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.thongtin {
+  max-width: 700px;
+  margin: 0 auto 40px;
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 35px 50px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  font-size: 18px;
+  line-height: 1.8;
+  color: #1f2937;
+  list-style: none;
+}
+
+.thongtin li {
+  margin-bottom: 16px;
+  display: flex;
+  align-items: flex-start;
+}
+
+.thongtin li strong {
+  min-width: 190px;
+  display: inline-block;
+  font-weight: 600;
+  color: #111827;
+}
+
+/* Lịch sử khảo sát */
+.survey-history {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 10px;
+}
+
+.survey-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  margin-bottom: 25px;
+  padding: 20px 25px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  transition: 0.3s ease;
+}
+
+.survey-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+}
+
+.survey-item h3 {
+  margin: 0 0 10px;
+  font-size: 20px;
+  color: #1e40af;
+}
+
+.survey-item p {
+  margin: 5px 0;
+  font-size: 16px;
+}
+
+.survey-item details {
+  margin-top: 12px;
+  background: #f9fafb;
+  padding: 10px 15px;
+  border-radius: 6px;
+}
+
+.survey-item summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: #4b5563;
+  margin-bottom: 8px;
+}
+
+/* Nút quay lại */
+.btn-back-home {
+  display: block;
+  margin: 40px auto 0;
+  background-color: #2563eb;
+  color: #ffffff;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.2s ease-in-out;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.btn-back-home:hover {
+  background-color: #1e3a8a;
+}
