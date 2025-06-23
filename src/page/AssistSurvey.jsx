@@ -17,13 +17,14 @@ const getOptions = (questionId) => {
     ];
   }
 
-  if (questionId === 6 || questionId === 8) {
-    return [
-      { label: "Không", value: "NEVER" },
-      { label: "Có, trong 3 tháng qua", value: "RECENT" },
-      { label: "Có, nhưng không trong 3 tháng qua", value: "PAST" },
-    ];
-  }
+ if (questionId === 6 || questionId === 7 || questionId === 8) {
+  return [
+    { label: "Không", value: "NEVER" },
+    { label: "Có, trong 3 tháng qua", value: "RECENT" },
+    { label: "Có, nhưng không trong 3 tháng qua", value: "PAST" },
+  ];
+}
+
 
   return [
     { label: "Không bao giờ", value: "NEVER" },
