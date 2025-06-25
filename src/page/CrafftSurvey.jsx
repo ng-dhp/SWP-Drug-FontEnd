@@ -142,6 +142,12 @@ function CrafftSurvey() {
             <button className="back-home-button" onClick={() => (window.location.href = "/")}>
               🏠 Quay lại trang chủ
             </button>
+            <button
+                className="support-request-button"
+                onClick={() => (window.location.href = "/guiyeucau")}
+              >
+                🛠 Gửi yêu cầu hỗ trợ
+              </button>
           </div>
         ) : (
           <p className="question-sub">

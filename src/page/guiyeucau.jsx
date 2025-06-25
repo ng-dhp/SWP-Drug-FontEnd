@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./css/AssistSurvey.css";
+import "./css/guiyeucau.css";
 
 function GuiYeuCau() {
   const [reason, setReason] = useState("");
@@ -40,36 +40,37 @@ function GuiYeuCau() {
     } finally {
       setLoading(false);
     }
-  };
+  }
 
   return (
     <div className="assist-survey-container">
       <div className="survey-box">
         <h2 className="question-title">Gửi yêu cầu hỗ trợ làm lại khảo sát</h2>
-        <form onSubmit={handleSubmit}>
-          <label className="label-title">
-            Lý do bạn muốn làm lại khảo sát:
-          </label>
-          <textarea
-            rows="4"
-            value={reason}
-            onChange={(e) => setReason(e.target.value)}
-            placeholder="Nhập lý do tại đây..."
-          ></textarea>
-          
-          <div className="button-group">
-            <button className="submit-button" type="submit" disabled={loading}>
-              {loading ? "Đang gửi..." : "📨 Gửi yêu cầu"}
-            </button>
-            <button
-              type="button"
-              className="reset-button"
-              onClick={() => (window.location.href = "/")}
-            >
-              🏠 Quay lại trang chủ
-            </button>
-          </div>
-        </form>
+       <form onSubmit={handleSubmit}>
+  <div className="input-group">
+    <label className="label-title">Lý do bạn muốn làm lại khảo sát:</label>
+    <textarea
+      rows="4"
+      value={reason}
+      onChange={(e) => setReason(e.target.value)}
+      placeholder="Nhập lý do tại đây..."
+    ></textarea>
+  </div>
+
+  <div className="button-group">
+    <button className="submit-button" type="submit" disabled={loading}>
+      {loading ? "Đang gửi..." : "📨 Gửi yêu cầu"}
+    </button>
+    <button
+      type="button"
+      className="submit-button"
+      onClick={() => (window.location.href = "/")}
+    >
+      🏠 Quay lại trang chủ
+    </button>
+  </div>
+</form>
+
 
         {message && (
           <p className={`status-message ${message.includes("✅") ? "success" : "error"}`}>
