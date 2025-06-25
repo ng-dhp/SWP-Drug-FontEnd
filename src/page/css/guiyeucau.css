@@ -1,0 +1,59 @@
+/* Style textarea */
+textarea {
+  width: 100%;
+  margin-top: 8px;
+  margin-bottom: 16px;
+  padding: 12px;
+  font-size: 15px;
+  font-family: inherit;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  background-color: #f9fafb;
+  resize: vertical;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+textarea:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+/* Nhãn */
+.label-title {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+/* Button nhóm */
+.button-group {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+/* Style chung cho tất cả nút */
+.button-group button {
+  flex: 1 1 160px; /* Đảm bảo nút có tối thiểu 160px, co dãn đều */
+  max-width: 220px;
+  background-color: #3b82f6;
+  color: white;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* Hover */
+.button-group button:hover {
+  background-color: #2563eb;
+}

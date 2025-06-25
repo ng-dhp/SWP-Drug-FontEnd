@@ -1,0 +1,41 @@
+.dashboard-yeucau-container {
+  padding: 30px;
+  background-color: #f7f7f7;
+  min-height: 100vh;
+}
+
+.dashboard-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #1d4ed8;
+}
+
+.dashboard-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.08);
+}
+
+.dashboard-table th,
+.dashboard-table td {
+  padding: 12px;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+.dashboard-table th {
+  background-color: #dbeafe;
+  color: #1e293b;
+}
+
+.status.approved {
+  color: #16a34a;
+  font-weight: bold;
+}
+
+.status.rejected {
+  color: #dc2626;
+  font-weight: bold;
+}

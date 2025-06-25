@@ -213,5 +213,29 @@ body {
 .back-home-button:hover {
   background-color: #0056b3;
 }
+.support-request-button {
+  background-color: #f97316;
+  color: white;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 16px; /* 👈 Thêm dòng này */
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+
+.support-request-button:hover {
+  background-color: #ea580c;
+}
+
+.button-group {
+  margin-top: 16px;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
 
 
