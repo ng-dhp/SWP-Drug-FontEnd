@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./css/AssistSurvey.css";
 
-// Các lựa chọn cho từng câu hỏi
 const getOptions = (questionId) => {
   if (questionId === 1) {
     return [
@@ -17,7 +16,7 @@ const getOptions = (questionId) => {
     ];
   }
 
-  if (questionId === 6 || questionId === 8) {
+  if (questionId === 6 || questionId === 7 || questionId === 8) {
     return [
       { label: "Không", value: "NEVER" },
       { label: "Có, trong 3 tháng qua", value: "RECENT" },
@@ -34,7 +33,6 @@ const getOptions = (questionId) => {
   ];
 };
 
-// Map giá trị thành nhãn tiếng Việt
 const substanceMap = {
   tabaco: "Thuốc lá",
   alcohol: "Rượu",
@@ -55,33 +53,86 @@ function AssistSurvey() {
   const [surveyId, setSurveyId] = useState(null);
   const [fetchedQuestions, setFetchedQuestions] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [warningMessage, setWarningMessage] = useState(null);
 
   const selectedRiskySubstances = ["cocaine", "stimulants", "sedatives", "opioids"];
 
   useEffect(() => {
-    const fetchSurvey = async () => {
-      try {
-        const res = await fetch(
-          "http://localhost:8080/api/v1.0/survey-template/start?templateId=1",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
-        const data = await res.json();
-        setSurveyId(data.surveyId);
-        setFetchedQuestions(data.answers);
-      } catch (err) {
-        console.error("Lỗi khi lấy khảo sát:", err);
-      } finally {
-        setIsLoading(false);
+    const handleBeforeUnload = (e) => {
+      if (!result) {
+        e.preventDefault();
+        e.returnValue = "";
       }
     };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [result]);
 
-    fetchSurvey();
+  useEffect(() => {
+    if (surveyId && fetchedQuestions.length > 0) {
+      localStorage.setItem(
+        "assistSurveyData",
+        JSON.stringify({ surveyId, answers, fetchedQuestions })
+      );
+    }
+  }, [surveyId, answers, fetchedQuestions]);
+
+  const fetchSurvey = async () => {
+    try {
+      const res = await fetch(
+        "http://localhost:8080/api/v1.0/survey-template/start?templateId=1",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      const contentType = res.headers.get("content-type");
+
+      if (!res.ok) {
+        if (contentType && contentType.includes("text/plain")) {
+          const message = await res.text();
+          if (message.includes("7 ngày")) {
+            setWarningMessage(
+              "📅 Bạn chỉ có thể làm lại khảo sát này sau 7 ngày kể từ lần trước.\n\n" +
+              "🛠 Nếu bạn cho rằng mình đã trả lời sai, vui lòng liên hệ bộ phận hỗ trợ để được xem xét lại."
+            );
+          } else {
+            alert("⚠️ Lỗi từ server:\n" + message);
+          }
+          return;
+        }
+
+        const errData = await res.json();
+        alert("⚠️ Lỗi: " + (errData.message || "Không xác định."));
+        return;
+      }
+
+      const data = await res.json();
+      setSurveyId(data.surveyId);
+      setFetchedQuestions(data.answers);
+    } catch (err) {
+      console.error("Lỗi khi lấy khảo sát:", err);
+      alert("❌ Không thể kết nối đến máy chủ hoặc server không phản hồi đúng định dạng.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const saved = localStorage.getItem("assistSurveyData");
+    if (saved) {
+      const { surveyId, answers, fetchedQuestions } = JSON.parse(saved);
+      setSurveyId(surveyId);
+      setAnswers(answers);
+      setFetchedQuestions(fetchedQuestions);
+      setIsLoading(false);
+    } else {
+      fetchSurvey();
+    }
   }, []);
 
   const handleAnswerChange = (qid, value) => {
@@ -95,10 +146,10 @@ function AssistSurvey() {
       setAnswers((prev) => ({ ...prev, [qid]: value }));
     }
   };
-const handleFinish = async () => {
+
+  const handleFinish = async () => {
     const payload = {
       answers: [
-        // 👉 Thêm câu 1 (danh sách chất đã chọn)
         ...(answers[1]
           ? [
               {
@@ -108,8 +159,6 @@ const handleFinish = async () => {
               },
             ]
           : []),
-
-        // 👉 Các câu còn lại
         ...Object.entries(answers)
           .filter(([key]) => key !== "1")
           .map(([questionKey, answerText]) => {
@@ -135,43 +184,11 @@ const handleFinish = async () => {
           body: JSON.stringify(payload),
         }
       );
-
       const data = await res.json();
-      setResult({
-        score: data.totalScore,
-        risk: data.recommendation,
-      });
+      setResult({ score: data.totalScore, risk: data.recommendation });
+      localStorage.removeItem("assistSurveyData");
     } catch (err) {
       console.error("Lỗi gửi khảo sát:", err);
-    }
-  };
-
-  const handleReset = async () => {
-    setAnswers({});
-    setResult(null);
-    setSurveyId(null);
-    setFetchedQuestions([]);
-    setIsLoading(true);
-
-    try {
-      const res = await fetch(
-        "http://localhost:8080/api/v1.0/survey-template/start?templateId=1",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-
-      const data = await res.json();
-      setSurveyId(data.surveyId);
-      setFetchedQuestions(data.answers);
-    } catch (err) {
-      console.error("Lỗi khi reset khảo sát:", err);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -179,13 +196,25 @@ const handleFinish = async () => {
     <div className="assist-survey-container">
       <div className="survey-box">
         <h2 className="question-title">Khảo sát ASSIST</h2>
-        <p className="question-sub">
-          Công cụ sàng lọc sử dụng chất gây nghiện cho người lớn (18+).
-        </p>
+
+        {warningMessage ? (
+          <div className="warning">
+            {warningMessage.split("\n").map((line, i) => (
+              <p key={i}>{line}</p>
+            ))}
+            <button className="back-home-button" onClick={() => (window.location.href = "/")}>
+              🏠 Quay lại trang chủ
+            </button>
+          </div>
+        ) : (
+          <p className="question-sub">
+            Công cụ sàng lọc sử dụng chất gây nghiện cho người lớn (18+).
+          </p>
+        )}
 
         {isLoading ? (
           <p>Đang tải câu hỏi...</p>
-        ) : !result ? (
+        ) : !result && !warningMessage ? (
           <>
             {fetchedQuestions.map((q) => {
               if (q.questionId === 1) {
@@ -198,7 +227,7 @@ const handleFinish = async () => {
                     </p>
                     <div className="checkbox-group">
                       {getOptions(1).map((opt, idx) => (
-<label key={idx} className="checkbox-item">
+                        <label key={idx} className="checkbox-item">
                           <input
                             type="checkbox"
                             name={`q${q.questionId}`}
@@ -216,18 +245,14 @@ const handleFinish = async () => {
 
               if (q.questionId !== 1 && answers[1]?.length > 0) {
                 return answers[1].map((sub) => {
-                  if (q.questionId === 8 && !selectedRiskySubstances.includes(sub))
-                    return null;
+                  if (q.questionId === 8 && !selectedRiskySubstances.includes(sub)) return null;
 
                   return (
                     <div key={`${q.questionId}-${sub}`} className="survey-question">
                       <p>
                         <strong>
                           Câu {q.questionId} -{" "}
-                          {q.questionText.replace(
-                            "chất đó",
-                            `chất ${getSubstanceLabel(sub)}`
-                          )}
+                          {q.questionText.replace("chất đó", `chất ${getSubstanceLabel(sub)}`)}
                         </strong>
                       </p>
                       <div className="radio-group">
@@ -237,14 +262,9 @@ const handleFinish = async () => {
                               type="radio"
                               name={`q${q.questionId}-${sub}`}
                               value={opt.value}
-                              checked={
-                                answers[`${q.questionId}-${sub}`] === opt.value
-                              }
+                              checked={answers[`${q.questionId}-${sub}`] === opt.value}
                               onChange={() =>
-                                handleAnswerChange(
-                                  `${q.questionId}-${sub}`,
-                                  opt.value
-                                )
+                                handleAnswerChange(`${q.questionId}-${sub}`, opt.value)
                               }
                             />
                             {opt.label}
@@ -262,7 +282,7 @@ const handleFinish = async () => {
               Gửi kết quả →
             </button>
           </>
-        ) : (
+        ) : result ? (
           <div className="result-box">
             <h3>Kết quả đánh giá</h3>
             <p>
@@ -274,14 +294,14 @@ const handleFinish = async () => {
             {result.risk?.includes("cao") && (
               <p className="note warning">
                 ⚠️ Bạn nên tìm tư vấn từ chuyên gia càng sớm càng tốt.
-</p>
+              </p>
             )}
             <br />
             <button className="tro-ve" onClick={() => (window.location.href = "/")}>
               🏠 Trở về màn hình chính
             </button>
           </div>
-        )}
+        ) : null}
       </div>
     </div>
   );

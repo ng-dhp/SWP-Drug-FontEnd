@@ -91,19 +91,22 @@ export default function Navbar({ onLogin, onRegister, isLoggedIn, onLogout }) {
             <Link to="/chiendich">Chiến dịch</Link>
             <Link to="/feedbackform">Đánh giá</Link>
 
-            <div
-              className="dropdown"
-              onMouseEnter={() => setIsDropdownOpen(true)}
-              onMouseLeave={() => setIsDropdownOpen(false)}
-            >
-              <span className="dropdown-toggle">Dashboard</span>
-              {isDropdownOpen && (
-                <div className="dropdown-menu">
-                  <Link to="/dashboard-survey">Dashboard Survey</Link>
-                  <Link to="/dashboard-campaign">Dashboard Chiến dịch</Link>
-                </div>
-              )}
-            </div>
+            {roleName === "ADMIN" && (
+              <div
+                className="dropdown"
+                onMouseEnter={() => setIsDropdownOpen(true)}
+                onMouseLeave={() => setIsDropdownOpen(false)}
+              >
+                <span className="dropdown-toggle">Dashboard</span>
+                {isDropdownOpen && (
+                  <div className="dropdown-menu">
+                    <Link to="/dashboard-survey">Dashboard Survey</Link>
+                    <Link to="/dashboard-campaign">Dashboard Chiến dịch</Link>
+                  </div>
+                )}
+              </div>
+            )}
+
           </div>
         </motion.div>
 
