@@ -10,9 +10,11 @@ body {
 .assist-survey-container {
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   padding: 40px 16px;
   min-height: 100vh;
+  flex-wrap: wrap;
+  box-sizing: border-box;
 }
 
 .survey-box {
@@ -22,13 +24,7 @@ body {
   max-width: 720px;
   width: 100%;
   padding: 32px;
-}
-
-.step {
-  color: #4f46e5;
-  font-weight: 1000;
-  margin-bottom: 8px;
-  text-align: center;
+  box-sizing: border-box;
 }
 
 .question-title {
@@ -45,86 +41,21 @@ body {
   text-align: center;
 }
 
-.note {
-  color: #3b82f6;
-  font-size: 14px;
-}
-
-.checkbox-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-bottom: 32px;
-}
-
-.checkbox-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 16px;
-  background: #f1f5f9;
-  padding: 12px 16px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.checkbox-item:hover {
-  background: #e2e8f0;
-}
-
-.checkbox-item input[type="checkbox"] {
-  transform: scale(1.2);
-}
-
-.submit-button {
-  background: #3b82f6;
-  color: white;
-  padding: 12px 24px;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background 0.2s;
-  margin-bottom: 20px;
-}
-
-.submit-button:hover {
-  background: #2563eb;
-}
-.substance-button {
-  display: block;
-  width: 100%;
-  text-align: left;
-  background: #f1f5f9;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-  padding: 12px 16px;
-  font-size: 16px;
-  color: #1f2937; /* <-- thêm dòng này */
-  cursor: pointer;
-  transition: background 0.2s, transform 0.1s;
-}
-
 .survey-question {
   background: #f9fafb;
   border-radius: 10px;
   padding: 16px;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
   border-left: 4px solid #3b82f6;
-   font-size: 1.2rem;
-}
-
-.highlight-question {
-  background: #fef2f2;
-  border-left-color: #dc2626;
+  font-size: 1.2rem;
+  box-sizing: border-box;
 }
 
 .radio-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin-top: 10px;
+  gap: 12px;
+  margin-top: 12px;
 }
 
 .radio-item {
@@ -133,7 +64,41 @@ body {
   align-items: center;
   gap: 10px;
 }
-/* Nút chọn chất dạng button */
+
+.submit-button, .reset-button {
+  background: #3b82f6;
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin: 10px 0;
+  flex: 1 1 150px;
+}
+
+.submit-button:hover {
+  background: #2563eb;
+}
+
+.reset-button {
+  background: #64748b;
+}
+
+.reset-button:hover {
+  background: #475569;
+}
+
+.button-group {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* Nút chọn chất */
 .substance-button {
   display: block;
   width: 100%;
@@ -145,6 +110,7 @@ body {
   font-size: 16px;
   cursor: pointer;
   transition: background 0.2s, transform 0.1s;
+  color: #1f2937;
 }
 
 .substance-button:hover {
@@ -152,7 +118,7 @@ body {
   transform: translateY(-1px);
 }
 
-/* Hộp kết quả */
+/* Kết quả */
 .result-box {
   background: #f1f5f9;
   padding: 24px;
@@ -178,7 +144,8 @@ body {
   font-size: 15px;
   margin-top: 16px;
 }
-.tro-ve{
+
+.tro-ve {
   background-color: #3498db;
   color: #fff;
   padding: 12px 24px;
@@ -188,54 +155,45 @@ body {
   cursor: pointer;
   font-weight: bold;
 }
+
+/* Cảnh báo */
 .warning {
   background-color: #fff3cd;
   color: #856404;
   padding: 16px;
   border-radius: 8px;
   border: 1px solid #ffeeba;
-  margin-bottom: 16px;
+  margin: 20px 0;
   font-size: 16px;
   white-space: pre-wrap;
+  text-align: center;
+}
+
+.back-home-button, .support-request-button {
+  padding: 10px 16px;
+  font-size: 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  border: none;
+  flex: 1 1 160px;
 }
 
 .back-home-button {
-  margin-top: 16px;
-  padding: 8px 16px;
-  font-size: 16px;
   background-color: #007bff;
   color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
 }
 
 .back-home-button:hover {
   background-color: #0056b3;
 }
+
 .support-request-button {
   background-color: #f97316;
   color: white;
-  padding: 10px 16px;
-  border: none;
-  border-radius: 6px;
-  font-weight: bold;
-  font-size: 16px; /* 👈 Thêm dòng này */
-  cursor: pointer;
   transition: background-color 0.3s;
 }
-
 
 .support-request-button:hover {
   background-color: #ea580c;
 }
-
-.button-group {
-  margin-top: 16px;
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-
