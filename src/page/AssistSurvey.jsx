@@ -54,7 +54,12 @@ function AssistSurvey() {
   const [warningMessage, setWarningMessage] = useState(null);
   const [isStep1Done, setIsStep1Done] = useState(false);
 
-  const selectedRiskySubstances = ["cocaine", "stimulants", "sedatives", "opioids"];
+  const selectedRiskySubstances = [
+    "cocaine",
+    "stimulants",
+    "sedatives",
+    "opioids",
+  ];
 
   useEffect(() => {
     const handleBeforeUnload = (e) => {
@@ -108,7 +113,9 @@ function AssistSurvey() {
       setFetchedQuestions(data.answers);
     } catch (err) {
       console.error("Lỗi khi lấy khảo sát:", err);
-      alert("❌ Không thể kết nối đến máy chủ hoặc server không phản hồi đúng định dạng.");
+      alert(
+        "❌ Không thể kết nối đến máy chủ hoặc server không phản hồi đúng định dạng."
+      );
     } finally {
       setIsLoading(false);
     }
@@ -185,9 +192,20 @@ function AssistSurvey() {
             {warningMessage.split("\n").map((line, i) => (
               <p key={i}>{line}</p>
             ))}
-            <button className="back-home-button" onClick={() => (window.location.href = "/")}>
-              🏠 Quay lại trang chủ
-            </button>
+            <div className="button-group">
+              <button
+                className="back-home-button"
+                onClick={() => (window.location.href = "/")}
+              >
+                🏠 Quay lại trang chủ
+              </button>
+              <button
+                className="support-request-button"
+                onClick={() => (window.location.href = "/guiyeucau")}
+              >
+                🛠 Gửi yêu cầu hỗ trợ
+              </button>
+            </div>
           </div>
         ) : (
           <p className="question-sub">
@@ -204,7 +222,11 @@ function AssistSurvey() {
                 .filter((q) => q.questionId === 1)
                 .map((q) => (
                   <div key={q.questionId} className="survey-question">
-                    <p><strong>Câu {q.questionId} - {q.questionText}</strong></p>
+                    <p>
+                      <strong>
+                        Câu {q.questionId} - {q.questionText}
+                      </strong>
+                    </p>
                     <div className="radio-group">
                       {getOptions(1).map((opt, idx) => (
                         <label key={idx} className="radio-item">
@@ -227,12 +249,25 @@ function AssistSurvey() {
                 .filter((q) => q.questionId !== 1)
                 .map((q) => {
                   const sub = answers[1];
-                  if (q.questionId === 8 && !selectedRiskySubstances.includes(sub)) return null;
+                  if (
+                    q.questionId === 8 &&
+                    !selectedRiskySubstances.includes(sub)
+                  )
+                    return null;
                   return (
-                    <div key={`${q.questionId}-${sub}`} className="survey-question">
-                      <p><strong>
-                        Câu {q.questionId} - {q.questionText.replace("chất đó", `chất ${getSubstanceLabel(sub)}`)}
-                      </strong></p>
+                    <div
+                      key={`${q.questionId}-${sub}`}
+                      className="survey-question"
+                    >
+                      <p>
+                        <strong>
+                          Câu {q.questionId} -{" "}
+                          {q.questionText.replace(
+                            "chất đó",
+                            `chất ${getSubstanceLabel(sub)}`
+                          )}
+                        </strong>
+                      </p>
                       <div className="radio-group">
                         {getOptions(q.questionId).map((opt, i) => (
                           <label key={i} className="radio-item">
@@ -240,8 +275,15 @@ function AssistSurvey() {
                               type="radio"
                               name={`q${q.questionId}-${sub}`}
                               value={opt.value}
-                              checked={answers[`${q.questionId}-${sub}`] === opt.value}
-                              onChange={() => handleAnswerChange(`${q.questionId}-${sub}`, opt.value)}
+                              checked={
+                                answers[`${q.questionId}-${sub}`] === opt.value
+                              }
+                              onChange={() =>
+                                handleAnswerChange(
+                                  `${q.questionId}-${sub}`,
+                                  opt.value
+                                )
+                              }
                             />
                             {opt.label}
                           </label>
@@ -252,45 +294,49 @@ function AssistSurvey() {
                 })}
 
             {isStep1Done && (
-  <>
-    <div className="button-group">
-      <button className="submit-button" onClick={handleFinish}>
-        Gửi kết quả →
-      </button>
-      <button
-        className="reset-button"
-        onClick={() => {
-          const sub = answers[1];
-          const newAnswers = { ...answers };
-          delete newAnswers[1];
-          Object.keys(newAnswers).forEach((key) => {
-            if (key.endsWith(`-${sub}`)) {
-              delete newAnswers[key];
-            }
-          });
-          setAnswers(newAnswers);
-          setIsStep1Done(false);
-        }}
-      >
-        🔄 Chọn lại chất khác
-      </button>
-    </div>
-  </>
-)}
-
+              <div className="button-group">
+                <button className="submit-button" onClick={handleFinish}>
+                  Gửi kết quả →
+                </button>
+                <button
+                  className="reset-button"
+                  onClick={() => {
+                    const sub = answers[1];
+                    const newAnswers = { ...answers };
+                    delete newAnswers[1];
+                    Object.keys(newAnswers).forEach((key) => {
+                      if (key.endsWith(`-${sub}`)) {
+                        delete newAnswers[key];
+                      }
+                    });
+                    setAnswers(newAnswers);
+                    setIsStep1Done(false);
+                  }}
+                >
+                  🔄 Chọn lại chất khác
+                </button>
+              </div>
+            )}
           </>
         ) : result ? (
           <div className="result-box">
             <h3>Kết quả đánh giá</h3>
-            <p><strong>Tổng điểm:</strong> {result.score}</p>
-            <p><strong>Mức độ nguy cơ:</strong> {result.risk}</p>
+            <p>
+              <strong>Tổng điểm:</strong> {result.score}
+            </p>
+            <p>
+              <strong>Mức độ nguy cơ:</strong> {result.risk}
+            </p>
             {result.risk?.includes("cao") && (
               <p className="note warning">
                 ⚠️ Bạn nên tìm tư vấn từ chuyên gia càng sớm càng tốt.
               </p>
             )}
             <br />
-            <button className="tro-ve" onClick={() => (window.location.href = "/")}>
+            <button
+              className="tro-ve"
+              onClick={() => (window.location.href = "/")}
+            >
               🏠 Trở về màn hình chính
             </button>
           </div>
