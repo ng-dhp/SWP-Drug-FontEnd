@@ -18,7 +18,7 @@ export default function TuVan() {
     message: "",
   });
 
-  // ✅ Lấy thông tin người dùng sau khi đăng nhập
+  // Lấy thông tin người dùng
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) return;
@@ -43,8 +43,8 @@ export default function TuVan() {
       });
   }, [isLoggedIn]);
 
-  // ✅ Lấy danh sách tư vấn viên từ API
- useEffect(() => {
+  // Lấy danh sách tư vấn viên
+  useEffect(() => {
   const token = localStorage.getItem("token");
 
   fetch("http://localhost:8080/api/v1.0/consultant/getAllConsultant", {
@@ -54,17 +54,36 @@ export default function TuVan() {
       ...(token && { Authorization: `Bearer ${token}` }),
     },
   })
-    .then((res) => {
-      if (!res.ok) throw new Error("Không lấy được danh sách tư vấn viên");
-      return res.json();
-    })
-    .then((data) => {
-      setConsultants(data);
+    .then(async (res) => {
+      const text = await res.text();
+      try {
+        // 1. Phân tích JSON thô và lọc bằng tay
+        const rawData = JSON.parse(text);
+        console.log("🔍 Dữ liệu gốc từ API:", rawData);
+
+        // 2. Lọc ra chỉ các thuộc tính cần dùng
+        const filtered = rawData.map((c) => ({
+          consultantId: c.consultantId,
+          name: c.name,
+          email: c.email,
+          specialization: c.specialization,
+          schedule: c.schedule,
+          availability: c.availability,
+        }));
+
+        console.log("✅ Dữ liệu đã lọc:", filtered);
+        setConsultants(filtered);
+      } catch (err) {
+        console.error("❌ JSON không hợp lệ:", err.message);
+        console.error("⛔ Nội dung gốc:", text.slice(0, 1000)); // cắt để dễ nhìn
+      }
     })
     .catch((err) => {
-      console.error("Lỗi khi lấy danh sách tư vấn viên:", err);
+      console.error("Lỗi khi gọi API:", err);
     });
 }, []);
+
+
 
 
   const handleChange = (e) => {
@@ -98,7 +117,7 @@ export default function TuVan() {
       date: formData.date,
       time: formData.time + ":00",
       status: "Scheduled",
-      location: `Phòng tư vấn với ${selectedDoctor.name}`,
+      location: "Room 204",
       userId: userId,
       consultantId: selectedDoctor.consultantId,
     };
@@ -128,7 +147,11 @@ export default function TuVan() {
     <div className="tuvan-container">
       <h2>Trang Tư Vấn & Đặt Lịch Hẹn</h2>
 
-      {isLoggedIn && <p className="greeting">👋 Xin chào, <strong>{fullName}</strong></p>}
+      {isLoggedIn && (
+        <p className="greeting">
+          👋 Xin chào, <strong>{fullName}</strong>
+        </p>
+      )}
 
       <p>Chọn bác sĩ bạn muốn đặt lịch:</p>
       <div className="doctor-list">
@@ -140,8 +163,9 @@ export default function TuVan() {
           >
             <h3>{doctor.name}</h3>
             <p><strong>Chuyên ngành:</strong> {doctor.specialization}</p>
-            <p><strong>Lịch làm việc:</strong> {doctor.availability || doctor.schedule}</p>
+            <p><strong>Lịch làm việc:</strong> {doctor.schedule}</p>
             <p><strong>Email:</strong> {doctor.email}</p>
+            <p><strong>Trạng thái:</strong> {doctor.availability ? "🟢 Có sẵn" : "🔴 Không có sẵn"}</p>
           </div>
         ))}
       </div>
@@ -159,7 +183,7 @@ export default function TuVan() {
         </label>
 
         <label>
-          Ghi chú:
+          Ghi chú (không bắt buộc):
           <textarea name="message" value={formData.message} onChange={handleChange} />
         </label>
 

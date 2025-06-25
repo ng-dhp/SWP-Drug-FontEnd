@@ -1,107 +1,85 @@
 .profile-container {
-  padding: 40px 20px;
-  background: #f3f4f6;
-  min-height: 100vh;
-  font-family: "Segoe UI", sans-serif;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  color: #333;
 }
 
 .tittle-thongtin {
-  font-size: 30px;
-  font-weight: 700;
-  color: #1d4ed8;
-  text-align: center;
-  margin-bottom: 30px;
+  font-size: 24px;
+  font-weight: bold;
+  margin: 30px 0 10px;
+  color: #1e3a8a;
+  border-bottom: 2px solid #1e3a8a;
+  padding-bottom: 5px;
 }
 
 .thongtin {
-  max-width: 700px;
-  margin: 0 auto 40px;
-  background-color: #ffffff;
-  border: 1px solid #e5e7eb;
-  border-radius: 16px;
-  padding: 35px 50px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-  font-size: 18px;
-  line-height: 1.8;
-  color: #1f2937;
   list-style: none;
+  padding: 0;
+  margin-bottom: 20px;
+  background: #f0f4ff;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
 
 .thongtin li {
-  margin-bottom: 16px;
+  margin-bottom: 8px;
+}
+
+.btn-back-home {
+  background-color: #2563eb;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-bottom: 30px;
+}
+
+.btn-back-home:hover {
+  background-color: #1d4ed8;
+}
+
+/* === Flex container cho hai cột === */
+.history-columns {
   display: flex;
-  align-items: flex-start;
+  gap: 20px;
+  flex-wrap: wrap;
 }
 
-.thongtin li strong {
-  min-width: 190px;
-  display: inline-block;
-  font-weight: 600;
-  color: #111827;
+/* === Hai cột: mỗi bên chiếm 50% === */
+.survey-history,
+.request-history {
+  flex: 1;
+  min-width: 300px;
+  background: #f9fafb;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
 
-/* Lịch sử khảo sát */
-.survey-history {
-  max-width: 800px;
-  margin: 0 auto;
+.survey-item,
+.request-item {
+  margin-bottom: 20px;
   padding: 10px;
-}
-
-.survey-item {
   border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  margin-bottom: 25px;
-  padding: 20px 25px;
-  background-color: #ffffff;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
-  transition: 0.3s ease;
-}
-
-.survey-item:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+  border-radius: 8px;
+  background-color: #fff;
 }
 
 .survey-item h3 {
   margin: 0 0 10px;
-  font-size: 20px;
+  color: #0f172a;
+}
+
+.survey-item details,
+.request-item p {
+  margin-top: 6px;
+}
+
+.request-item p strong {
   color: #1e40af;
-}
-
-.survey-item p {
-  margin: 5px 0;
-  font-size: 16px;
-}
-
-.survey-item details {
-  margin-top: 12px;
-  background: #f9fafb;
-  padding: 10px 15px;
-  border-radius: 6px;
-}
-
-.survey-item summary {
-  cursor: pointer;
-  font-weight: 600;
-  color: #4b5563;
-  margin-bottom: 8px;
-}
-
-/* Nút quay lại */
-.btn-back-home {
-  display: block;
-  margin: 40px auto 0;
-  background-color: #2563eb;
-  color: #ffffff;
-  padding: 12px 24px;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: 0.2s ease-in-out;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-.btn-back-home:hover {
-  background-color: #1e3a8a;
 }

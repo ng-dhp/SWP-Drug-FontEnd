@@ -4,6 +4,7 @@ import "./cssCom/profile.css";
 export default function Profile() {
     const [profile, setProfile] = useState(null);
     const [surveyHistory, setSurveyHistory] = useState([]);
+    const [requestHistory, setRequestHistory] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -13,7 +14,7 @@ export default function Profile() {
             return;
         }
 
-        // Lấy thông tin profile trước
+        // 1. Lấy thông tin hồ sơ
         fetch("http://localhost:8080/api/v1.0/profile", {
             headers: {
                 "Content-Type": "application/json",
@@ -27,7 +28,7 @@ export default function Profile() {
             .then((data) => {
                 setProfile(data);
 
-                // Sau khi có profile, lấy lịch sử khảo sát
+                // 2. Lấy lịch sử khảo sát
                 return fetch("http://localhost:8080/api/v1.0/survey-template/my", {
                     headers: {
                         "Content-Type": "application/json",
@@ -41,6 +42,21 @@ export default function Profile() {
             })
             .then((history) => {
                 setSurveyHistory(history);
+
+                // 3. Lấy lịch sử yêu cầu làm lại khảo sát
+                return fetch("http://localhost:8080/api/v1.0/my-requests/view-request-retake-survey", {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+            })
+            .then((res) => {
+                if (!res.ok) throw new Error("Lỗi khi lấy lịch sử yêu cầu khảo sát");
+                return res.json();
+            })
+            .then((requests) => {
+                setRequestHistory(requests);
                 setLoading(false);
             })
             .catch((err) => {
@@ -53,7 +69,6 @@ export default function Profile() {
     if (!profile) return <div className="text-center mt-10 text-red-500">Không có dữ liệu</div>;
 
     return (
-
         <div className="profile-container">
             <h2 className="tittle-thongtin">Thông tin cá nhân</h2>
             <ul className="thongtin">
@@ -66,40 +81,58 @@ export default function Profile() {
                 <li><strong>🔑 Đăng nhập bằng:</strong> {profile.authenticationProvider}</li>
             </ul>
 
-            <button
-                className="btn-back-home"
-                onClick={() => (window.location.href = "/")}
-            >
+            <button className="btn-back-home" onClick={() => (window.location.href = "/")}>
                 🏠 Quay về trang chủ
             </button>
 
-
-            <h2 className="tittle-thongtin">📝 Lịch sử khảo sát</h2>
-            {surveyHistory.length === 0 ? (
-                <p>Không có bài khảo sát nào được thực hiện.</p>
-            ) : (
+            {/* Hai cột song song: lịch sử khảo sát và yêu cầu */}
+            <div className="history-columns">
                 <div className="survey-history">
-                    {surveyHistory.map((survey) => (
-                        <div key={survey.surveyId} className="survey-item">
-                            <h3>{survey.surveyType} - {survey.status}</h3>
-                            <p><strong>📅 Ngày làm:</strong> {survey.takenDate}</p>
-                            <p><strong>🧮 Tổng điểm:</strong> {survey.totalScore}</p>
-                            <p><strong>🩺 Đánh giá:</strong> {survey.recommendation || "Chưa có"}</p>
-                            <details>
-                                <summary>📋 Xem chi tiết câu trả lời</summary>
-                                <ul>
-                                    {survey.answers.map((ans) => (
-                                        <li key={ans.questionId}>
-                                            <strong>Câu {ans.questionId}:</strong> {ans.questionText}<br />
-                                            <em>Trả lời:</em> {ans.answerText || "Chưa trả lời"} | <em>Điểm:</em> {ans.score}
-                                        </li>
-                                    ))}
-                                </ul>
-                            </details>
-                        </div>
-                    ))}
+                    <h2 className="tittle-thongtin">📝 Lịch sử khảo sát</h2>
+                    {surveyHistory.length === 0 ? (
+                        <p>Không có bài khảo sát nào được thực hiện.</p>
+                    ) : (
+                        surveyHistory.map((survey) => (
+                            <div key={survey.surveyId} className="survey-item">
+                                <h3>{survey.surveyType} - {survey.status}</h3>
+                                <p><strong>📅 Ngày làm:</strong> {survey.takenDate}</p>
+                                <p><strong>🧮 Tổng điểm:</strong> {survey.totalScore}</p>
+                                <p><strong>🩺 Đánh giá:</strong> {survey.recommendation || "Chưa có"}</p>
+                                <details>
+                                    <summary>📋 Xem chi tiết câu trả lời</summary>
+                                    <ul>
+                                        {survey.answers.map((ans) => (
+                                            <li key={ans.questionId}>
+                                                <strong>Câu {ans.questionId}:</strong> {ans.questionText}<br />
+                                                <em>Trả lời:</em> {ans.answerText || "Chưa trả lời"} | <em>Điểm:</em> {ans.score}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </details>
+                            </div>
+                        ))
+                    )}
                 </div>
-            )}
+
+                <div className="request-history">
+                    <h2 className="tittle-thongtin">📨 Lịch sử yêu cầu làm lại khảo sát</h2>
+                    {requestHistory.length === 0 ? (
+                        <p>Không có yêu cầu nào.</p>
+                    ) : (
+                        requestHistory.map((req) => (
+                            <div key={req.id} className="request-item">
+                                <p><strong>📄 Mã yêu cầu:</strong> {req.id}</p>
+                                <p><strong>🗓 Ngày yêu cầu:</strong> {new Date(req.requestDate).toLocaleString()}</p>
+                                <p><strong>🧾 Lý do:</strong> {req.reason}</p>
+                                <p><strong>📌 Trạng thái:</strong> {req.status}</p>
+                                {req.status === "REJECTED" && (
+                                    <p><strong>❌ Lý do từ chối:</strong> {req.rejectionReason || "Không có"}</p>
+                                )}
+                            </div>
+                        ))
+                    )}
+                </div>
+            </div>
         </div>
     );
 }
