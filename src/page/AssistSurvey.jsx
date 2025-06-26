@@ -162,6 +162,7 @@ function AssistSurvey() {
           }),
       ],
     };
+
     try {
       const res = await fetch(
         `http://localhost:8080/api/v1.0/survey-template/survey/${surveyId}/submit`,
@@ -174,13 +175,34 @@ function AssistSurvey() {
           body: JSON.stringify(payload),
         }
       );
+
+      const contentType = res.headers.get("content-type");
+
+      if (!res.ok) {
+        // Nếu trả về text
+        if (contentType && contentType.includes("text/plain")) {
+          const message = await res.text();
+          alert("❌ Lỗi từ server:\n" + message);
+          return;
+        }
+
+        // Nếu trả về JSON lỗi
+        const errData = await res.json();
+        alert("❌ Gửi khảo sát thất bại: " + (errData.message || "Không xác định."));
+        return;
+      }
+
+      // Nếu thành công và response là JSON
       const data = await res.json();
       setResult({ score: data.totalScore, risk: data.recommendation });
       localStorage.removeItem("assistSurveyData");
+
     } catch (err) {
       console.error("Lỗi gửi khảo sát:", err);
+      alert("❌ Không thể kết nối đến máy chủ hoặc phản hồi không hợp lệ.");
     }
   };
+
 
   return (
     <div className="assist-survey-container">
@@ -201,7 +223,7 @@ function AssistSurvey() {
               </button>
               <button
                 className="support-request-button"
-                onClick={() => (window.location.href = "/guiyeucau")}
+                onClick={() => (window.location.href = "/guiyeucauassit")}
               >
                 🛠 Gửi yêu cầu hỗ trợ
               </button>
