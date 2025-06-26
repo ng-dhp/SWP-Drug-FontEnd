@@ -15,6 +15,7 @@ import QuanLy from "./components/quanly.jsx"; // Quản lý người dùng
 import XuLyYeuCau from "./components/xulyyeucau.jsx"; // Xử lý yêu cầu
 import DashboardYeuCau from "./page/DashBoardYeuCau.jsx"; // ✅
 import GuiYeuCau from "./page/guiyeucau.jsx";
+import GuiYeuCauCrafft from "./page/guiyeucaucrafft.jsx";
 
 
 
@@ -42,6 +43,7 @@ export default function App() {
         <Route path="/quanly" element={<QuanLy />} />
         <Route path="/xulyyeucau" element={<XuLyYeuCau />} />
         <Route path="/guiyeucau" element={<GuiYeuCau />} />
+        <Route path="/guiyeucaucrafft" element={<GuiYeuCauCrafft />} />
 
 
 

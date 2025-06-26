@@ -9,17 +9,18 @@ function CrafftSurvey() {
   const [isLoading, setIsLoading] = useState(true);
   const [showPartB, setShowPartB] = useState(false);
   const [warningMessage, setWarningMessage] = useState("");
+  const [submitted, setSubmitted] = useState(false); // ✅ trạng thái đã gửi
 
   useEffect(() => {
     const handleBeforeUnload = (e) => {
-      if (!result) {
+      if (!submitted && questions.length > 0) {
         e.preventDefault();
         e.returnValue = "";
       }
     };
     window.addEventListener("beforeunload", handleBeforeUnload);
     return () => window.removeEventListener("beforeunload", handleBeforeUnload);
-  }, [result]);
+  }, [submitted, questions]);
 
   useEffect(() => {
     const saved = localStorage.getItem("crafftSurveyData");
@@ -85,13 +86,13 @@ function CrafftSurvey() {
   }, [answers]);
 
   useEffect(() => {
-    if (!result && surveyId && questions.length > 0) {
+if (!submitted && surveyId && questions.length > 0) {
       localStorage.setItem(
         "crafftSurveyData",
         JSON.stringify({ surveyId, questions, answers })
       );
     }
-  }, [surveyId, questions, answers, result]);
+  }, [surveyId, questions, answers, submitted]);
 
   const handleAnswerChange = (qid, value) => {
     setAnswers((prev) => ({ ...prev, [qid]: value }));
@@ -123,6 +124,7 @@ function CrafftSurvey() {
         totalScore: data.totalScore,
         recommendation: data.recommendation,
       });
+      setSubmitted(true); // ✅ đánh dấu đã hoàn thành
       localStorage.removeItem("crafftSurveyData");
     } catch (err) {
       console.error("Lỗi gửi khảo sát:", err);
@@ -142,12 +144,13 @@ function CrafftSurvey() {
             <button className="back-home-button" onClick={() => (window.location.href = "/")}>
               🏠 Quay lại trang chủ
             </button>
-            <button
-                className="support-request-button"
-                onClick={() => (window.location.href = "/guiyeucau")}
-              >
-                🛠 Gửi yêu cầu hỗ trợ
-              </button>
+           <button
+  className="support-request-button"
+  onClick={() => (window.location.href = "/guiyeucaucrafft")}
+>
+  🛠 Gửi yêu cầu hỗ trợ
+</button>
+
           </div>
         ) : (
           <p className="question-sub">
@@ -174,7 +177,7 @@ function CrafftSurvey() {
             )}
             <br />
             <button className="tro-ve" onClick={() => (window.location.href = "/")}>
-              🏠 Trở về màn hình chính
+🏠 Trở về màn hình chính
             </button>
           </div>
         ) : (
@@ -222,7 +225,6 @@ function CrafftSurvey() {
                     </div>
                   </div>
                 ))}
-
                 <button className="submit-button" onClick={handleSubmit}>
                   Gửi kết quả →
                 </button>

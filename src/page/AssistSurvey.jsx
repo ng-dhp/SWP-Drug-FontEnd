@@ -299,7 +299,7 @@ function AssistSurvey() {
                   Gửi kết quả →
                 </button>
                 <button
-                  className="reset-button"
+                  className="submit-button"
                   onClick={() => {
                     const sub = answers[1];
                     const newAnswers = { ...answers };
