@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import OTPModal from "./OTPModal";
 import "./cssCom/register.css";
 
@@ -7,32 +9,12 @@ export default function RegisterModal({ onClose }) {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [dob, setDob] = useState("");
+  const [dob, setDob] = useState(null); // now a Date object
   const [gender, setGender] = useState("");
   const [phone, setPhone] = useState("");
   const [errors, setErrors] = useState({});
   const [showOtpModal, setShowOtpModal] = useState(false);
   const navigate = useNavigate();
-
-  const formatDateInput = (value) => {
-    let cleaned = value.replace(/[^0-9/]/g, "");
-    if (cleaned.length > 10) {
-      cleaned = cleaned.slice(0, 10);
-    }
-    if (cleaned.length > 2 && cleaned[2] !== "/") {
-      cleaned = cleaned.slice(0, 2) + "/" + cleaned.slice(2);
-    }
-    if (cleaned.length > 5 && cleaned[5] !== "/") {
-      cleaned = cleaned.slice(0, 5) + "/" + cleaned.slice(5);
-    }
-
-    return cleaned;
-  };
-
-  const handleDobChange = (e) => {
-    const formatted = formatDateInput(e.target.value);
-    setDob(formatted);
-  };
 
   const validateForm = () => {
     const newErrors = {};
@@ -46,19 +28,12 @@ export default function RegisterModal({ onClose }) {
     if (!password) newErrors.password = "Mật khẩu không được để trống";
     else if (password.length < 8) newErrors.password = "Mật khẩu phải có ít nhất 8 ký tự";
 
-    const dobRegex = /^(0[1-9]|[12]\d|3[01])\/(0[1-9]|1[0-2])\/(19\d{2}|20\d{2})$/;
-    if (!dob) newErrors.dob = "Ngày sinh không được để trống";
-    else if (!dobRegex.test(dob)) {
-      newErrors.dob = "Ngày sinh phải có định dạng dd/mm/yyyy và hợp lệ (từ 1900)";
+    if (!dob) {
+      newErrors.dob = "Ngày sinh không được để trống";
     } else {
-      const [day, month, year] = dob.split("/").map(Number);
-      const date = new Date(year, month - 1, day);
-      const isValidDate =
-        date.getDate() === day &&
-        date.getMonth() === month - 1 &&
-        date.getFullYear() === year;
-      if (!isValidDate || year < 1900) {
-        newErrors.dob = "Ngày sinh không hợp lệ (từ 1900)";
+      const year = dob.getFullYear();
+      if (year < 1900) {
+        newErrors.dob = "Năm sinh phải từ 1900 trở lên";
       }
     }
 
@@ -76,13 +51,13 @@ export default function RegisterModal({ onClose }) {
     e.preventDefault();
     if (!validateForm()) return;
 
-    const yearOfBirth = parseInt(dob.split("/")[2]);
+    const year = dob.getFullYear();
 
     const userData = {
       fullName: fullName.trim(),
       email,
       password,
-      yob: yearOfBirth,
+      yob: year,
       gender,
       phone,
     };
@@ -101,7 +76,7 @@ export default function RegisterModal({ onClose }) {
         setFullName("");
         setEmail("");
         setPassword("");
-        setDob("");
+        setDob(null);
         setGender("");
         setPhone("");
       } else {
@@ -161,13 +136,17 @@ export default function RegisterModal({ onClose }) {
 
           <div className="form-group">
             <label>Ngày sinh:</label>
-            <input
-              type="text"
-              placeholder="dd/mm/yyyy"
-              value={dob}
-              onChange={handleDobChange}
-              maxLength="10"
-              required
+            <DatePicker
+              selected={dob}
+              onChange={(date) => setDob(date)}
+              dateFormat="dd/MM/yyyy"
+              placeholderText="Nhập ngày tháng năm (VD:22/06/2004)"
+              className="custom-datepicker"
+              showMonthDropdown
+              showYearDropdown
+              dropdownMode="select"
+              maxDate={new Date()}
+              isClearable
             />
             {errors.dob && <p className="error">{errors.dob}</p>}
           </div>
