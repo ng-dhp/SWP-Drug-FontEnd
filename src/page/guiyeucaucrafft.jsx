@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./css/guiyeucau.css";
 
-function GuiYeuCauAssist() {
+function GuiYeuCauCrafft() {
   const [reason, setReason] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
@@ -18,7 +18,7 @@ function GuiYeuCauAssist() {
 
     try {
       const res = await fetch(
-        `http://localhost:8080/api/v1.0/my-requests/retake-survey?templateId=1&reason=${encodeURIComponent(reason)}`,
+        `http://localhost:8080/api/v1.0/my-requests/retake-survey?templateId=2&reason=${encodeURIComponent(reason)}`,
         {
           method: "POST",
           headers: {
@@ -45,7 +45,7 @@ function GuiYeuCauAssist() {
   return (
     <div className="assist-survey-container">
       <div className="survey-box">
-        <h2 className="question-title">Gửi yêu cầu hỗ trợ làm lại khảo sát (ASSIST)</h2>
+        <h2 className="question-title">Gửi yêu cầu làm lại khảo sát CRAFFT</h2>
         <form onSubmit={handleSubmit}>
           <div className="input-group">
             <label className="label-title">Lý do bạn muốn làm lại khảo sát:</label>
@@ -81,4 +81,4 @@ function GuiYeuCauAssist() {
   );
 }
 
-export default GuiYeuCauAssist;
+export default GuiYeuCauCrafft;

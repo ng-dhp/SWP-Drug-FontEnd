@@ -122,6 +122,7 @@ export default function Profile() {
                         requestHistory.map((req) => (
                             <div key={req.id} className="request-item">
                                 <p><strong>📄 Mã yêu cầu:</strong> {req.id}</p>
+                                <p><strong>📘 Tên khảo sát:</strong> {req.name}</p>
                                 <p><strong>🗓 Ngày yêu cầu:</strong> {new Date(req.requestDate).toLocaleString()}</p>
                                 <p><strong>🧾 Lý do:</strong> {req.reason}</p>
                                 <p><strong>📌 Trạng thái:</strong> {req.status}</p>

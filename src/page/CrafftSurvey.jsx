@@ -86,7 +86,9 @@ function CrafftSurvey() {
   }, [answers]);
 
   useEffect(() => {
+
     if (!submitted && surveyId && questions.length > 0) {
+
       localStorage.setItem(
         "crafftSurveyData",
         JSON.stringify({ surveyId, questions, answers })
@@ -144,12 +146,14 @@ function CrafftSurvey() {
             <button className="back-home-button" onClick={() => (window.location.href = "/")}>
               🏠 Quay lại trang chủ
             </button>
+
             <button
               className="support-request-button"
-              onClick={() => (window.location.href = "/guiyeucau")}
+              onClick={() => (window.location.href = "/guiyeucaucrafft")}
             >
               🛠 Gửi yêu cầu hỗ trợ
             </button>
+
           </div>
         ) : (
           <p className="question-sub">
