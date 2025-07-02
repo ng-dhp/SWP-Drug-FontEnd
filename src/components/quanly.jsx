@@ -7,7 +7,7 @@ export default function QuanLy() {
   const [selectedRoles, setSelectedRoles] = useState({});
   const navigate = useNavigate();
 
-  const roleOptions = ["USER", "STAFF", "MANAGER"];
+  const roleOptions = ["USER", "STAFF", "MANAGER", "CONSULTANT"];
   const token = localStorage.getItem("token");
 
   // ✅ Tách hàm fetch users để gọi lại sau khi cập nhật

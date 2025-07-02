@@ -1,120 +1,107 @@
-/* Reset */
 .tuvan-container {
-  padding: 30px;
-  max-width: 900px;
-  margin: 0 auto;
-  background: #ffffff;
-  border-radius: 15px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  max-width: 960px;
+  margin: auto;
+  padding: 20px;
+  font-family: "Segoe UI", sans-serif;
+  background: #f8f9fa;
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
 }
 
-.tuvan-container h2 {
+h2, h3 {
   text-align: center;
-  margin-bottom: 15px;
-  color: #1f2937;
+  color: #0a3d62;
+  margin-bottom: 1rem;
 }
 
-.tuvan-container p {
+.greeting {
   text-align: center;
-  color: #4a5568;
+  font-size: 1.1rem;
+  margin-bottom: 20px;
 }
 
 .doctor-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
   margin: 20px 0;
-  justify-content: center;
 }
 
 .doctor-card {
-  flex: 1 1 250px;
-  background: #f7fafc;
-  padding: 20px;
-  border-radius: 10px;
+  background: white;
+  padding: 15px;
+  border-radius: 8px;
   border: 2px solid transparent;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease;
   cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
 }
 
 .doctor-card:hover {
-  background: #edf2f7;
-  transform: translateY(-3px);
+  border-color: #0a3d62;
+  transform: scale(1.02);
 }
 
 .doctor-card.selected {
-  border-color: #4b6cb7;
-  background: #e0e7ff;
-}
-
-.doctor-card h3 {
-  margin-top: 0;
-  color: #2d3748;
-}
-
-.doctor-card p {
-  margin: 5px 0;
-  color: #4a5568;
-  font-size: 14px;
+  border-color: #1e90ff;
+  background-color: #eaf4ff;
 }
 
 .tuvan-form {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  margin-top: 20px;
+  box-shadow: 0 1px 5px rgba(0,0,0,0.08);
 }
 
 .tuvan-form label {
-  display: flex;
-  flex-direction: column;
-  color: #1f2937;
-  font-weight: 500;
+  display: block;
+  margin-bottom: 12px;
+  font-weight: bold;
 }
 
 .tuvan-form input,
 .tuvan-form textarea {
-  margin-top: 5px;
+  width: 100%;
   padding: 10px;
-  border: 1px solid #cbd5e0;
-  border-radius: 8px;
-  font-size: 14px;
-  outline: none;
-  transition: border 0.2s;
-}
-
-.tuvan-form input:focus,
-.tuvan-form textarea:focus {
-  border-color: #4b6cb7;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  margin-top: 5px;
+  margin-bottom: 15px;
+  font-size: 1rem;
 }
 
 .tuvan-form button {
-  margin-top: 10px;
-  padding: 12px;
-  background: #4b6cb7;
+  background-color: #1e90ff;
   color: white;
+  padding: 12px 20px;
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
   cursor: pointer;
-  font-weight: 600;
-  transition: background 0.3s;
+  width: 100%;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
 }
 
 .tuvan-form button:hover {
-  background: #182848;
+  background-color: #0a74d6;
 }
 
-.login-button {
-  margin: 10px 0;
-  background: #f56565;
+.back-home-button {
+  margin-top: 20px;
+  padding: 10px 16px;
+  background-color: #6c757d;
   color: white;
-  padding: 10px 15px;
-  border-radius: 8px;
-  cursor: pointer;
   border: none;
-  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  display: block;
+  width: 100%;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
 }
 
-.login-button:hover {
-  background: #c53030;
+.back-home-button:hover {
+  background-color: #5a6268;
 }
