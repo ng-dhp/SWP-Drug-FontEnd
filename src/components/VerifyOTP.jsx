@@ -1,61 +1,79 @@
 import React, { useState } from "react";
+import "./cssCom/OTPModal.css";
 
-export default function VerifyOTP({ email, onClose, onVerified }) {
+export default function OTPModal({ email, onVerify, onClose }) {
   const [otp, setOtp] = useState("");
-  const [isVerifying, setIsVerifying] = useState(false);
+  const [newPassword, setNewPassword] = useState("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
-  const handleVerify = async (e) => {
-    e.preventDefault();
+  const handleResetPassword = async () => {
+    setError("");
+    setSuccess("");
+
+    if (!otp.trim() || !newPassword.trim()) {
+      setError("Vui lòng nhập đầy đủ OTP và mật khẩu mới");
+      return;
+    }
 
     try {
-      setIsVerifying(true);
-      const response = await fetch("http://localhost:8080/api/v1.0/verify-otp", {
+      const response = await fetch("http://localhost:8080/api/v1.0/reset-password", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, otp }),
+        body: JSON.stringify({ email, otp, newPassword }),
       });
 
-      const data = await response.json();
-
       if (response.ok) {
-        alert("✅ Xác minh thành công!");
-
-        // ✅ Gọi callback mở lại Login
-        if (onVerified) onVerified();
-
-        // ✅ Đóng modal này
-        if (onClose) onClose();
+        setSuccess("Đặt lại mật khẩu thành công!");
+        onVerify();
       } else {
-        alert(data.message || "❌ Xác minh thất bại. Vui lòng thử lại.");
+        // Kiểm tra nếu có body trả về mới parse
+        const text = await response.text();
+        const data = text ? JSON.parse(text) : {};
+        setError(data.message || "Đặt lại mật khẩu thất bại");
       }
-    } catch (error) {
-      console.error("Lỗi xác minh OTP:", error);
-      alert("⚠️ Lỗi kết nối máy chủ.");
-    } finally {
-      setIsVerifying(false);
+    } catch (err) {
+      console.error("Lỗi khi đặt lại mật khẩu:", err);
     }
   };
 
+
   return (
-    <div>
-      <h2>Xác minh OTP</h2>
-      <p>Email: {email}</p>
-      <form onSubmit={handleVerify}>
+    <div className="otp-backdrop">
+      <div className="otp-modal">
+        <h3>Đặt lại mật khẩu bằng OTP</h3>
+        <p>
+          Mã OTP đã được gửi đến email: <strong>{email}</strong>
+        </p>
+
         <input
           type="text"
           placeholder="Nhập mã OTP"
           value={otp}
           onChange={(e) => setOtp(e.target.value)}
-          className="form-input"
-          required
         />
-        <button type="submit" className="login-button" disabled={isVerifying}>
-          {isVerifying ? "Đang xác minh..." : "Xác minh"}
-        </button>
-      </form>
-      <button onClick={onClose} className="close-button">Đóng</button>
+
+        <input
+          type="password"
+          placeholder="Nhập mật khẩu mới"
+          value={newPassword}
+          onChange={(e) => setNewPassword(e.target.value)}
+        />
+
+        {error && <p className="otp-error">{error}</p>}
+        {success && <p className="otp-success">{success}</p>}
+
+        <div className="otp-buttons">
+          <button className="verify-btn" onClick={handleResetPassword}>
+            Đặt lại mật khẩu
+          </button>
+          <button className="close-btn" onClick={onClose}>
+            Đóng
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
