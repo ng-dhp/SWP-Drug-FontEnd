@@ -5,7 +5,7 @@ export default function Profile() {
   const [profile, setProfile] = useState(null);
   const [surveyHistory, setSurveyHistory] = useState([]);
   const [requestHistory, setRequestHistory] = useState([]);
-  const [appointment, setAppointment] = useState(null);
+  const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const [editData, setEditData] = useState({
@@ -81,8 +81,8 @@ export default function Profile() {
         });
       })
       .then((res) => res.json())
-      .then((appt) => {
-        setAppointment(appt || null);
+      .then((apptList) => {
+        setAppointments(Array.isArray(apptList) ? apptList : []);
         setLoading(false);
       })
       .catch((err) => {
@@ -269,16 +269,18 @@ export default function Profile() {
 
         <div className="appointment-history">
           <h2 className="tittle-thongtin">📅 Lịch sử cuộc hẹn tư vấn</h2>
-          {!appointment ? (
+          {appointments.length === 0 ? (
             <p>Không có cuộc hẹn nào.</p>
           ) : (
-            <div className="appointment-item">
-              <p><strong>🆔 Mã cuộc hẹn:</strong> {appointment.appointmentId}</p>
-              <p><strong>📅 Ngày:</strong> {appointment.date}</p>
-              <p><strong>🕒 Thời gian:</strong> {appointment.startTime} - {appointment.endTime}</p>
-              <p><strong>📍 Địa điểm:</strong> {appointment.location}</p>
-              <p><strong>📌 Trạng thái:</strong> {appointment.status}</p>
-            </div>
+            appointments.map((appointment) => (
+              <div key={appointment.appointmentId} className="appointment-item">
+                <p><strong>🆔 Mã cuộc hẹn:</strong> {appointment.appointmentId}</p>
+                <p><strong>📅 Ngày:</strong> {appointment.date}</p>
+                <p><strong>🕒 Thời gian:</strong> {appointment.startTime} - {appointment.endTime}</p>
+                <p><strong>📍 Địa điểm:</strong> {appointment.location}</p>
+                <p><strong>📌 Trạng thái:</strong> {appointment.status}</p>
+              </div>
+            ))
           )}
         </div>
       </div>
