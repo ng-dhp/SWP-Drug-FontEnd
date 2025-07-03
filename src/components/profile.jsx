@@ -6,6 +6,8 @@ export default function Profile() {
   const [surveyHistory, setSurveyHistory] = useState([]);
   const [requestHistory, setRequestHistory] = useState([]);
   const [appointment, setAppointment] = useState(null);
+  const [feedbacks, setFeedbacks] = useState([]);
+  const [consultants, setConsultants] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const [editData, setEditData] = useState({
@@ -51,38 +53,53 @@ export default function Profile() {
           });
         }
 
-        return fetch("http://localhost:8080/api/v1.0/survey-template/my", {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const userId = data.userId;
+
+        return Promise.all([
+          fetch("http://localhost:8080/api/v1.0/survey-template/my", {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }),
+          fetch("http://localhost:8080/api/v1.0/my-requests/view-request-retake-survey", {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }),
+          fetch("http://localhost:8080/api/v1.0/appointment/myAppointment", {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }),
+          fetch(`http://localhost:8080/api/v1.0/feedback/user/${userId}`, {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }),
+          fetch("http://localhost:8080/api/v1.0/consultant/getAllConsultant", {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }),
+        ]);
       })
-      .then((res) => res.json())
-      .then((survey) => {
+      .then(async ([surveyRes, requestRes, apptRes, fbRes, consultantRes]) => {
+        const survey = await surveyRes.json();
+        const requests = await requestRes.json();
+        const appt = await apptRes.json();
+        const fb = await fbRes.json();
+        const consultants = await consultantRes.json();
+
         setSurveyHistory(Array.isArray(survey) ? survey : []);
-
-        return fetch("http://localhost:8080/api/v1.0/my-requests/view-request-retake-survey", {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
-      })
-      .then((res) => res.json())
-      .then((requests) => {
         setRequestHistory(Array.isArray(requests) ? requests : []);
-
-        return fetch("http://localhost:8080/api/v1.0/appointment/myAppointment", {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
-      })
-      .then((res) => res.json())
-      .then((appt) => {
         setAppointment(appt || null);
+        setFeedbacks(Array.isArray(fb) ? fb : []);
+        setConsultants(Array.isArray(consultants) ? consultants : []);
         setLoading(false);
       })
       .catch((err) => {
@@ -150,6 +167,11 @@ export default function Profile() {
       });
   };
 
+  const getConsultantName = (id) => {
+    const c = consultants.find((c) => c.consultantId === id);
+    return c ? c.name : `ID ${id}`;
+  };
+
   if (loading) return <div className="text-center mt-10">Đang tải...</div>;
   if (!profile) return <div className="text-center mt-10 text-red-500">Không có dữ liệu</div>;
 
@@ -168,22 +190,10 @@ export default function Profile() {
       {profile.roleName === "CONSULTANT" && (
         <div className="consultant-edit">
           <h3>🛠️ Cập nhật thông tin tư vấn viên</h3>
-          <label>
-            Họ tên:
-            <input type="text" name="name" value={editData.name} onChange={handleChange} />
-          </label>
-          <label>
-            Chuyên ngành:
-            <input type="text" name="specialization" value={editData.specialization} onChange={handleChange} />
-          </label>
-          <label>
-            Năm sinh:
-            <input type="number" name="yob" value={editData.yob} onChange={handleChange} />
-          </label>
-          <label>
-            Số điện thoại:
-            <input type="text" name="phone" value={editData.phone} onChange={handleChange} />
-          </label>
+          <label>Họ tên:<input type="text" name="name" value={editData.name} onChange={handleChange} /></label>
+          <label>Chuyên ngành:<input type="text" name="specialization" value={editData.specialization} onChange={handleChange} /></label>
+          <label>Năm sinh:<input type="number" name="yob" value={editData.yob} onChange={handleChange} /></label>
+          <label>Số điện thoại:<input type="text" name="phone" value={editData.phone} onChange={handleChange} /></label>
           <button className="btn-update" onClick={handleUpdate}>💾 Lưu thông tin</button>
         </div>
       )}
@@ -191,40 +201,26 @@ export default function Profile() {
       {profile.roleName === "USER" && (
         <div className="user-edit">
           <h3>🛠️ Cập nhật thông tin cá nhân</h3>
-          <label>
-            Họ tên:
-            <input type="text" name="name" value={editData.name} onChange={handleChange} />
-          </label>
-          <label>
-            Năm sinh:
-            <input type="number" name="yob" value={editData.yob} onChange={handleChange} />
-          </label>
-          <label>
-            Giới tính:
+          <label>Họ tên:<input type="text" name="name" value={editData.name} onChange={handleChange} /></label>
+          <label>Năm sinh:<input type="number" name="yob" value={editData.yob} onChange={handleChange} /></label>
+          <label>Giới tính:
             <select name="gender" value={editData.gender || ""} onChange={handleChange}>
               <option value="">-- Chọn giới tính --</option>
               <option value="Male">Nam</option>
               <option value="Female">Nữ</option>
             </select>
           </label>
-          <label>
-            Số điện thoại:
-            <input type="text" name="phone" value={editData.phone} onChange={handleChange} />
-          </label>
+          <label>Số điện thoại:<input type="text" name="phone" value={editData.phone} onChange={handleChange} /></label>
           <button className="btn-update" onClick={handleUpdate}>💾 Lưu thông tin</button>
         </div>
       )}
 
-      <button className="btn-back-home" onClick={() => (window.location.href = "/")}>
-        🏠 Quay về trang chủ
-      </button>
+      <button className="btn-back-home" onClick={() => (window.location.href = "/")}>🏠 Quay về trang chủ</button>
 
       <div className="history-columns">
         <div className="survey-history">
           <h2 className="tittle-thongtin">📝 Lịch sử khảo sát</h2>
-          {surveyHistory.length === 0 ? (
-            <p>Không có bài khảo sát nào được thực hiện.</p>
-          ) : (
+          {surveyHistory.length === 0 ? <p>Không có bài khảo sát nào được thực hiện.</p> : (
             surveyHistory.map((survey) => (
               <div key={survey.surveyId} className="survey-item">
                 <h3>{survey.surveyType} - {survey.status}</h3>
@@ -249,9 +245,7 @@ export default function Profile() {
 
         <div className="request-history">
           <h2 className="tittle-thongtin">📨 Lịch sử yêu cầu làm lại khảo sát</h2>
-          {requestHistory.length === 0 ? (
-            <p>Không có yêu cầu nào.</p>
-          ) : (
+          {requestHistory.length === 0 ? <p>Không có yêu cầu nào.</p> : (
             requestHistory.map((req) => (
               <div key={req.id} className="request-item">
                 <p><strong>📄 Mã yêu cầu:</strong> {req.id}</p>
@@ -269,9 +263,7 @@ export default function Profile() {
 
         <div className="appointment-history">
           <h2 className="tittle-thongtin">📅 Lịch sử cuộc hẹn tư vấn</h2>
-          {!appointment ? (
-            <p>Không có cuộc hẹn nào.</p>
-          ) : (
+          {!appointment ? <p>Không có cuộc hẹn nào.</p> : (
             <div className="appointment-item">
               <p><strong>🆔 Mã cuộc hẹn:</strong> {appointment.appointmentId}</p>
               <p><strong>📅 Ngày:</strong> {appointment.date}</p>
@@ -279,6 +271,20 @@ export default function Profile() {
               <p><strong>📍 Địa điểm:</strong> {appointment.location}</p>
               <p><strong>📌 Trạng thái:</strong> {appointment.status}</p>
             </div>
+          )}
+        </div>
+
+        <div className="feedback-history">
+          <h2 className="tittle-thongtin">💬 Lịch sử phản hồi</h2>
+          {feedbacks.length === 0 ? <p>Không có phản hồi nào.</p> : (
+            feedbacks.map((fb) => (
+              <div key={fb.feedbackId} className="feedback-item">
+                <p><strong>🆔 Mã phản hồi:</strong> {fb.feedbackId}</p>
+                <p><strong>👨‍⚕️ Tư vấn viên:</strong> {getConsultantName(fb.consultantId)}</p>
+                <p><strong>📅 Ngày gửi:</strong> {fb.date}</p>
+                <p><strong>📝 Nội dung:</strong> {fb.content}</p>
+              </div>
+            ))
           )}
         </div>
       </div>
