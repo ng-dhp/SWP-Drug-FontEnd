@@ -53,22 +53,44 @@ button:hover {
 }
 
 /* Form cập nhật */
+.user-edit,
+.consultant-edit {
+  margin-top: 20px;
+  padding: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  background-color: #f8f8f8;
+}
+
+.user-edit label,
 .consultant-edit label {
   display: block;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
   font-weight: 600;
 }
 
-.consultant-edit input {
+.user-edit input,
+.consultant-edit input,
+.user-edit select {
   width: 100%;
   padding: 8px 12px;
   margin-top: 4px;
-  margin-bottom: 12px;
   border: 1px solid #ccc;
   border-radius: 6px;
+  box-sizing: border-box;
 }
 
-/* Lịch sử hiển thị 3 cột */
+.btn-update {
+  margin-top: 10px;
+  padding: 8px 16px;
+  background-color: #0066cc;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* Lịch sử hiển thị dạng lưới 4 cột */
 .history-columns {
   display: flex;
   flex-wrap: wrap;
@@ -78,18 +100,21 @@ button:hover {
 
 .survey-history,
 .request-history,
-.appointment-history {
+.appointment-history,
+.feedback-history {
   flex: 1;
-  min-width: 300px;
+  min-width: 250px;
   background: #f0f6ff;
   padding: 16px;
   border-radius: 10px;
   box-shadow: 0 0 6px rgba(0, 0, 0, 0.05);
 }
 
+/* Các khối nội dung bên trong mỗi cột */
 .survey-item,
 .request-item,
-.appointment-item {
+.appointment-item,
+.feedback-item {
   background-color: #ffffff;
   padding: 12px 14px;
   margin-bottom: 14px;
@@ -98,6 +123,7 @@ button:hover {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
 }
 
+/* Chi tiết câu trả lời trong khảo sát */
 details summary {
   cursor: pointer;
   margin-top: 8px;
@@ -110,41 +136,30 @@ details ul {
   padding-left: 20px;
 }
 
-/* Responsive: xuống 1 cột nếu nhỏ */
+/* Responsive: xuống 2 cột khi nhỏ hơn 1024px, 1 cột khi nhỏ hơn 768px */
+@media (max-width: 1024px) {
+  .history-columns {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .survey-history,
+  .request-history,
+  .appointment-history,
+  .feedback-history {
+    flex: 1 1 48%;
+  }
+}
+
 @media (max-width: 768px) {
   .history-columns {
     flex-direction: column;
   }
-}
 
-.user-edit, .consultant-edit {
-  margin-top: 20px;
-  padding: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 12px;
-  background-color: #f8f8f8;
+  .survey-history,
+  .request-history,
+  .appointment-history,
+  .feedback-history {
+    flex: 1 1 100%;
+  }
 }
-.user-edit label,
-.consultant-edit label {
-  display: block;
-  margin-bottom: 10px;
-}
-.user-edit input,
-.consultant-edit input,
-.user-edit select {
-  width: 100%;
-  padding: 6px;
-  margin-top: 4px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-}
-.btn-update {
-  margin-top: 10px;
-  padding: 8px 16px;
-  background-color: #0066cc;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
