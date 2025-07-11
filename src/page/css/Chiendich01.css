@@ -1,0 +1,94 @@
+.trang-chien-dich {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  background-color: #f9f9f9;
+}
+
+.khung-chien-dich {
+  background: #fff;
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.tieu-de {
+  font-size: 26px;
+  font-weight: bold;
+  color: #1e40af;
+  margin-bottom: 10px;
+}
+
+.mo-ta {
+  color: #4b5563;
+  margin-bottom: 25px;
+}
+
+.khung-cau-hoi {
+  margin-bottom: 30px;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 20px;
+}
+
+.ten-cau-hoi {
+  display: block;
+  font-size: 18px;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+
+.lua-chon-tra-loi {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.muc-lua-chon {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.o-chon {
+  width: 18px;
+  height: 18px;
+}
+
+.o-nhap-van-ban {
+  width: 100%;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  padding: 10px;
+  resize: none;
+  font-size: 16px;
+}
+
+.khung-nut-gui {
+  margin-top: 30px;
+}
+
+.nut-gui {
+  background-color: #2563eb;
+  color: white;
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+}
+
+.nut-gui:hover {
+  background-color: #1d4ed8;
+}
+
+.trang-tai-du-lieu {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.thong-bao {
+  color: #6b7280;
+  font-size: 18px;
+}

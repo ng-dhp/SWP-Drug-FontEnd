@@ -1,3 +1,4 @@
+// src/components/ChienDich.jsx
 import React from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
@@ -5,6 +6,10 @@ import "./css/ChienDich.css";
 
 const ChienDich = () => {
   const navigate = useNavigate();
+
+  const handleJoinChiendich01 = () => {
+    navigate("/chiendich01");
+  };
 
   return (
     <div className="event-page">
@@ -50,10 +55,11 @@ const ChienDich = () => {
           <p className="event-description">
             🎯 Mô tả: Chiến dịch bao gồm các buổi hội thảo, trưng bày, và giao lưu nhằm tăng cường ý thức cộng đồng về tác hại của chất gây nghiện.
           </p>
-          <button className="join-button">Tham gia</button>
+          <button className="join-button" onClick={handleJoinChiendich01}>
+            Tham gia
+          </button>
         </motion.div>
-
-        <motion.div
+ <motion.div
           className="event-card"
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -124,6 +130,7 @@ const ChienDich = () => {
           </p>
           <button className="join-button">Tham gia</button>
         </motion.div>
+        ...
       </div>
     </div>
   );
