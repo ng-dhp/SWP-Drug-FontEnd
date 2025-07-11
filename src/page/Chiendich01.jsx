@@ -8,10 +8,17 @@ const Chiendich01 = () => {
 
     useEffect(() => {
         const token = localStorage.getItem("token");
+        const surveyCount = parseInt(localStorage.getItem("surveyCount") || "0");
 
         if (!token) {
             alert("Vui lòng đăng nhập trước.");
             window.location.href = "/login";
+            return;
+        }
+
+        if (surveyCount >= 2) {
+            alert("❗Bạn đã hoàn thành khảo sát trước và sau. Không thể làm thêm.");
+            window.location.href = "/";
             return;
         }
 
@@ -40,6 +47,7 @@ const Chiendich01 = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        setIsSubmitting(true);
         const token = localStorage.getItem("token");
 
         if (!token) {
@@ -48,16 +56,15 @@ const Chiendich01 = () => {
             return;
         }
 
-        // Kiểm tra câu trả lời thiếu
         const missingAnswers = campaign.questions.filter(
             (q) => !answers[q.id] || answers[q.id].toString().trim() === ""
         );
         if (missingAnswers.length > 0) {
             alert("Vui lòng trả lời tất cả các câu hỏi trước khi gửi.");
+            setIsSubmitting(false);
             return;
         }
 
-        // Định dạng lại dữ liệu để gửi
         const formattedAnswers = Object.entries(answers).map(
             ([questionId, answerText]) => ({
                 questionId: Number(questionId),
@@ -81,16 +88,22 @@ const Chiendich01 = () => {
                     throw new Error(errorText || "Gửi phản hồi thất bại.");
                 }
 
-                // Nếu BE trả về plain text như ✅ Đã gửi khảo sát thành công! Điểm số: 25
                 const resultText = await response.text();
                 alert(resultText);
+
+                // ✅ Cập nhật số lượt khảo sát
+                const count = parseInt(localStorage.getItem("surveyCount") || "0");
+                localStorage.setItem("surveyCount", count + 1);
+
+                // 👉 Chuyển hướng sau khi gửi xong nếu muốn
+                window.location.href = "/";
             })
             .catch((error) => {
                 alert("Lỗi khi gửi phản hồi: " + error.message);
                 console.error("Lỗi khi gửi phản hồi:", error);
-            });
+            })
+            .finally(() => setIsSubmitting(false));
     };
-
 
     if (!campaign) {
         return (
@@ -120,7 +133,7 @@ const Chiendich01 = () => {
                                             <input
                                                 type="radio"
                                                 name={`question_${q.id}`}
-                                                value={opt.text} // Lưu answerText thay vì optionId
+                                                value={opt.text}
                                                 checked={answers[q.id] === opt.text}
                                                 onChange={(e) =>
                                                     handleChange(q.id, e.target.value)

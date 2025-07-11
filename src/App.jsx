@@ -5,7 +5,7 @@ import TuVan from "./page/tuvan";
 import AppContent from "./appContent";
 import KhoaHoc from "./page/Khoahoc.jsx"; // 
 import ChienDich from "./page/ChienDich";
-import Chiendich01 from "./page/Chiendich01.jsx"; //
+import Chiendich01 from "./page/chiendich01.jsx"; //
 
 import Lichhen from "./page/Lichhen";
 
