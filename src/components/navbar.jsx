@@ -58,6 +58,7 @@ export default function Navbar({ onLogin, onRegister, isLoggedIn, onLogout }) {
   return (
     <header className="navbar bg-white shadow-sm">
       <div className="container flex justify-between items-center px-4 py-2 mx-auto">
+
         {/* Logo */}
         <motion.div
           initial={{ opacity: 0, y: -30 }}
@@ -83,6 +84,7 @@ export default function Navbar({ onLogin, onRegister, isLoggedIn, onLogout }) {
             <Link to="/chiendich">Chiến dịch</Link>
             <Link to="/feedbackform">Đánh giá</Link>
 
+            {/* Menu riêng theo role */}
             {roleName === "ADMIN" && (
               <>
                 <Link to="/quanly">Quản lý</Link>
@@ -97,7 +99,6 @@ export default function Navbar({ onLogin, onRegister, isLoggedIn, onLogout }) {
                       <Link to="/dashboard-survey">Dashboard Survey</Link>
                       <Link to="/dashboard-campaign">Dashboard Chiến dịch</Link>
                       <Link to="/dashboard-request">Dashboard Yêu Cầu</Link>
-
                     </div>
                   )}
                 </div>
@@ -106,6 +107,10 @@ export default function Navbar({ onLogin, onRegister, isLoggedIn, onLogout }) {
 
             {roleName === "STAFF" && (
               <Link to="/xulyyeucau">Xử lý yêu cầu</Link>
+            )}
+
+            {roleName === "CONSULTANT" && (
+              <Link to="/lichhen">Lịch hẹn</Link>
             )}
           </div>
         </motion.div>

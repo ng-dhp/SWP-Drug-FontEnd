@@ -5,6 +5,8 @@ import TuVan from "./page/tuvan";
 import AppContent from "./appContent";
 import KhoaHoc from "./page/Khoahoc.jsx"; // 
 import ChienDich from "./page/ChienDich";
+import Lichhen from "./page/Lichhen";
+
 
 import DashboardSurvey from "./page/DashBoardSurvey";
 import DashboardChienDich from "./page/DashBoardChienDich";
@@ -43,6 +45,8 @@ export default function App() {
         <Route path="/quanly" element={<QuanLy />} />
         <Route path="/xulyyeucau" element={<XuLyYeuCau />} />
         <Route path="/guiyeucau" element={<GuiYeuCau />} />
+          <Route path="/lichhen" element={<Lichhen />} />
+
 
         <Route path="/guiyeucaucrafft" element={<GuiYeuCauCrafft />} />
 

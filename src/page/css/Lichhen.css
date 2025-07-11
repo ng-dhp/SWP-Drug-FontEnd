@@ -1,0 +1,111 @@
+/* Container tổng */
+.lichhen-container {
+  max-width: 1100px;
+  margin: 40px auto;
+  padding: 25px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.15);
+  font-family: Arial, sans-serif;
+}
+
+/* Tiêu đề */
+.lichhen-title {
+  text-align: center;
+  font-size: 26px;
+  color: #333;
+  margin-bottom: 25px;
+}
+
+/* Bảng hiển thị */
+.lichhen-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fdfdfd;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Header bảng */
+.lichhen-table th {
+  background-color: #007bff;
+  color: white;
+  padding: 12px;
+  text-align: center;
+  font-size: 14px;
+}
+
+/* Ô dữ liệu */
+.lichhen-table td {
+  padding: 10px;
+  border: 1px solid #ddd;
+  text-align: center;
+  font-size: 14px;
+}
+
+/* Hàng chẵn đổi màu nền */
+.lichhen-table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+/* Hover dòng */
+.lichhen-table tr:hover {
+  background-color: #e8f4ff;
+}
+
+/* Ô input chỉnh status */
+.lichhen-table input[type="text"] {
+  width: 100px;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  text-align: center;
+  font-size: 13px;
+}
+
+/* Nút cập nhật */
+.btn-update {
+  padding: 6px 12px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background-color 0.3s ease;
+}
+
+.btn-update:hover {
+  background-color: #218838;
+}
+
+/* Loading hoặc thông báo */
+.text-center {
+  text-align: center;
+}
+
+.mt-10 {
+  margin-top: 40px;
+}
+
+.lichhen-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.btn-home {
+  background-color: #3498db;
+  color: #fff;
+  padding: 8px 16px;
+  text-decoration: none;
+  border-radius: 6px;
+  transition: background-color 0.3s;
+}
+
+.btn-home:hover {
+  background-color: #2980b9;
+}
+
