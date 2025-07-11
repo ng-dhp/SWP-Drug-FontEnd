@@ -9,17 +9,18 @@ function CrafftSurvey() {
   const [isLoading, setIsLoading] = useState(true);
   const [showPartB, setShowPartB] = useState(false);
   const [warningMessage, setWarningMessage] = useState("");
+  const [submitted, setSubmitted] = useState(false);
 
   useEffect(() => {
     const handleBeforeUnload = (e) => {
-      if (!result) {
+      if (!submitted && questions.length > 0) {
         e.preventDefault();
         e.returnValue = "";
       }
     };
     window.addEventListener("beforeunload", handleBeforeUnload);
     return () => window.removeEventListener("beforeunload", handleBeforeUnload);
-  }, [result]);
+  }, [submitted, questions]);
 
   useEffect(() => {
     const saved = localStorage.getItem("crafftSurveyData");
@@ -37,45 +38,6 @@ function CrafftSurvey() {
       }
     }
 
-    const fetchSurvey = async () => {
-      try {
-        const res = await fetch("http://localhost:8080/api/v1.0/survey-template/start?templateId=2", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
-
-        const contentType = res.headers.get("content-type");
-
-        if (!res.ok) {
-          const msg = contentType?.includes("text")
-            ? await res.text()
-            : (await res.json()).message || "Không rõ lỗi";
-
-          if (msg.includes("7 ngày")) {
-            setWarningMessage(
-              "📅 Bạn chỉ có thể làm lại khảo sát này sau 7 ngày kể từ lần trước.\n\n" +
-              "🛠 Nếu bạn cho rằng mình đã trả lời sai, vui lòng liên hệ bộ phận hỗ trợ để được xem xét lại."
-            );
-          } else {
-            setWarningMessage("⚠️ " + msg);
-          }
-          return;
-        }
-
-        const data = await res.json();
-        setSurveyId(data.surveyId);
-        setQuestions(data.answers);
-      } catch (err) {
-        console.error("Lỗi tải khảo sát CRAFFT:", err);
-        setWarningMessage("❌ Không thể kết nối đến máy chủ.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     fetchSurvey();
   }, []);
 
@@ -85,13 +47,53 @@ function CrafftSurvey() {
   }, [answers]);
 
   useEffect(() => {
-    if (!result && surveyId && questions.length > 0) {
+    if (!submitted && surveyId && questions.length > 0) {
       localStorage.setItem(
         "crafftSurveyData",
         JSON.stringify({ surveyId, questions, answers })
       );
     }
-  }, [surveyId, questions, answers, result]);
+  }, [surveyId, questions, answers, submitted]);
+
+  const fetchSurvey = async () => {
+    try {
+      const res = await fetch("http://localhost:8080/api/v1.0/survey-template/start?templateId=2", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      const contentType = res.headers.get("content-type");
+
+      if (!res.ok) {
+        const msg = contentType?.includes("text")
+          ? await res.text()
+          : (await res.json()).message || "Không rõ lỗi";
+
+        if (msg.includes("7 ngày")) {
+          setWarningMessage(
+            "📅 Bạn chỉ có thể làm lại khảo sát này sau 7 ngày kể từ lần trước.\n\n" +
+            "🛠 Nếu bạn cho rằng mình đã trả lời sai, vui lòng liên hệ bộ phận hỗ trợ để được xem xét lại."
+          );
+        } else {
+          setWarningMessage("⚠️ " + msg);
+        }
+        return;
+      }
+
+      const data = await res.json();
+      console.log("Survey ID (CRAFFT):", data.surveyId);
+      setSurveyId(data.surveyId);
+      setQuestions(data.answers);
+    } catch (err) {
+      console.error("Lỗi tải khảo sát CRAFFT:", err);
+      setWarningMessage("❌ Không thể kết nối đến máy chủ.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleAnswerChange = (qid, value) => {
     setAnswers((prev) => ({ ...prev, [qid]: value }));
@@ -118,11 +120,33 @@ function CrafftSurvey() {
         }
       );
 
+      const contentType = res.headers.get("content-type");
+
+      if (!res.ok) {
+        if (contentType?.includes("text/plain")) {
+          const msg = await res.text();
+          if (msg.includes("Survey not found")) {
+            alert("⚠️ Mã khảo sát không hợp lệ hoặc đã bị xóa. Trang sẽ được tải lại.");
+            localStorage.removeItem("crafftSurveyData");
+            window.location.reload();
+            return;
+          } else {
+            alert("⚠️ Lỗi từ server:\n" + msg);
+            return;
+          }
+        } else {
+          const error = await res.json();
+          alert("⚠️ Lỗi: " + (error.message || "Không xác định."));
+          return;
+        }
+      }
+
       const data = await res.json();
       setResult({
         totalScore: data.totalScore,
         recommendation: data.recommendation,
       });
+      setSubmitted(true);
       localStorage.removeItem("crafftSurveyData");
     } catch (err) {
       console.error("Lỗi gửi khảo sát:", err);
@@ -141,6 +165,12 @@ function CrafftSurvey() {
             ))}
             <button className="back-home-button" onClick={() => (window.location.href = "/")}>
               🏠 Quay lại trang chủ
+            </button>
+            <button
+              className="support-request-button"
+              onClick={() => (window.location.href = "/guiyeucaucrafft")}
+            >
+              🛠 Gửi yêu cầu hỗ trợ
             </button>
           </div>
         ) : (
@@ -216,7 +246,6 @@ function CrafftSurvey() {
                     </div>
                   </div>
                 ))}
-
                 <button className="submit-button" onClick={handleSubmit}>
                   Gửi kết quả →
                 </button>

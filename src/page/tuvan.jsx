@@ -1,3 +1,4 @@
+// TuVan.jsx
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./css/tuvan.css";
@@ -15,10 +16,9 @@ export default function TuVan() {
   const [formData, setFormData] = useState({
     date: "",
     time: "",
-    message: "",
   });
 
-  // Lấy thông tin người dùng
+  // Lấy thông tin user
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) return;
@@ -30,61 +30,44 @@ export default function TuVan() {
         Authorization: `Bearer ${token}`,
       },
     })
-      .then((res) => {
-        if (!res.ok) throw new Error("Không lấy được profile");
-        return res.json();
-      })
+      .then((res) => res.json())
       .then((data) => {
         setFullName(data.fullName || data.email || "Người dùng");
-        setUserId(data.id);
+        setUserId(data.userId);
       })
-      .catch((err) => {
-        console.error("Lỗi lấy profile:", err);
-      });
+      .catch((err) => console.error("Lỗi lấy profile:", err));
   }, [isLoggedIn]);
 
   // Lấy danh sách tư vấn viên
   useEffect(() => {
-  const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token");
 
-  fetch("http://localhost:8080/api/v1.0/consultant/getAllConsultant", {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      ...(token && { Authorization: `Bearer ${token}` }),
-    },
-  })
-    .then(async (res) => {
-      const text = await res.text();
-      try {
-        // 1. Phân tích JSON thô và lọc bằng tay
-        const rawData = JSON.parse(text);
-        console.log("🔍 Dữ liệu gốc từ API:", rawData);
-
-        // 2. Lọc ra chỉ các thuộc tính cần dùng
-        const filtered = rawData.map((c) => ({
-          consultantId: c.consultantId,
-          name: c.name,
-          email: c.email,
-          specialization: c.specialization,
-          schedule: c.schedule,
-          availability: c.availability,
-        }));
-
-        console.log("✅ Dữ liệu đã lọc:", filtered);
-        setConsultants(filtered);
-      } catch (err) {
-        console.error("❌ JSON không hợp lệ:", err.message);
-        console.error("⛔ Nội dung gốc:", text.slice(0, 1000)); // cắt để dễ nhìn
-      }
+    fetch("http://localhost:8080/api/v1.0/consultant/getAllConsultant", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        ...(token && { Authorization: `Bearer ${token}` }),
+      },
     })
-    .catch((err) => {
-      console.error("Lỗi khi gọi API:", err);
-    });
-}, []);
-
-
-
+      .then(async (res) => {
+        const text = await res.text();
+        try {
+          const rawData = JSON.parse(text);
+          const filtered = rawData.map((c) => ({
+            consultantId: c.consultantId,
+            name: c.name,
+            email: c.email,
+            specialization: c.specialization,
+            schedule: c.schedule,
+            availability: c.availability,
+          }));
+          setConsultants(filtered);
+        } catch (err) {
+          console.error("Lỗi JSON:", err.message);
+        }
+      })
+      .catch((err) => console.error("Lỗi khi gọi API:", err));
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -97,29 +80,21 @@ export default function TuVan() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!isLoggedIn) {
-      setShowLoginModal(true);
-      return;
-    }
-
-    if (!selectedDoctor) {
-      alert("❗ Vui lòng chọn bác sĩ trước khi đặt lịch!");
-      return;
-    }
+    if (!isLoggedIn) return setShowLoginModal(true);
+    if (!selectedDoctor) return alert("❗ Vui lòng chọn bác sĩ!");
+    if (!userId) return alert("❗ Không tìm thấy ID người dùng.");
 
     const token = localStorage.getItem("token");
-    if (!token) {
-      alert("Không tìm thấy token. Vui lòng đăng nhập lại.");
-      return;
-    }
+    if (!token) return alert("❗ Token không hợp lệ!");
 
     const payload = {
-      date: formData.date,
-      time: formData.time + ":00",
-      status: "Scheduled",
-      location: "Room 204",
       userId: userId,
       consultantId: selectedDoctor.consultantId,
+      date: formData.date,
+      startTime: formData.time,
+      message: "",
+      status: "Pending",
+      location: "Phòng 203 - Tòa B",
     };
 
     try {
@@ -132,28 +107,28 @@ export default function TuVan() {
         body: JSON.stringify(payload),
       });
 
-      if (!res.ok) throw new Error("❌ Lỗi khi tạo lịch hẹn");
-
-      alert("🎉 Đặt lịch thành công!");
-      setFormData({ date: "", time: "", message: "" });
-      setSelectedDoctor(null);
+      const text = await res.text();
+      if (res.ok) {
+        alert("🎉 Đặt lịch thành công!");
+        setFormData({ date: "", time: "" });
+        setSelectedDoctor(null);
+      } else {
+        alert(`❌ Lỗi: ${text}`);
+      }
     } catch (err) {
-      console.error("Lỗi đặt lịch:", err);
-      alert("❌ Lỗi: " + err.message);
+      alert("❌ Lỗi không xác định: " + err.message);
     }
   };
 
   return (
     <div className="tuvan-container">
-      <h2>Trang Tư Vấn & Đặt Lịch Hẹn</h2>
+      <h2>🩺 Tư Vấn & Đặt Lịch Hẹn</h2>
 
       {isLoggedIn && (
-        <p className="greeting">
-          👋 Xin chào, <strong>{fullName}</strong>
-        </p>
+        <p className="greeting">👋 Xin chào, <strong>{fullName}</strong></p>
       )}
 
-      <p>Chọn bác sĩ bạn muốn đặt lịch:</p>
+      <p>🧑‍⚕️ Chọn bác sĩ bạn muốn đặt lịch:</p>
       <div className="doctor-list">
         {consultants.map((doctor) => (
           <div
@@ -163,14 +138,13 @@ export default function TuVan() {
           >
             <h3>{doctor.name}</h3>
             <p><strong>Chuyên ngành:</strong> {doctor.specialization}</p>
-            <p><strong>Lịch làm việc:</strong> {doctor.schedule}</p>
             <p><strong>Email:</strong> {doctor.email}</p>
             <p><strong>Trạng thái:</strong> {doctor.availability ? "🟢 Có sẵn" : "🔴 Không có sẵn"}</p>
           </div>
         ))}
       </div>
 
-      <h3>Đặt Lịch Hẹn</h3>
+      <h3>📅 Đặt Lịch Hẹn</h3>
       <form className="tuvan-form" onSubmit={handleSubmit}>
         <label>
           Ngày hẹn:
@@ -182,18 +156,13 @@ export default function TuVan() {
           <input type="time" name="time" value={formData.time} onChange={handleChange} required />
         </label>
 
-        <label>
-          Ghi chú (không bắt buộc):
-          <textarea name="message" value={formData.message} onChange={handleChange} />
-        </label>
-
-        <button type="submit" disabled={!selectedDoctor}>
-          {isLoggedIn ? "📅 Đặt Lịch Hẹn" : "Vui lòng đăng nhập trước"}
+        <button type="submit" disabled={!selectedDoctor || !userId}>
+          {isLoggedIn ? "📥 Đặt Lịch" : "🔐 Vui lòng đăng nhập"}
         </button>
       </form>
 
       <button className="back-home-button" onClick={() => navigate("/")}>
-        🏠 Quay lại Trang Chủ
+        🏠 Về Trang Chủ
       </button>
 
       {showLoginModal && (
