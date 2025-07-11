@@ -41,7 +41,6 @@ export default function KhaoSat() {
 
   return (
     <div className="wrapper">
-
       <div className="header"></div>
 
 

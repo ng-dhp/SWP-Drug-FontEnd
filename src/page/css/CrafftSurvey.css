@@ -99,3 +99,12 @@
   font-size: 15px;
   margin-top: 16px;
 }
+.warning-box {
+  background-color: #ffe0e0;
+  color: #c62828;
+  padding: 15px;
+  border-left: 6px solid #c62828;
+  border-radius: 8px;
+  margin: 20px 0;
+  white-space: pre-line;
+}

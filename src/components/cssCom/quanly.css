@@ -1,0 +1,58 @@
+.quanly-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  background: #ffffff;
+  padding: 32px;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.quanly-container h2 {
+  text-align: center;
+  color: #1e40af;
+  font-size: 28px;
+  margin-bottom: 24px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+th, td {
+  border: 1px solid #e2e8f0;
+  padding: 12px 16px;
+  text-align: center;
+}
+
+th {
+  background-color: #f1f5f9;
+  color: #1e293b;
+  font-weight: bold;
+}
+
+tr:nth-child(even) {
+  background-color: #f9fafb;
+}
+
+select {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  font-weight: 500;
+}
+
+button {
+  background-color: #3b82f6;
+  color: white;
+  padding: 6px 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+button:hover {
+  background-color: #2563eb;
+}

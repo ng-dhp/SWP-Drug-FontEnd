@@ -188,3 +188,54 @@ body {
   cursor: pointer;
   font-weight: bold;
 }
+.warning {
+  background-color: #fff3cd;
+  color: #856404;
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid #ffeeba;
+  margin-bottom: 16px;
+  font-size: 16px;
+  white-space: pre-wrap;
+}
+
+.back-home-button {
+  margin-top: 16px;
+  padding: 8px 16px;
+  font-size: 16px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.back-home-button:hover {
+  background-color: #0056b3;
+}
+.support-request-button {
+  background-color: #f97316;
+  color: white;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 16px; /* 👈 Thêm dòng này */
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+
+.support-request-button:hover {
+  background-color: #ea580c;
+}
+
+.button-group {
+  margin-top: 16px;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+

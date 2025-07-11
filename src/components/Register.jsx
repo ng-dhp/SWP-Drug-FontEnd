@@ -15,29 +15,15 @@ export default function RegisterModal({ onClose }) {
   const navigate = useNavigate();
 
   const formatDateInput = (value) => {
-    // Remove non-digit characters except slashes
     let cleaned = value.replace(/[^0-9/]/g, "");
-    
-    // Prevent input after dd/mm/yyyy (10 characters)
     if (cleaned.length > 10) {
       cleaned = cleaned.slice(0, 10);
     }
-
-    // Auto-add slashes
     if (cleaned.length > 2 && cleaned[2] !== "/") {
       cleaned = cleaned.slice(0, 2) + "/" + cleaned.slice(2);
     }
     if (cleaned.length > 5 && cleaned[5] !== "/") {
       cleaned = cleaned.slice(0, 5) + "/" + cleaned.slice(5);
-    }
-
-    // Ensure only digits and slashes at correct positions
-    if (cleaned.length <= 2) {
-      cleaned = cleaned.replace(/[^0-9]/g, "");
-    } else if (cleaned.length <= 5) {
-      cleaned = cleaned.replace(/[^0-9/]/g, "").replace(/\/\/+/g, "/");
-    } else {
-      cleaned = cleaned.replace(/[^0-9/]/g, "").replace(/\/\/+/g, "/");
     }
 
     return cleaned;
@@ -65,10 +51,12 @@ export default function RegisterModal({ onClose }) {
     else if (!dobRegex.test(dob)) {
       newErrors.dob = "Ngày sinh phải có định dạng dd/mm/yyyy và hợp lệ (từ 1900)";
     } else {
-      // Validate date logic
       const [day, month, year] = dob.split("/").map(Number);
       const date = new Date(year, month - 1, day);
-      const isValidDate = date.getDate() === day && date.getMonth() === month - 1 && date.getFullYear() === year;
+      const isValidDate =
+        date.getDate() === day &&
+        date.getMonth() === month - 1 &&
+        date.getFullYear() === year;
       if (!isValidDate || year < 1900) {
         newErrors.dob = "Ngày sinh không hợp lệ (từ 1900)";
       }
@@ -88,11 +76,13 @@ export default function RegisterModal({ onClose }) {
     e.preventDefault();
     if (!validateForm()) return;
 
+    const yearOfBirth = parseInt(dob.split("/")[2]);
+
     const userData = {
       fullName: fullName.trim(),
       email,
       password,
-      dob, // Send as string in dd/mm/yyyy format
+      yob: yearOfBirth,
       gender,
       phone,
     };
