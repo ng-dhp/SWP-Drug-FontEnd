@@ -28,9 +28,19 @@ export default function Profile() {
         setProfile(data);
 
         if (data.roleName === "CONSULTANT") {
-          setEditData({ name: data.fullName || "", specialization: data.specialization || "", yob: data.yob || "", phone: data.phone || "" });
+          setEditData({
+            name: data.fullName || "",
+            specialization: data.specialization || "",
+            yob: data.yob || "",
+            phone: data.phone || "",
+          });
         } else if (data.roleName === "USER") {
-          setEditData({ name: data.fullName || "", yob: data.yob || "", gender: data.gender || "", phone: data.phone || "" });
+          setEditData({
+            name: data.fullName || "",
+            yob: data.yob || "",
+            gender: data.gender || "",
+            phone: data.phone || "",
+          });
         }
 
         const userId = data.userId;
@@ -44,15 +54,29 @@ export default function Profile() {
         ]);
       })
       .then(async ([surveyRes, requestRes, apptRes, fbRes, consultantRes]) => {
-        const survey = await surveyRes.json();
-        const requests = await requestRes.json();
-        const apptList = await apptRes.json();
-        const fb = await fbRes.json();
-        const consultants = await consultantRes.json();
+        const [survey, requests, apptList, fb, consultants] = await Promise.all([
+          surveyRes.ok ? surveyRes.json() : [],
+          requestRes.ok ? requestRes.json() : [],
+          apptRes.ok ? apptRes.json() : [],
+          fbRes.ok ? fbRes.json() : [],
+          consultantRes.ok ? consultantRes.json() : [],
+        ]);
+
+        if (!surveyRes.ok) console.error("❌ Survey API error:", surveyRes.status);
+        if (!requestRes.ok) console.error("❌ Request API error:", requestRes.status);
+        if (!apptRes.ok) console.error("❌ Appointment API error:", apptRes.status);
+        if (!fbRes.ok) console.error("❌ Feedback API error:", fbRes.status);
+        if (!consultantRes.ok) console.error("❌ Consultant API error:", consultantRes.status);
+
+        console.log("📝 Khảo sát:", survey);
+        console.log("📨 Yêu cầu khảo sát lại:", requests);
+        console.log("📅 Cuộc hẹn:", apptList);
+        console.log("💬 Phản hồi:", fb);
+        console.log("👨‍⚕️ Tư vấn viên:", consultants);
 
         setSurveyHistory(Array.isArray(survey) ? survey : []);
         setRequestHistory(Array.isArray(requests) ? requests : []);
-        setAppointments(Array.isArray(apptList) ? apptList : []);
+        setAppointments(Array.isArray(apptList) ? apptList : apptList ? [apptList] : []);
         setFeedbacks(Array.isArray(fb) ? fb : []);
         setConsultants(Array.isArray(consultants) ? consultants : []);
         setLoading(false);
@@ -74,9 +98,19 @@ export default function Profile() {
 
     let payload = {};
     if (profile.roleName === "CONSULTANT") {
-      payload = { name: editData.name, specialization: editData.specialization, yob: parseInt(editData.yob), phone: editData.phone };
+      payload = {
+        name: editData.name,
+        specialization: editData.specialization,
+        yob: parseInt(editData.yob),
+        phone: editData.phone,
+      };
     } else if (profile.roleName === "USER") {
-      payload = { fullName: editData.name, yob: parseInt(editData.yob), gender: editData.gender, phone: editData.phone };
+      payload = {
+        fullName: editData.name,
+        yob: parseInt(editData.yob),
+        gender: editData.gender,
+        phone: editData.phone,
+      };
     }
 
     fetch("http://localhost:8080/api/v1.0/update-my-profile", {
@@ -90,7 +124,14 @@ export default function Profile() {
       })
       .then(() => {
         alert("✅ Cập nhật thành công!");
-        setProfile((prev) => ({ ...prev, fullName: editData.name, specialization: editData.specialization || prev.specialization, yob: editData.yob, gender: editData.gender || prev.gender, phone: editData.phone }));
+        setProfile((prev) => ({
+          ...prev,
+          fullName: editData.name,
+          specialization: editData.specialization || prev.specialization,
+          yob: editData.yob,
+          gender: editData.gender || prev.gender,
+          phone: editData.phone,
+        }));
       })
       .catch((err) => {
         console.error("Lỗi cập nhật:", err);
@@ -108,7 +149,7 @@ export default function Profile() {
 
   return (
     <div className="profile-container">
-      <h2 className="tittle-thongtin">Thông tin cá nhân</h2>
+   <h2 className="tittle-thongtin">Thông tin cá nhân</h2>
       <ul className="thongtin">
         <li><strong>👤 Họ tên:</strong> {profile.fullName}</li>
         <li><strong>📧 Email:</strong> {profile.email}</li>
@@ -189,8 +230,9 @@ export default function Profile() {
             <div key={appointment.appointmentId} className="appointment-item">
               <p><strong>🆔 Mã cuộc hẹn:</strong> {appointment.appointmentId}</p>
               <p><strong>📅 Ngày:</strong> {appointment.date}</p>
-              <p><strong>🕒 Thời gian:</strong> {appointment.startTime} - {appointment.endTime}</p>
+              <p><strong>🕒 Thời gian:</strong> {appointment.startTime.slice(0, 5)} - {appointment.endTime.slice(0, 5)}</p>
               <p><strong>📍 Địa điểm:</strong> {appointment.location}</p>
+              <p><strong>👨‍⚕️ Tư vấn viên:</strong> {getConsultantName(appointment.consultantId)}</p>
               <p><strong>📌 Trạng thái:</strong> {appointment.status}</p>
             </div>
           ))}
