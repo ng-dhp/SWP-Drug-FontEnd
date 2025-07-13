@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./css/Chiendich01.css";
+import "./css/Chiendich02.css";
 
 export default function Chiendich01() {
   const [campaign, setCampaign] = useState(null);
@@ -48,7 +48,7 @@ export default function Chiendich01() {
     const token = localStorage.getItem("token");
     if (!token) return;
 
-    fetch("http://localhost:8080/api/v1.0/campaigns/1", {
+    fetch("http://localhost:8080/api/v1.0/campaigns/3", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -96,7 +96,7 @@ export default function Chiendich01() {
       answer: answers[q.id] || null
     }));
 
-    fetch(`http://localhost:8080/api/v1.0/campaigns/1/submit?userId=${userId}`, {
+    fetch(`http://localhost:8080/api/v1.0/campaigns/3/submit?userId=${userId}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

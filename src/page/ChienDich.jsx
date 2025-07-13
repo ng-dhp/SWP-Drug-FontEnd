@@ -1,4 +1,3 @@
-// src/components/ChienDich.jsx
 import React from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
@@ -7,8 +6,54 @@ import "./css/ChienDich.css";
 const ChienDich = () => {
   const navigate = useNavigate();
 
+  const checkAndJoin = async (campaignId, routePath) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Bạn chưa đăng nhập!");
+      return;
+    }
+
+    try {
+      // Lấy userId từ profile
+      const profileRes = await fetch("http://localhost:8080/api/v1.0/profile", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const profileData = await profileRes.json();
+      const userId = profileData.userId;
+
+      if (!userId) {
+        alert("Không thể xác định userId.");
+        return;
+      }
+
+      // Kiểm tra trạng thái khảo sát
+      const statusRes = await fetch(
+        `http://localhost:8080/api/v1.0/campaigns/${campaignId}/status?userId=${userId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      const statusData = await statusRes.json();
+
+      if (statusData.status === "COMPLETED") {
+        alert("Bạn đã tham gia chiến dịch này rồi!");
+        return;
+      }
+
+      // Nếu chưa làm, điều hướng sang trang làm khảo sát
+      navigate(routePath);
+    } catch (err) {
+      console.error("Lỗi khi kiểm tra trạng thái:", err);
+      alert("Không thể kiểm tra trạng thái. Vui lòng thử lại.");
+    }
+  };
+
   const handleJoinChiendich01 = () => {
-    navigate("/chiendich01");
+    checkAndJoin(1, "/chiendich01");
+  };
+
+  const handleJoinChiendich02 = () => {
+    checkAndJoin(2, "/chiendich02");
   };
 
   return (
@@ -34,6 +79,7 @@ const ChienDich = () => {
       </header>
 
       <div className="event-container">
+        {/* Chiến dịch 1 */}
         <motion.div
           className="event-card"
           initial={{ opacity: 0, y: 50 }}
@@ -59,7 +105,9 @@ const ChienDich = () => {
             Tham gia
           </button>
         </motion.div>
- <motion.div
+
+        {/* Chiến dịch 2 */}
+        <motion.div
           className="event-card"
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -80,57 +128,13 @@ const ChienDich = () => {
           <p className="event-description">
             🎯 Mô tả: Buổi nói chuyện chuyên đề kết hợp hoạt động nhóm cho học sinh nhằm nâng cao kỹ năng phòng chống ma túy.
           </p>
-          <button className="join-button">Tham gia</button>
+          <button className="join-button" onClick={handleJoinChiendich02}>
+            Tham gia
+          </button>
         </motion.div>
 
-        <motion.div
-          className="event-card"
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.5 }}
-          viewport={{ once: true }}
-        >
-          <img
-            src="https://i.ytimg.com/vi/CL7bKrJDr6U/maxresdefault.jpg"
-            alt="Hỗ trợ cai nghiện cộng đồng"
-            className="event-image"
-          />
-          <h2>Chiến dịch: Hỗ trợ cai nghiện cộng đồng</h2>
-          <p className="event-topic">📌 Chủ đề: Hỗ trợ người nghiện phục hồi</p>
-          <p className="event-date">📅 Thời gian: 01/07/2025 - 03/07/2025</p>
-          <p className="event-time">🕒 Giờ: 10:00 - 17:00 mỗi ngày</p>
-          <p className="event-location">📍 Địa điểm: Trung tâm Y tế Quận Hoàn Kiếm</p>
-          <p className="event-host">👤 Người host: Lê Văn C</p>
-          <p className="event-description">
-            🎯 Mô tả: Chương trình cung cấp tư vấn và hỗ trợ cai nghiện, kết hợp với các buổi tập huấn cho cộng đồng.
-          </p>
-          <button className="join-button">Tham gia</button>
-        </motion.div>
-
-        <motion.div
-          className="event-card"
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.6 }}
-          viewport={{ once: true }}
-        >
-          <img
-            src="https://th.bing.com/th/id/OIP.3sQgJkq533E_hJVH5dTgDgHaE0?r=0&rs=1&pid=ImgDetMain"
-            alt="Nâng cao nhận thức gia đình"
-            className="event-image"
-          />
-          <h2>Chiến dịch: Nâng cao nhận thức gia đình</h2>
-          <p className="event-topic">📌 Chủ đề: Bảo vệ gia đình khỏi ma túy</p>
-          <p className="event-date">📅 Thời gian: 05/07/2025 - 07/07/2025</p>
-          <p className="event-time">🕒 Giờ: 13:00 - 18:00</p>
-          <p className="event-location">📍 Địa điểm: Nhà Văn hóa Phường Nguyễn Du</p>
-          <p className="event-host">👤 Người host: Phạm Thị D</p>
-          <p className="event-description">
-            🎯 Mô tả: Tổ chức hội thảo và phân phát tài liệu giáo dục cho các gia đình nhằm nâng cao nhận thức về phòng chống ma túy.
-          </p>
-          <button className="join-button">Tham gia</button>
-        </motion.div>
-        ...
+        {/* Các chiến dịch khác... */}
+        {/* Có thể gắn thêm check như trên nếu cần */}
       </div>
     </div>
   );

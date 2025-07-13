@@ -5,7 +5,8 @@ import TuVan from "./page/tuvan";
 import AppContent from "./appContent";
 import KhoaHoc from "./page/Khoahoc.jsx"; // 
 import ChienDich from "./page/ChienDich";
-import Chiendich01 from "./page/chiendich01.jsx"; //
+import Chiendich01 from "./page/Chiendich01.jsx"; //
+import Chiendich02 from "./page/Chiendich02.jsx";
 
 import Lichhen from "./page/Lichhen";
 
@@ -40,6 +41,7 @@ export default function App() {
         <Route path="/tuvan" element={<TuVan />} />
         <Route path="/chiendich" element={<ChienDich />} />
         <Route path="/chiendich01" element={<Chiendich01 />} />
+        <Route path="/chiendich02" element={<Chiendich02 />} />
 
         <Route path="/khoahoc" element={<KhoaHoc />} />
         <Route path="/dashboard-survey" element={<DashboardSurvey />} />
