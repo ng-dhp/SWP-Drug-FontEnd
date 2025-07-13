@@ -53,6 +53,7 @@ export default function KhoaHoc() {
         Authorization: `Bearer ${token}`,
       },
     })
+
       .then((res) => {
         if (!res.ok) return res.text().then((msg) => Promise.reject(msg));
         return res.text();
@@ -116,6 +117,7 @@ export default function KhoaHoc() {
                 <button
                   className="khoa-hoc-button"
                   onClick={() => handleDangKy(khoaHocData[0].id)}
+
                 >
                   Đăng ký khóa học
                 </button>

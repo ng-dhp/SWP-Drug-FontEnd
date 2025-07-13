@@ -96,9 +96,10 @@ export default function Navbar({ onLogin, onRegister, isLoggedIn, onLogout }) {
                   <span className="dropdown-toggle cursor-pointer">Dashboard</span>
                   {isDropdownOpen && (
                     <div className="dropdown-menu bg-white shadow-md absolute z-50 p-2 rounded">
-                      <Link to="/dashboard-survey">Dashboard Survey</Link>
-                      <Link to="/dashboard-campaign">Dashboard Chiến dịch</Link>
-                      <Link to="/dashboard-request">Dashboard Yêu Cầu</Link>
+                      <Link to="/dashboard-survey">Báo Cáo Khảo Sát</Link>
+                      <Link to="/dashboard-campaign">Báo Cáo Chiến Dịch</Link>
+                      <Link to="/dashboard-request">Báo Cáo Yêu Cầu</Link>
+                      <Link to="/dashboard-feedback">Báo Cáo Phản Hồi</Link>
                     </div>
                   )}
                 </div>

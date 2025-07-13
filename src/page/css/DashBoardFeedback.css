@@ -1,0 +1,56 @@
+.bao-cao-phan-hoi {
+  padding: 2rem;
+  font-family: Arial, sans-serif;
+}
+
+.tieu-de {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+  color: #333;
+}
+
+.loi {
+  color: red;
+  margin-bottom: 1rem;
+}
+
+.bang-phan-hoi {
+  overflow-x: auto;
+}
+
+.bang {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.bang th,
+.bang td {
+  border: 1px solid #ddd;
+  padding: 0.75rem;
+  text-align: left;
+}
+
+.bang th {
+  background-color: #f0f0f0;
+}
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.quay-ve {
+  background-color: #f2f2f2;
+  color: #333;
+  border: 1px solid #ccc;
+  padding: 6px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s;
+}
+
+.quay-ve:hover {
+  background-color: #e0e0e0;
+}

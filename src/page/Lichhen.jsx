@@ -8,35 +8,12 @@ export default function Lichhen() {
   const [editStatus, setEditStatus] = useState({});
   const [users, setUsers] = useState([]);
   const [consultants, setConsultants] = useState([]);
+  const [consultantId, setConsultantId] = useState(null);
 
   useEffect(() => {
-    loadAppointments();
     loadUsers();
-    loadConsultants();
+    loadConsultantsAndAppointments();
   }, []);
-
-  const loadAppointments = () => {
-    const token = localStorage.getItem("token");
-    if (!token) return setLoading(false);
-
-    fetch("http://localhost:8080/api/v1.0/appointment/getAllAppointment", {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (Array.isArray(data)) {
-          setAppointments(data);
-        }
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Lỗi lấy dữ liệu cuộc hẹn:", err);
-        setLoading(false);
-      });
-  };
 
   const loadUsers = () => {
     const token = localStorage.getItem("token");
@@ -51,43 +28,75 @@ export default function Lichhen() {
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data)) {
+          console.log("📌 Danh sách users:", data);
           setUsers(data);
         }
       })
       .catch((err) => {
-        console.error("Lỗi lấy danh sách người dùng:", err);
+        console.error("❌ Lỗi lấy danh sách người dùng:", err);
       });
   };
 
-  const loadConsultants = () => {
+  const loadConsultantsAndAppointments = async () => {
     const token = localStorage.getItem("token");
     if (!token) return;
 
-    fetch("http://localhost:8080/api/v1.0/consultant/getAllConsultant", {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (Array.isArray(data)) {
-          setConsultants(data);
-        }
-      })
-      .catch((err) => {
-        console.error("Lỗi lấy danh sách tư vấn viên:", err);
+    try {
+      const profileRes = await fetch("http://localhost:8080/api/v1.0/profile", {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       });
+      const profile = await profileRes.json();
+      const fullName = profile.fullName;
+      console.log("👤 Tư vấn viên hiện tại:", fullName);
+
+      const consultantsRes = await fetch("http://localhost:8080/api/v1.0/consultant/getAllConsultant", {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const consultantList = await consultantsRes.json();
+      console.log("📌 Danh sách tư vấn viên:", consultantList);
+      setConsultants(consultantList);
+
+      const matched = consultantList.find((c) => c.name === fullName);
+      if (matched) {
+        setConsultantId(matched.consultantId);
+        console.log("✅ consultantId tìm được:", matched.consultantId);
+
+        const apptRes = await fetch(`http://localhost:8080/api/v1.0/appointment/consultant/${matched.consultantId}`, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const apptData = await apptRes.json();
+        if (Array.isArray(apptData)) {
+          console.log("📆 Danh sách cuộc hẹn:", apptData);
+          setAppointments(apptData);
+        }
+        setLoading(false);
+      } else {
+        console.warn("⚠️ Không tìm thấy consultantId phù hợp với:", fullName);
+        setLoading(false);
+      }
+    } catch (err) {
+      console.error("❌ Lỗi khi load consultant và appointments:", err);
+      setLoading(false);
+    }
   };
 
   const getUserName = (id) => {
     const user = users.find((u) => u.userId === id);
-    return user ? user.fullName : id;
+    return user ? user.fullName : "Ẩn danh";
   };
 
   const getConsultantName = (id) => {
     const consultant = consultants.find((c) => c.consultantId === id);
-    return consultant ? consultant.name : id;
+    return consultant ? consultant.name : "Không rõ";
   };
 
   const handleStatusChange = (id, value) => {
@@ -97,46 +106,36 @@ export default function Lichhen() {
     }));
   };
 
-  const handleUpdateStatus = (appt) => {
-    const token = localStorage.getItem("token");
-    if (!token) return alert("Vui lòng đăng nhập lại.");
+ const handleUpdateStatus = (appt) => {
+  const token = localStorage.getItem("token");
+  if (!token) return alert("Vui lòng đăng nhập lại.");
 
-    const payload = {
-      date: appt.date,
-      time: appt.startTime,
-      status: editStatus[appt.appointmentId] || appt.status,
-      location: appt.location,
-      userId: appt.userId,
-      consultantId: appt.consultantId,
-    };
+  const newStatus = editStatus[appt.appointmentId] || appt.status;
 
-    fetch(`http://localhost:8080/api/v1.0/appointment/update/${appt.appointmentId}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(payload),
+  fetch(`http://localhost:8080/api/v1.0/appointment/consultant/update-status/${appt.appointmentId}?status=${newStatus}`, {
+    method: "PUT",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+    .then((res) => {
+      if (!res.ok) throw new Error("Cập nhật thất bại");
+
+      const contentType = res.headers.get("content-type");
+      return contentType && contentType.includes("application/json")
+        ? res.json()
+        : res.text();
     })
-      .then((res) => {
-        if (!res.ok) throw new Error("Cập nhật thất bại");
+    .then(() => {
+      alert("✅ Cập nhật thành công!");
+      loadConsultantsAndAppointments();
+    })
+    .catch((err) => {
+      console.error("❌ Lỗi cập nhật:", err);
+      alert("❌ Cập nhật thất bại.");
+    });
+};
 
-        const contentType = res.headers.get("content-type");
-        if (contentType && contentType.includes("application/json")) {
-          return res.json();
-        } else {
-          return res.text();
-        }
-      })
-      .then(() => {
-        alert("✅ Cập nhật thành công!");
-        loadAppointments();
-      })
-      .catch((err) => {
-        console.error("Lỗi cập nhật:", err);
-        alert("❌ Cập nhật thất bại.");
-      });
-  };
 
   if (loading) return <div className="text-center mt-10">Đang tải dữ liệu...</div>;
 
