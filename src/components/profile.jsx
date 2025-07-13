@@ -9,79 +9,57 @@ export default function Profile() {
   const [appointments, setAppointments] = useState([]);
   const [feedbacks, setFeedbacks] = useState([]);
   const [consultants, setConsultants] = useState([]);
+  const [myCourses, setMyCourses] = useState([]);
+  const [showCourses, setShowCourses] = useState(false);
   const [loading, setLoading] = useState(true);
   const [editData, setEditData] = useState({ name: "", specialization: "", yob: "", phone: "", gender: "" });
+  const [courseSessions, setCourseSessions] = useState({});
+  const [consultantSessions, setConsultantSessions] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (!token) {
-      setLoading(false);
-      return;
-    }
+    if (!token) return setLoading(false);
 
     fetch("http://localhost:8080/api/v1.0/profile", {
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
     })
-      .then((res) => res.json())
-      .then((data) => {
+      .then(res => res.json())
+      .then(data => {
         setProfile(data);
-
-        if (data.roleName === "CONSULTANT") {
-          setEditData({
-            name: data.fullName || "",
-            specialization: data.specialization || "",
-            yob: data.yob || "",
-            phone: data.phone || "",
-          });
-        } else if (data.roleName === "USER") {
-          setEditData({
-            name: data.fullName || "",
-            yob: data.yob || "",
-            gender: data.gender || "",
-            phone: data.phone || "",
-          });
-        }
+        setEditData({
+          name: data.fullName || "",
+          specialization: data.specialization || "",
+          yob: data.yob || "",
+          phone: data.phone || "",
+          gender: data.gender || ""
+        });
 
         const userId = data.userId;
-
         return Promise.all([
           fetch("http://localhost:8080/api/v1.0/survey-template/my", { headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` } }),
           fetch("http://localhost:8080/api/v1.0/my-requests/view-request-retake-survey", { headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` } }),
           fetch("http://localhost:8080/api/v1.0/appointment/myAppointment", { headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` } }),
           fetch(`http://localhost:8080/api/v1.0/feedback/user/${userId}`, { headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` } }),
-          fetch("http://localhost:8080/api/v1.0/consultant/getAllConsultant", { headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` } }),
+          fetch("http://localhost:8080/api/v1.0/consultant/getAllConsultant", { headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` } })
         ]);
       })
       .then(async ([surveyRes, requestRes, apptRes, fbRes, consultantRes]) => {
-        const [survey, requests, apptList, fb, consultants] = await Promise.all([
+        const [survey, requests, appts, fb, consultants] = await Promise.all([
           surveyRes.ok ? surveyRes.json() : [],
           requestRes.ok ? requestRes.json() : [],
           apptRes.ok ? apptRes.json() : [],
           fbRes.ok ? fbRes.json() : [],
-          consultantRes.ok ? consultantRes.json() : [],
+          consultantRes.ok ? consultantRes.json() : []
         ]);
-
-        if (!surveyRes.ok) console.error("❌ Survey API error:", surveyRes.status);
-        if (!requestRes.ok) console.error("❌ Request API error:", requestRes.status);
-        if (!apptRes.ok) console.error("❌ Appointment API error:", apptRes.status);
-        if (!fbRes.ok) console.error("❌ Feedback API error:", fbRes.status);
-        if (!consultantRes.ok) console.error("❌ Consultant API error:", consultantRes.status);
-
-        console.log("📝 Khảo sát:", survey);
-        console.log("📨 Yêu cầu khảo sát lại:", requests);
-        console.log("📅 Cuộc hẹn:", apptList);
-        console.log("💬 Phản hồi:", fb);
-        console.log("👨‍⚕️ Tư vấn viên:", consultants);
-
         setSurveyHistory(Array.isArray(survey) ? survey : []);
         setRequestHistory(Array.isArray(requests) ? requests : []);
-        setAppointments(Array.isArray(apptList) ? apptList : apptList ? [apptList] : []);
+        setAppointments(Array.isArray(appts) ? appts : appts ? [appts] : []);
         setFeedbacks(Array.isArray(fb) ? fb : []);
         setConsultants(Array.isArray(consultants) ? consultants : []);
         setLoading(false);
       })
-      .catch((err) => {
+      .catch(err => {
         console.error("Lỗi khi tải dữ liệu:", err);
         setLoading(false);
       });
@@ -89,53 +67,83 @@ export default function Profile() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setEditData((prev) => ({ ...prev, [name]: value }));
+    setEditData(prev => ({ ...prev, [name]: value }));
   };
 
   const handleUpdate = () => {
     const token = localStorage.getItem("token");
     if (!token) return alert("Vui lòng đăng nhập lại.");
-
-    let payload = {};
-    if (profile.roleName === "CONSULTANT") {
-      payload = {
-        name: editData.name,
-        specialization: editData.specialization,
-        yob: parseInt(editData.yob),
-        phone: editData.phone,
-      };
-    } else if (profile.roleName === "USER") {
-      payload = {
-        fullName: editData.name,
-        yob: parseInt(editData.yob),
-        gender: editData.gender,
-        phone: editData.phone,
-      };
-    }
+    const payload = profile.roleName === "CONSULTANT"
+      ? { name: editData.name, specialization: editData.specialization, yob: parseInt(editData.yob), phone: editData.phone }
+      : { fullName: editData.name, yob: parseInt(editData.yob), gender: editData.gender, phone: editData.phone };
 
     fetch("http://localhost:8080/api/v1.0/update-my-profile", {
       method: "PUT",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-      body: JSON.stringify(payload),
+      body: JSON.stringify(payload)
     })
-      .then((res) => {
+      .then(res => {
         if (!res.ok) throw new Error("Cập nhật thất bại");
         return res.json();
       })
       .then(() => {
         alert("✅ Cập nhật thành công!");
-        setProfile((prev) => ({
+        setProfile(prev => ({
           ...prev,
           fullName: editData.name,
           specialization: editData.specialization || prev.specialization,
           yob: editData.yob,
           gender: editData.gender || prev.gender,
-          phone: editData.phone,
+          phone: editData.phone
         }));
       })
-      .catch((err) => {
+      .catch(err => {
         console.error("Lỗi cập nhật:", err);
         alert("❌ Cập nhật thất bại.");
+      });
+  };
+
+  const handleFetchMyCourses = () => {
+    const token = localStorage.getItem("token");
+    if (!token) return alert("Vui lòng đăng nhập.");
+
+    fetch("http://localhost:8080/api/v1.0/profile", {
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+    })
+      .then((res) => res.json())
+      .then((userData) => {
+        const userName = userData.fullName;
+        if (userData.roleName === "CONSULTANT") {
+          return fetch("http://localhost:8080/api/v1.0/consultant/getAllConsultant", {
+            headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+          })
+            .then((res) => res.json())
+            .then((consultants) => {
+              const matched = consultants.find((c) => c.name === userName);
+              if (!matched) throw new Error("Không tìm thấy tư vấn viên phù hợp.");
+              return fetch(`http://localhost:8080/api/v1.0/khoahoc/consultant/${matched.consultantId}/sessions`, {
+                headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+              });
+            })
+            .then((res) => res.json())
+            .then((data) => {
+              setConsultantSessions(Array.isArray(data) ? data : []);
+              setShowCourses(true);
+            });
+        } else {
+          return fetch(`http://localhost:8080/api/v1.0/khoahoc/khoahoc-cuatoi/${userData.userId}`, {
+            headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+          })
+            .then(res => res.json())
+            .then((data) => {
+              setMyCourses(Array.isArray(data) ? data : []);
+              setShowCourses(true);
+            });
+        }
+      })
+      .catch(err => {
+        console.error("❌ Lỗi khi lấy dữ liệu khóa học/lịch dạy:", err);
+        alert("Không thể tải dữ liệu khóa học hoặc lịch dạy.");
       });
   };
 
@@ -144,12 +152,29 @@ export default function Profile() {
     return c ? c.name : `ID ${id}`;
   };
 
+  const fetchSessionsForCourse = (courseId) => {
+    const token = localStorage.getItem("token");
+    if (!token || !profile?.userId) return;
+
+    fetch(`http://localhost:8080/api/v1.0/khoahoc/${courseId}/sessions?userId=${profile.userId}`, {
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }
+    })
+      .then(res => res.json())
+      .then(data => {
+        setCourseSessions(prev => ({
+          ...prev,
+          [courseId]: Array.isArray(data) ? data : []
+        }));
+      })
+      .catch(err => console.error("Lỗi khi lấy buổi học:", err));
+  };
+
   if (loading) return <div className="text-center mt-10">Đang tải...</div>;
   if (!profile) return <div className="text-center mt-10 text-red-500">Không có dữ liệu</div>;
 
   return (
     <div className="profile-container">
-   <h2 className="tittle-thongtin">Thông tin cá nhân</h2>
+      <h2 className="tittle-thongtin">Thông tin cá nhân</h2>
       <ul className="thongtin">
         <li><strong>👤 Họ tên:</strong> {profile.fullName}</li>
         <li><strong>📧 Email:</strong> {profile.email}</li>
@@ -159,35 +184,33 @@ export default function Profile() {
         <li><strong>🛡️ Vai trò:</strong> {profile.roleName}</li>
       </ul>
 
-      {profile.roleName === "CONSULTANT" && (
-        <div className="consultant-edit">
-          <h3>🛠️ Cập nhật thông tin tư vấn viên</h3>
+      {(profile.roleName === "CONSULTANT" || profile.roleName === "USER") && (
+        <div className={profile.roleName === "CONSULTANT" ? "consultant-edit" : "user-edit"}>
+          <h3>🛠️ Cập nhật thông tin {profile.roleName === "CONSULTANT" ? "tư vấn viên" : "cá nhân"}</h3>
           <label>Họ tên:<input type="text" name="name" value={editData.name} onChange={handleChange} /></label>
-          <label>Chuyên ngành:<input type="text" name="specialization" value={editData.specialization} onChange={handleChange} /></label>
+          {profile.roleName === "CONSULTANT" && (
+            <label>Chuyên ngành:<input type="text" name="specialization" value={editData.specialization} onChange={handleChange} /></label>
+          )}
           <label>Năm sinh:<input type="number" name="yob" value={editData.yob} onChange={handleChange} /></label>
-          <label>Số điện thoại:<input type="text" name="phone" value={editData.phone} onChange={handleChange} /></label>
-          <button className="btn-update" onClick={handleUpdate}>💾 Lưu thông tin</button>
-        </div>
-      )}
-
-      {profile.roleName === "USER" && (
-        <div className="user-edit">
-          <h3>🛠️ Cập nhật thông tin cá nhân</h3>
-          <label>Họ tên:<input type="text" name="name" value={editData.name} onChange={handleChange} /></label>
-          <label>Năm sinh:<input type="number" name="yob" value={editData.yob} onChange={handleChange} /></label>
-          <label>Giới tính:
-            <select name="gender" value={editData.gender || ""} onChange={handleChange}>
-              <option value="">-- Chọn giới tính --</option>
-              <option value="Male">Nam</option>
-              <option value="Female">Nữ</option>
-            </select>
-          </label>
+          {profile.roleName === "USER" && (
+            <label>Giới tính:
+              <select name="gender" value={editData.gender || ""} onChange={handleChange}>
+                <option value="">-- Chọn giới tính --</option>
+                <option value="Male">Nam</option>
+                <option value="Female">Nữ</option>
+              </select>
+            </label>
+          )}
           <label>Số điện thoại:<input type="text" name="phone" value={editData.phone} onChange={handleChange} /></label>
           <button className="btn-update" onClick={handleUpdate}>💾 Lưu thông tin</button>
         </div>
       )}
 
       <button className="btn-back-home" onClick={() => navigate("/")}>🏠 Quay về trang chủ</button>
+      <button className="btn-update" onClick={handleFetchMyCourses}>
+        🎓 {profile.roleName === "CONSULTANT" ? "Lịch dạy của tôi" : "Khóa học của tôi"}
+      </button>
+
 
       <div className="history-columns">
         <div className="survey-history">
@@ -250,6 +273,68 @@ export default function Profile() {
           ))}
         </div>
       </div>
+
+      {showCourses && (
+        <div className="popup-courses">
+          <div className="popup-content">
+            <h2>🎓 {profile.roleName === "CONSULTANT" ? "Lịch dạy của tôi" : "Danh sách khóa học của tôi"}</h2>
+            <button className="btn-close" onClick={() => setShowCourses(false)}>❌ Đóng</button>
+
+            {profile.roleName === "CONSULTANT" ? (
+              consultantSessions.length === 0 ? (
+                <p>Không có buổi học nào.</p>
+              ) : (
+                <ul>
+                  {consultantSessions.map((session) => (
+                    <li key={session.sessionId} className="course-item">
+                      <h4>📘 Khóa học ID: {session.courseId}</h4>
+                      <p>🧩 Buổi {session.sessionIndex}</p>
+                      <p>📅 Ngày: {new Date(session.sessionDate).toLocaleString()}</p>
+                    </li>
+                  ))}
+                </ul>
+              )
+            ) : (
+              myCourses.length === 0 ? (
+                <p>Không có khóa học nào.</p>
+              ) : (
+                <ul>
+                  {myCourses.map((course) => (
+                    <li key={course.courseId} className="course-item">
+                      <h3>🎓 {course.tenKhoaHoc}</h3>
+                      <p><strong>📍 Địa điểm:</strong> {course.diaDiem}</p>
+                      <p><strong>📅 Thời gian:</strong>
+                        {new Date(course.thoiGianBatDau).toLocaleString()} → {new Date(course.thoiGianKetThuc).toLocaleString()}
+                      </p>
+                      <p><strong>👨‍⚕️ Tư vấn viên:</strong> {course.consultant?.name || "Không rõ"} ({course.consultant?.email || "N/A"})</p>
+                      <button onClick={() => fetchSessionsForCourse(course.courseId)}>📖 Chi tiết buổi học</button>
+
+                      {courseSessions[course.courseId] && (
+                        <div className="session-list">
+                          <h4>🗓️ Danh sách buổi học:</h4>
+                          <ul>
+                            {courseSessions[course.courseId].map((session) => (
+                              <li key={session.sessionId}>
+                                <p>🧩 Buổi {session.sessionIndex}</p>
+                                <p>📅 Ngày: {new Date(session.sessionDate).toLocaleString()}</p>
+                                <p>✅ Điểm danh: {
+                                  session.isPresent === true ? "Có mặt" :
+                                    session.isPresent === false ? "Vắng" : "Chưa điểm danh"
+                                }</p>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              )
+            )}
+
+          </div>
+        </div>
+      )}
     </div>
   );
 }
