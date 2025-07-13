@@ -47,7 +47,7 @@ export default function KhoaHoc() {
       return;
     }
 
-    fetch(`http://localhost:8080/api/v1.0/khoahoc/dangky?courseId=${courseId}&userId=${userId}`, {
+    fetch(`http://localhost:8080/api/v1.0/khoahoc/dangky/${courseId}?userId=${userId}`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
