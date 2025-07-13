@@ -58,7 +58,7 @@ export default function KhoaHoc() {
     }
 
     fetch(
-      `http://localhost:8080/api/v1.0/khoahoc/dangky?courseId=${courseId}&userId=${userId}`,
+      `http://localhost:8080/api/v1.0/khoahoc/dangky/${courseId}?userId=${userId}`,
       {
         method: "POST",
         headers: {
@@ -77,6 +77,7 @@ export default function KhoaHoc() {
         setThongBao(`❌ ${errMsg}`);
       });
   };
+
 
   return (
     <section className="khoa-hoc-section">

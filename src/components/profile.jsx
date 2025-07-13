@@ -292,7 +292,11 @@ export default function Profile() {
             <div key={appointment.appointmentId} className="appointment-item">
               <p><strong>🆔 Mã cuộc hẹn:</strong> {appointment.appointmentId}</p>
               <p><strong>📅 Ngày:</strong> {appointment.date}</p>
-              <p><strong>🕒 Thời gian:</strong> {appointment.startTime.slice(0, 5)} - {appointment.endTime.slice(0, 5)}</p>
+              <p><strong>🕒 Thời gian:</strong>
+                {appointment.startTime ? appointment.startTime.slice(0, 5) : "Không rõ"} -
+                {appointment.endTime ? appointment.endTime.slice(0, 5) : "Không rõ"}
+              </p>
+
               <p><strong>📍 Địa điểm:</strong> {appointment.location}</p>
               <p><strong>👨‍⚕️ Tư vấn viên:</strong> {getConsultantName(appointment.consultantId)}</p>
               <p><strong>📌 Trạng thái:</strong> {appointment.status}</p>

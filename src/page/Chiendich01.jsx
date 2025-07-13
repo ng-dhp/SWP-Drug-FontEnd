@@ -5,10 +5,8 @@ const Chiendich01 = () => {
     const [campaign, setCampaign] = useState(null);
     const [answers, setAnswers] = useState({});
     const [isSubmitting, setIsSubmitting] = useState(false);
-
     useEffect(() => {
         const token = localStorage.getItem("token");
-        const surveyCount = parseInt(localStorage.getItem("surveyCount") || "0");
 
         if (!token) {
             alert("Vui lòng đăng nhập trước.");
@@ -16,13 +14,8 @@ const Chiendich01 = () => {
             return;
         }
 
-        if (surveyCount >= 2) {
-            alert("❗Bạn đã hoàn thành khảo sát trước và sau. Không thể làm thêm.");
-            window.location.href = "/";
-            return;
-        }
-
-        fetch("http://localhost:8080/api/v1.0/campaigns/3", {
+        // 👉 Chỉ kiểm tra surveyCount sau khi lấy dữ liệu chiến dịch
+        fetch("http://localhost:8080/api/v1.0/campaigns/1", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -35,11 +28,21 @@ const Chiendich01 = () => {
                 }
                 return response.json();
             })
-            .then((data) => setCampaign(data))
-            .catch((error) =>
-                console.error("Lỗi khi lấy dữ liệu chiến dịch:", error)
-            );
+            .then((data) => {
+
+                if (surveyCount >= 2) {
+                    alert("❗Bạn đã hoàn thành khảo sát trước và sau. Không thể làm thêm.");
+                    window.location.href = "/";
+                    return;
+                }
+
+                setCampaign(data);
+            })
+            .catch((error) => {
+                console.error("Lỗi khi lấy dữ liệu chiến dịch:", error);
+            });
     }, []);
+
 
     const handleChange = (questionId, value) => {
         setAnswers({ ...answers, [questionId]: value });
@@ -72,7 +75,7 @@ const Chiendich01 = () => {
             })
         );
 
-        fetch("http://localhost:8080/api/v1.0/campaigns/3/submit", {
+        fetch("http://localhost:8080/api/v1.0/campaigns/1/submit", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -92,8 +95,8 @@ const Chiendich01 = () => {
                 alert(resultText);
 
                 // ✅ Cập nhật số lượt khảo sát
-                const count = parseInt(localStorage.getItem("surveyCount") || "0");
-                localStorage.setItem("surveyCount", count + 1);
+
+
 
                 // 👉 Chuyển hướng sau khi gửi xong nếu muốn
                 window.location.href = "/";
