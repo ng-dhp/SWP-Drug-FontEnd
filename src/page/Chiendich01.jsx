@@ -22,7 +22,7 @@ const Chiendich01 = () => {
             return;
         }
 
-        fetch("http://localhost:8080/api/v1.0/campaigns/3", {
+        fetch("http://localhost:8080/api/v1.0/campaigns/2", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -72,7 +72,7 @@ const Chiendich01 = () => {
             })
         );
 
-        fetch("http://localhost:8080/api/v1.0/campaigns/3/submit", {
+        fetch("http://localhost:8080/api/v1.0/campaigns/2/submit", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

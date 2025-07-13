@@ -1,134 +1,74 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import "./css/Khoahoc.css";
-import anh_hs from "../assets/anh_hs.png";
-import anh_phuhuynh from "../assets/anh_phuhuynh.png";
-import anh_gv from "../assets/anh_gv.png";
-import anh_tv from "../assets/anh_tv.png";
-import anh_tuchoi from "../assets/anh_tuchoi.png";
-import anh_gt from "../assets/anh_gt.png";
-import anh_sk from "../assets/anh_sk.png";
-import anh_td from "../assets/anh_td.png";
 import { useNavigate } from "react-router-dom";
-
-
-const khoaHocData = [
-  {
-    title: "Phòng ngừa Ma túy cho Học sinh",
-    image: anh_hs,
-    audience: "Học sinh từ 12–18 tuổi",
-    level: "Cơ bản",
-    quality: "1 gói",
-    price: "Miễn phí",
-    highlights: [
-      "Hiểu biết về các loại ma túy",
-      "Hậu quả của ma túy đối với cơ thể",
-      "Kỹ năng từ chối và tự bảo vệ",
-      "Xây dựng lối sống tích cực",
-    ],
-  },
-  {
-    title: "Hướng dẫn cho Phụ huynh",
-    image: anh_phuhuynh,
-    audience: "Phụ huynh, người chăm sóc",
-    level: "Trung bình",
-    quality: "1 gói",
-    price: "500.000 VNĐ",
-    highlights: [
-      "Dấu hiệu nhận biết lạm dụng ma túy",
-      "Giao tiếp hiệu quả với con cái",
-      "Xây dựng thói quen tích cực",
-    ],
-  },
-  {
-    title: "Đào tạo cho Giáo viên",
-    image: anh_gv,
-    audience: "Giáo viên, nhân viên giáo dục",
-    level: "Nâng cao",
-    quality: "1 gói",
-    price: "1.200.000 VNĐ",
-    highlights: [
-      "Phương pháp giáo dục phòng ngừa",
-      "Hỗ trợ học sinh và thanh thiếu niên",
-      "Xử lý tình huống và báo cáo",
-    ],
-  },
-  {
-    title: "Tư vấn viên Chuyên nghiệp",
-    image: anh_tv,
-    audience: "Chuyên gia, tư vấn viên",
-    level: "Chuyên gia",
-    quality: "1 gói",
-    price: "3.500.000 VNĐ",
-    highlights: [
-      "Kỹ thuật tư vấn & hỗ trợ hồi phục",
-      "Công cụ đánh giá nguy cơ (ASSIST, CRAFFT)",
-      "Xây dựng chương trình can thiệp",
-    ],
-  },
-  {
-    title: "Kỹ năng Từ chối và Phòng vệ",
-    image: anh_tuchoi,
-    audience: "Thanh thiếu niên",
-    level: "Cơ bản",
-    quality: "1 gói",
-    price: "300.000 VNĐ",
-    highlights: [
-      "Nhận biết tình huống nguy cơ",
-      "Kỹ năng từ chối hiệu quả",
-      "Phòng vệ cá nhân và giao tiếp an toàn",
-    ],
-  },
-  {
-    title: "Giáo dục giới tính & kỹ năng sống",
-    image: anh_gt,
-    audience: "Tuổi vị thành niên",
-    level: "Cơ bản",
-    quality: "1 gói",
-    price: "400.000 VNĐ",
-    highlights: [
-      "Kiến thức giới tính lành mạnh",
-      "Kỹ năng sống và tự quản lý bản thân",
-      "Phòng tránh nguy cơ lệch lạc hành vi",
-    ],
-  },
-  {
-    title: "Chăm sóc sức khỏe tâm thần",
-    image: anh_sk,
-    audience: "Mọi đối tượng",
-    level: "Trung bình",
-    quality: "1 gói",
-    price: "600.000 VNĐ",
-    highlights: [
-      "Nhận diện vấn đề tâm lý",
-      "Chiến lược kiểm soát stress",
-      "Xây dựng tinh thần tích cực",
-    ],
-  },
-  {
-    title: "Tư duy tích cực & Lối sống lành mạnh",
-    image: anh_td,
-    audience: "Thanh thiếu niên, người trưởng thành",
-    level: "Cơ bản",
-    quality: "1 gói",
-    price: "Miễn phí",
-    highlights: [
-      "Thói quen tốt và sức khỏe tinh thần",
-      "Giảm nguy cơ sa vào tệ nạn",
-      "Xây dựng môi trường sống tích cực",
-    ],
-  },
-];
+import "./css/Khoahoc.css";
+import defaultImage from "../assets/anh_hs.png";
 
 export default function KhoaHoc() {
   const navigate = useNavigate();
+  const [khoaHocData, setKhoaHocData] = useState([]);
+  const [userId, setUserId] = useState(null);
+  const [thongBao, setThongBao] = useState("");
+  const [thongBaoType, setThongBaoType] = useState("");
+  const token = localStorage.getItem("token");
+
+  useEffect(() => {
+    fetch("http://localhost:8080/api/v1.0/profile", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Không lấy được profile");
+        return res.json();
+      })
+      .then((data) => setUserId(data.userId))
+      .catch((error) => console.error("Lỗi gọi API profile:", error));
+  }, [token]);
+
+  useEffect(() => {
+    fetch("http://localhost:8080/api/v1.0/khoahoc/getallcourse", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Lỗi khi tải khóa học");
+        return res.json();
+      })
+      .then((data) => setKhoaHocData(data))
+      .catch((error) => console.error("Lỗi gọi API getAllCourse:", error));
+  }, [token]);
+
+  const handleDangKy = (courseId) => {
+    if (!userId) {
+      setThongBao("❌ Không xác định được người dùng.");
+      setThongBaoType("error");
+      return;
+    }
+
+    fetch(`http://localhost:8080/api/v1.0/khoahoc/dangky?courseId=${courseId}&userId=${userId}`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((res) => {
+        if (!res.ok) return res.text().then((msg) => Promise.reject(msg));
+        return res.text();
+      })
+      .then((message) => {
+        setThongBao(`✅ ${message}`);
+        setThongBaoType("success");
+      })
+      .catch((errMsg) => {
+        setThongBao(`❌ ${errMsg}`);
+        setThongBaoType("error");
+      });
+  };
 
   return (
     <section className="khoa-hoc-section">
-      <button className="back-button" onClick={() => navigate("/")}>
-        🏠 Trở về màn hình chính
-      </button>
-
       <motion.h2
         className="khoa-hoc-title"
         initial={{ opacity: 0 }}
@@ -138,33 +78,99 @@ export default function KhoaHoc() {
         Khóa học phòng ngừa sử dụng ma túy
       </motion.h2>
 
-      <div className="khoa-hoc-grid">
-        {khoaHocData.map((course, index) => (
+      {thongBao && (
+        <div className={`alert ${thongBaoType === "success" ? "alert-success" : "alert-error"}`}>
+          {thongBao}
+        </div>
+      )}
+
+      {khoaHocData.length === 1 ? (
+        <div className="khoa-hoc-single">
           <motion.div
-            key={index}
+            key={khoaHocData[0].id}
             className="khoa-hoc-card"
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.2 }}
+            transition={{ duration: 0.3 }}
             viewport={{ once: true }}
           >
-            <img src={course.image} alt={course.title} />
+<img src={defaultImage} alt={khoaHocData[0].tenKhoaHoc} />
             <div className="khoa-hoc-content">
-              <h3>{course.title}</h3>
+              <h3>{khoaHocData[0].tenKhoaHoc}</h3>
               <ul className="khoa-hoc-highlights">
-                {course.highlights.map((item, i) => (
-                  <li key={i}>{item}</li>
-                ))}
+                <li>👥 Tư vấn viên: {khoaHocData[0].consultant?.name || "Chưa rõ"}</li>
+                <li>📍 Địa điểm: {khoaHocData[0].diaDiem}</li>
+                <li>
+                  🕒 Thời gian:{" "}
+                  {new Date(khoaHocData[0].thoiGianBatDau).toLocaleString("vi-VN")} →{" "}
+                  {new Date(khoaHocData[0].thoiGianKetThuc).toLocaleString("vi-VN")}
+                </li>
+                <li>👤 Số lượng tối đa: {khoaHocData[0].soLuongToiDa}</li>
               </ul>
-              
-
               <div className="khoa-hoc-footer">
-                <span className="khoa-hoc-price">{course.price}</span>
-                <button className="khoa-hoc-button">Xem chi tiết</button>
+                <span className="khoa-hoc-price">
+                  {khoaHocData[0].giaTien === 0 || !khoaHocData[0].giaTien
+                    ? "Miễn phí"
+                    : `${khoaHocData[0].giaTien.toLocaleString()} VNĐ`}
+                </span>
+                <button
+                  className="khoa-hoc-button"
+                  onClick={() => handleDangKy(khoaHocData[0].id)}
+                >
+                  Đăng ký khóa học
+                </button>
               </div>
             </div>
           </motion.div>
-        ))}
+        </div>
+      ) : (
+        <div className="khoa-hoc-grid">
+          {khoaHocData.map((course, index) => (
+            <motion.div
+              key={course.id}
+              className="khoa-hoc-card"
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+              viewport={{ once: true }}
+            >
+              <img src={defaultImage} alt={course.tenKhoaHoc} />
+              <div className="khoa-hoc-content">
+                <h3>{course.tenKhoaHoc}</h3>
+                <ul className="khoa-hoc-highlights">
+                  <li>👥 Tư vấn viên: {course.consultant?.name || "Chưa rõ"}</li>
+                  <li>📍 Địa điểm: {course.diaDiem}</li>
+                  <li>
+                    🕒 Thời gian:{" "}
+                    {new Date(course.thoiGianBatDau).toLocaleString("vi-VN")} →{" "}
+                    {new Date(course.thoiGianKetThuc).toLocaleString("vi-VN")}
+                  </li>
+                  <li>👤 Số lượng tối đa: {course.soLuongToiDa}</li>
+                </ul>
+                <div className="khoa-hoc-footer">
+                  <span className="khoa-hoc-price">
+                    {course.giaTien === 0 || !course.giaTien
+                      ? "Miễn phí"
+                      : `${course.giaTien.toLocaleString()} VNĐ`}
+                  </span>
+                  <button
+                    className="khoa-hoc-button"
+                    onClick={() => handleDangKy(course.id)}
+                  >
+                    Đăng ký khóa học
+                  </button>
+</div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      )}
+
+      {/* ✅ Nút back nằm giữa cuối trang */}
+      <div className="back-button-wrapper">
+        <button className="back-button" onClick={() => navigate("/")}>
+          🏠 Trở về màn hình chính
+        </button>
       </div>
     </section>
   );

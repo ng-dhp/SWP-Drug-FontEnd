@@ -10,6 +10,9 @@ body {
   background: linear-gradient(to bottom, #f7fafc, #ffffff);
   padding: 4rem 1rem;
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .khoa-hoc-title {
@@ -18,7 +21,6 @@ body {
   color: #1e40af;
   text-align: center;
   margin-bottom: 2rem;
-  padding-bottom: 50px;
 }
 
 .khoa-hoc-grid {
@@ -26,7 +28,7 @@ body {
   gap: 2rem;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   max-width: 1200px;
-  margin: 0 auto;
+  width: 100%;
 }
 
 .khoa-hoc-card {
@@ -44,7 +46,6 @@ body {
   box-shadow: 0 15px 25px rgba(0, 0, 0, 0.1);
 }
 
-/* Ảnh */
 .khoa-hoc-card img {
   width: 100%;
   height: 200px;
@@ -53,7 +54,6 @@ body {
   border-bottom: 1px solid #bae6fd;
 }
 
-/* Nội dung */
 .khoa-hoc-content {
   padding: 1.5rem;
   flex: 1;
@@ -62,7 +62,6 @@ body {
   justify-content: space-between;
 }
 
-/* Tên khóa học */
 .khoa-hoc-content h3 {
   font-size: 1.25rem;
   font-weight: 600;
@@ -70,7 +69,6 @@ body {
   margin-bottom: 0.5rem;
 }
 
-/* Danh sách mô tả */
 .khoa-hoc-highlights {
   margin-top: 0.75rem;
   margin-bottom: auto;
@@ -78,6 +76,7 @@ body {
   color: #374151;
   font-size: 0.95rem;
   line-height: 1.5;
+  list-style: none;
 }
 
 .khoa-hoc-footer {
@@ -85,14 +84,14 @@ body {
   justify-content: space-between;
   align-items: center;
   margin-top: 1.2rem;
-  gap: 1rem; /* thêm khoảng cách giữa 2 cột */
+  gap: 1rem;
 }
 
 .khoa-hoc-price {
   font-size: 1rem;
   font-weight: 600;
   color: #1f2937;
-  white-space: nowrap; /* giữ trên 1 dòng */
+  white-space: nowrap;
 }
 
 .khoa-hoc-button {
@@ -104,7 +103,7 @@ body {
   border-radius: 9999px;
   transition: background-color 0.3s ease, box-shadow 0.2s ease;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-  white-space: nowrap; /* giữ trên 1 dòng */
+  white-space: nowrap;
 }
 
 .khoa-hoc-button:hover {
@@ -112,6 +111,63 @@ body {
   cursor: pointer;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
+
+.khoa-hoc-single {
+  max-width: 350px;
+  margin: 2rem auto;
+}
+
+/* Thông báo */
+.alert {
+  margin: 1rem auto;
+  padding: 1rem 1.25rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  width: fit-content;
+  max-width: 90%;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.alert-success {
+  background-color: #d1fae5;
+  color: #065f46;
+  border: 1px solid #10b981;
+}
+
+.alert-error {
+  background-color: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #ef4444;
+}
+
+/* Nút trở về nằm giữa cuối */
+.back-button-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 3rem;
+  width: 100%;
+}
+
+.back-button {
+  background-color: #e0e7ff;
+  border: none;
+  color: #1e3a8a;
+  font-size: 1rem;
+  font-weight: 500;
+  padding: 0.6rem 1.4rem;
+  border-radius: 9999px;
+  transition: all 0.3s ease;
+cursor: pointer;
+}
+
+.back-button:hover {
+  background-color: #c7d2fe;
+  color: #2563eb;
+}
+
+/* Responsive */
 @media (max-width: 768px) {
   .khoa-hoc-grid {
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
@@ -120,28 +176,33 @@ body {
 
 @media (min-width: 1600px) {
   .khoa-hoc-grid {
-    max-width: 90vw; /* cho co giãn thoải mái hơn ở màn hình rộng */
+    max-width: 90vw;
   }
 }
-.back-button {
-  background: none;
-  border: none;
-  color: #1e3a8a;
-  font-size: 1rem;
-  font-weight: 500;
-  cursor: pointer;
-  padding: 0;
+.khoa-hoc-section {
+  background: linear-gradient(135deg, #f0f4ff 0%, #dbeafe 40%, #fdf2f8 100%);
+  padding: 4rem 1rem;
+  min-height: 100vh;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 0.4rem;
-  transition: color 0.2s ease;
+}
+.khoa-hoc-section::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.3), transparent 40%),
+                    radial-gradient(circle at 80% 30%, rgba(255, 255, 255, 0.2), transparent 50%);
+  z-index: 0;
+
+  /* ✅ Thêm dòng này để không chặn click */
+  pointer-events: none;
 }
 
-.back-button:hover {
-  color: #2563eb;
-  text-decoration: underline;
+.khoa-hoc-section {
+  position: relative;
+  z-index: 1;
 }
-
-
-
-
