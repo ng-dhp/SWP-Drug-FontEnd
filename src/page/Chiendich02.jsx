@@ -2,16 +2,17 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./css/Chiendich02.css";
 
-export default function Chiendich01() {
+export default function Chiendich03() {
   const [campaign, setCampaign] = useState(null);
   const [answers, setAnswers] = useState({});
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState(null);
   const [serverMessage, setServerMessage] = useState("");
+  const [totalScore, setTotalScore] = useState(null); // ✅ điểm số
 
-  const navigate = useNavigate(); // điều hướng
+  const navigate = useNavigate();
 
-  // Lấy userId từ profile
+  // Lấy userId
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -96,6 +97,18 @@ export default function Chiendich01() {
       answer: answers[q.id] || null
     }));
 
+    // ✅ Tính điểm
+    let score = 0;
+    campaign.questions.forEach(q => {
+      if (q.type === "MULTIPLE_CHOICE") {
+        const selectedOptionId = answers[q.id];
+        const selectedOption = q.options.find(opt => opt.id === selectedOptionId);
+        if (selectedOption) {
+          score += selectedOption.score || 0;
+        }
+      }
+    });
+
     fetch(`http://localhost:8080/api/v1.0/campaigns/3/submit?userId=${userId}`, {
       method: "POST",
       headers: {
@@ -107,12 +120,12 @@ export default function Chiendich01() {
       .then(res => res.json().then(data => ({ status: res.status, body: data })))
       .then(({ status, body }) => {
         if (status >= 200 && status < 300) {
+          setTotalScore(score); // ✅ Hiển thị điểm
           setServerMessage(body.message || "Gửi khảo sát thành công!");
-          setAnswers({}); // xoá hết câu trả lời
-
+          setAnswers({});
           setTimeout(() => {
-            navigate("/chiendich"); // điều hướng về trang danh sách chiến dịch
-          }, 2000);
+            navigate("/chiendich");
+          }, 5000);
         } else {
           setServerMessage(body.message || "Gửi khảo sát thất bại!");
         }
@@ -138,7 +151,13 @@ export default function Chiendich01() {
         <div className="popup-thongbao">
           <div className="noi-dung-thongbao">
             <p>{serverMessage}</p>
-            <button onClick={() => setServerMessage("")}>Đóng</button>
+            {totalScore !== null && (
+              <p><strong>Điểm số của bạn:</strong> {totalScore}</p>
+            )}
+            <button onClick={() => {
+              setServerMessage("");
+              setTotalScore(null);
+            }}>Đóng</button>
           </div>
         </div>
       )}
