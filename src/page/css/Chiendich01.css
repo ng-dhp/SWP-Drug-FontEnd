@@ -1,59 +1,51 @@
+/* Chèn nội dung anh đã gửi ở trên */
 .trang-chien-dich {
   max-width: 900px;
   margin: 0 auto;
   padding: 40px 20px;
   background-color: #f9f9f9;
 }
-
 .khung-chien-dich {
   background: #fff;
   border-radius: 12px;
   padding: 30px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
-
 .tieu-de {
   font-size: 26px;
   font-weight: bold;
   color: #1e40af;
   margin-bottom: 10px;
 }
-
 .mo-ta {
   color: #4b5563;
   margin-bottom: 25px;
 }
-
 .khung-cau-hoi {
   margin-bottom: 30px;
   border-bottom: 1px solid #e5e7eb;
   padding-bottom: 20px;
 }
-
 .ten-cau-hoi {
   display: block;
   font-size: 18px;
   font-weight: 500;
   margin-bottom: 10px;
 }
-
 .lua-chon-tra-loi {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
-
 .muc-lua-chon {
   display: flex;
   align-items: center;
   gap: 10px;
 }
-
 .o-chon {
   width: 18px;
   height: 18px;
 }
-
 .o-nhap-van-ban {
   width: 100%;
   border: 1px solid #d1d5db;
@@ -62,11 +54,9 @@
   resize: none;
   font-size: 16px;
 }
-
 .khung-nut-gui {
   margin-top: 30px;
 }
-
 .nut-gui {
   background-color: #2563eb;
   color: white;
@@ -76,19 +66,57 @@
   border: none;
   cursor: pointer;
 }
-
 .nut-gui:hover {
   background-color: #1d4ed8;
 }
-
 .trang-tai-du-lieu {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
 }
-
 .thong-bao {
   color: #6b7280;
   font-size: 18px;
+}
+
+.popup-thongbao {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.noi-dung-thongbao {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+  max-width: 400px;
+  text-align: center;
+}
+
+.noi-dung-thongbao p {
+  margin-bottom: 20px;
+  font-size: 16px;
+  color: #111827;
+}
+
+.noi-dung-thongbao button {
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.noi-dung-thongbao button:hover {
+  background-color: #1d4ed8;
 }
