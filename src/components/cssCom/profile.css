@@ -256,3 +256,9 @@ details ul {
 .session-list li:last-child {
   border-bottom: none;
 }
+
+.flex-btn-group {
+  display: flex;
+  gap: 12px;
+  margin: 16px 0;
+}

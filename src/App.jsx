@@ -21,6 +21,8 @@ import DashboardYeuCau from "./page/DashBoardYeuCau.jsx"; // ✅
 import DashBoardFeedback from "./page/DashBoardFeedback.jsx";
 import GuiYeuCau from "./page/guiyeucau.jsx";
 import GuiYeuCauCrafft from "./page/guiyeucaucrafft.jsx";
+import Diemdanh from "./page/Diemdanh.jsx";
+
 
 
 
@@ -44,6 +46,7 @@ export default function App() {
         <Route path="/dashboard-campaign" element={<DashboardChienDich />} />
         <Route path="/dashboard-request" element={<DashboardYeuCau />} />
         <Route path="/dashboard-feedback" element={<DashBoardFeedback />} />
+        <Route path="/diemdanh" element={<Diemdanh />} />
 
         <Route path="/feedbackform" element={<FeedbackForm />}></Route>
         <Route path="/profile" element={<Profile />} />

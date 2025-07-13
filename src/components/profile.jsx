@@ -113,6 +113,7 @@ export default function Profile() {
       .then((res) => res.json())
       .then((userData) => {
         const userName = userData.fullName;
+
         if (userData.roleName === "CONSULTANT") {
           return fetch("http://localhost:8080/api/v1.0/consultant/getAllConsultant", {
             headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
@@ -121,15 +122,30 @@ export default function Profile() {
             .then((consultants) => {
               const matched = consultants.find((c) => c.name === userName);
               if (!matched) throw new Error("Không tìm thấy tư vấn viên phù hợp.");
-              return fetch(`http://localhost:8080/api/v1.0/khoahoc/consultant/${matched.consultantId}/sessions`, {
-                headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-              });
+
+              // Gọi đồng thời 2 API
+              return Promise.all([
+                fetch(`http://localhost:8080/api/v1.0/khoahoc/consultant/${matched.consultantId}/sessions`, {
+                  headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+                }),
+                fetch("http://localhost:8080/api/v1.0/khoahoc/getallcourse", {
+                  headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+                })
+              ]);
             })
-            .then((res) => res.json())
-            .then((data) => {
-              setConsultantSessions(Array.isArray(data) ? data : []);
+            .then(async ([sessionsRes, allCoursesRes]) => {
+              const sessionsData = await sessionsRes.json();
+              const allCoursesData = await allCoursesRes.json();
+
+              setConsultantSessions(Array.isArray(sessionsData) ? sessionsData : []);
+              setAllCourses(Array.isArray(allCoursesData) ? allCoursesData : []);
+
+              // 🧪 Thêm dòng này để kiểm tra dữ liệu:
+              console.log("✅ Danh sách tất cả khóa học (allCourses):", allCoursesData);
+
               setShowCourses(true);
             });
+
         } else {
           return fetch(`http://localhost:8080/api/v1.0/khoahoc/khoahoc-cuatoi/${userData.userId}`, {
             headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
@@ -146,6 +162,16 @@ export default function Profile() {
         alert("Không thể tải dữ liệu khóa học hoặc lịch dạy.");
       });
   };
+
+
+  const getCourseInfoById = (courseId) => {
+    const course = allCourses.find(c => Number(c.id) === Number(courseId));
+    return course ? { tenKhoaHoc: course.tenKhoaHoc } : { tenKhoaHoc: `Khóa ${courseId}` };
+  };
+
+
+
+
 
   const getConsultantName = (id) => {
     const c = consultants.find((c) => c.consultantId === id);
@@ -168,6 +194,10 @@ export default function Profile() {
       })
       .catch(err => console.error("Lỗi khi lấy buổi học:", err));
   };
+
+  const [allCourses, setAllCourses] = useState([]);
+
+
 
   if (loading) return <div className="text-center mt-10">Đang tải...</div>;
   if (!profile) return <div className="text-center mt-10 text-red-500">Không có dữ liệu</div>;
@@ -207,9 +237,18 @@ export default function Profile() {
       )}
 
       <button className="btn-back-home" onClick={() => navigate("/")}>🏠 Quay về trang chủ</button>
-      <button className="btn-update" onClick={handleFetchMyCourses}>
-        🎓 {profile.roleName === "CONSULTANT" ? "Lịch dạy của tôi" : "Khóa học của tôi"}
-      </button>
+      <div className="flex-btn-group">
+        <button className="btn-update" onClick={handleFetchMyCourses}>
+          🎓 {profile.roleName === "CONSULTANT" ? "Lịch dạy của tôi" : "Khóa học của tôi"}
+        </button>
+
+        {profile.roleName === "CONSULTANT" && (
+          <button className="btn-update" onClick={() => navigate("/diemdanh")}>
+            📋 Điểm danh
+          </button>
+        )}
+      </div>
+
 
 
       <div className="history-columns">
@@ -287,7 +326,7 @@ export default function Profile() {
                 <ul>
                   {consultantSessions.map((session) => (
                     <li key={session.sessionId} className="course-item">
-                      <h4>📘 Khóa học ID: {session.courseId}</h4>
+                      <h4>📘 Khóa học: {getCourseInfoById(session.courseId).tenKhoaHoc}</h4>
                       <p>🧩 Buổi {session.sessionIndex}</p>
                       <p>📅 Ngày: {new Date(session.sessionDate).toLocaleString()}</p>
                     </li>

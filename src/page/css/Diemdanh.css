@@ -1,0 +1,39 @@
+.diemdanh-container {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.session-block {
+  background: #f9f9f9;
+  border: 1px solid #ccc;
+  margin-top: 20px;
+  padding: 15px;
+  border-radius: 10px;
+}
+
+.student-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.student-table th,
+.student-table td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: left;
+}
+
+.student-table th {
+  background: #f0f0f0;
+}
+
+.btn-back-home {
+  margin-bottom: 20px;
+  padding: 8px 12px;
+  border: none;
+  background-color: #1976d2;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
