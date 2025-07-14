@@ -100,6 +100,7 @@ export default function Navbar({ onLogin, onRegister, isLoggedIn, onLogout }) {
                       <Link to="/dashboard-campaign">Báo Cáo Chiến Dịch</Link>
                       <Link to="/dashboard-request">Báo Cáo Yêu Cầu</Link>
                       <Link to="/dashboard-feedback">Báo Cáo Phản Hồi</Link>
+
                     </div>
                   )}
                 </div>

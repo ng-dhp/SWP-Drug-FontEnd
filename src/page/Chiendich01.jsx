@@ -10,6 +10,7 @@ export default function Chiendich01() {
   const [serverMessage, setServerMessage] = useState("");
   const [totalScore, setTotalScore] = useState(null); // ✅ điểm số
 
+
   const navigate = useNavigate();
 
   // Lấy userId
@@ -92,10 +93,21 @@ export default function Chiendich01() {
       return;
     }
 
-    const payload = campaign.questions.map(q => ({
-      questionId: q.id,
-      answer: answers[q.id] || null
-    }));
+    const payload = campaign.questions.map(q => {
+      if (q.type === "MULTIPLE_CHOICE") {
+        return {
+          questionId: q.id,
+          optionId: answers[q.id] ? Number(answers[q.id]) : null
+        };
+      } else {
+        return {
+          questionId: q.id,
+          answerText: answers[q.id] || ""
+        };
+      }
+    });
+
+    console.log("📤 Payload gửi đi:", payload);
 
     // ✅ Tính điểm trước khi gửi
     let score = 0;
@@ -119,6 +131,9 @@ export default function Chiendich01() {
     })
       .then(res => res.json().then(data => ({ status: res.status, body: data })))
       .then(({ status, body }) => {
+        const message = body.message || "Gửi khảo sát thành công!";
+        const scoreText = body.totalScore != null ? `\nTổng điểm: ${body.totalScore}` : "";
+
         if (status >= 200 && status < 300) {
           setTotalScore(score); // ✅ Cập nhật điểm
           setServerMessage(body.message || "Gửi khảo sát thành công!");
@@ -126,14 +141,24 @@ export default function Chiendich01() {
           setTimeout(() => {
             navigate("/chiendich");
           }, 5000);
+
         } else {
-          setServerMessage(body.message || "Gửi khảo sát thất bại!");
+          setServerMessage(`🚨 ${message}`);
+          setIsError(true);
         }
       })
       .catch(error => {
         console.error("Lỗi khi gửi khảo sát:", error);
-        setServerMessage("Lỗi kết nối hoặc server không phản hồi.");
+        setServerMessage("🚨 Không thể kết nối tới server.");
+        setIsError(true);
       });
+  };
+
+  const handleClosePopup = () => {
+    setServerMessage("");
+    if (isError) {
+      navigate("/"); // quay về trang chủ nếu có lỗi
+    }
   };
 
   if (loading || userId === null) {
@@ -158,6 +183,7 @@ export default function Chiendich01() {
               setServerMessage("");
               setTotalScore(null);
             }}>Đóng</button>
+
           </div>
         </div>
       )}
@@ -165,8 +191,12 @@ export default function Chiendich01() {
       <div className="trang-chien-dich">
         <div className="khung-chien-dich">
           <h1 className="tieu-de">{campaign.name}</h1>
-          <p className="mo-ta"><strong>Thời gian:</strong> {campaign.startDate} - {campaign.endDate}</p>
-          <p className="mo-ta"><strong>Mô tả:</strong> {campaign.description}</p>
+          <p className="mo-ta">
+            <strong>Thời gian:</strong> {campaign.startDate} - {campaign.endDate}
+          </p>
+          <p className="mo-ta">
+            <strong>Mô tả:</strong> {campaign.description}
+          </p>
 
           <form onSubmit={handleSubmit}>
             {campaign.questions.map((q, index) => (
