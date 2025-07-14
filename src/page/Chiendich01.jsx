@@ -8,16 +8,16 @@ export default function Chiendich01() {
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState(null);
   const [serverMessage, setServerMessage] = useState("");
-  const [totalScore, setTotalScore] = useState(null); // ✅ điểm số
-
+  const [totalScore, setTotalScore] = useState(null);
+  const [isError, setIsError] = useState(false);
 
   const navigate = useNavigate();
 
-  // Lấy userId
+  // ✅ Lấy userId
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
-      alert("Bạn chưa đăng nhập hoặc thiếu token.");
+      alert("Bạn chưa đăng nhập.");
       return;
     }
 
@@ -28,10 +28,7 @@ export default function Chiendich01() {
         "Authorization": `Bearer ${token}`
       }
     })
-      .then(res => {
-        if (!res.ok) throw new Error("Không thể lấy thông tin người dùng.");
-        return res.json();
-      })
+      .then(res => res.ok ? res.json() : Promise.reject("Không lấy được profile"))
       .then(data => {
         if (data.userId) {
           setUserId(data.userId);
@@ -39,13 +36,13 @@ export default function Chiendich01() {
           alert("Không tìm thấy userId trong profile.");
         }
       })
-      .catch(error => {
-        console.error("Lỗi khi lấy profile:", error);
-        alert("Không thể lấy thông tin người dùng.");
+      .catch(err => {
+        console.error(err);
+        alert("Lỗi khi lấy profile.");
       });
   }, []);
 
-  // Lấy dữ liệu chiến dịch
+  // ✅ Lấy dữ liệu chiến dịch
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) return;
@@ -57,21 +54,19 @@ export default function Chiendich01() {
         "Authorization": `Bearer ${token}`
       }
     })
-      .then(res => {
-        if (!res.ok) throw new Error("Không thể tải chiến dịch.");
-        return res.json();
-      })
+      .then(res => res.ok ? res.json() : Promise.reject("Không tải được chiến dịch"))
       .then(data => {
         setCampaign(data);
         setLoading(false);
       })
-      .catch(error => {
-        console.error("Lỗi khi tải chiến dịch:", error);
-        alert("Không thể tải dữ liệu chiến dịch.");
+      .catch(err => {
+        console.error(err);
+        alert("Lỗi khi tải chiến dịch.");
         setLoading(false);
       });
   }, []);
 
+  // ✅ Cập nhật câu trả lời
   const handleChange = (questionId, value) => {
     setAnswers(prev => ({
       ...prev,
@@ -79,47 +74,23 @@ export default function Chiendich01() {
     }));
   };
 
+  // ✅ Gửi khảo sát
   const handleSubmit = (e) => {
     e.preventDefault();
+
     const token = localStorage.getItem("token");
-
-    if (!token) {
-      alert("Bạn chưa đăng nhập.");
+    if (!token || !userId) {
+      alert("Chưa đăng nhập hoặc chưa có userId.");
       return;
     }
 
-    if (!userId) {
-      alert("Chưa xác định được userId. Vui lòng đợi tải xong hồ sơ.");
-      return;
-    }
-
-    const payload = campaign.questions.map(q => {
-      if (q.type === "MULTIPLE_CHOICE") {
-        return {
-          questionId: q.id,
-          optionId: answers[q.id] ? Number(answers[q.id]) : null
-        };
-      } else {
-        return {
-          questionId: q.id,
-          answerText: answers[q.id] || ""
-        };
-      }
-    });
+    // ✅ Tạo payload chỉ có answerText
+    const payload = campaign.questions.map(q => ({
+      questionId: q.id,
+      answerText: answers[q.id] || ""
+    }));
 
     console.log("📤 Payload gửi đi:", payload);
-
-    // ✅ Tính điểm trước khi gửi
-    let score = 0;
-    campaign.questions.forEach(q => {
-      if (q.type === "MULTIPLE_CHOICE") {
-        const selectedOptionId = answers[q.id];
-        const selectedOption = q.options.find(opt => opt.id === selectedOptionId);
-        if (selectedOption) {
-          score += selectedOption.score || 0;
-        }
-      }
-    });
 
     fetch(`http://localhost:8080/api/v1.0/campaigns/1/submit?userId=${userId}`, {
       method: "POST",
@@ -131,34 +102,22 @@ export default function Chiendich01() {
     })
       .then(res => res.json().then(data => ({ status: res.status, body: data })))
       .then(({ status, body }) => {
-        const message = body.message || "Gửi khảo sát thành công!";
-        const scoreText = body.totalScore != null ? `\nTổng điểm: ${body.totalScore}` : "";
-
+        const msg = body.message || "Gửi khảo sát thành công!";
         if (status >= 200 && status < 300) {
-          setTotalScore(score); // ✅ Cập nhật điểm
-          setServerMessage(body.message || "Gửi khảo sát thành công!");
+          setTotalScore(body.totalScore || null);
+          setServerMessage(msg);
           setAnswers({});
-          setTimeout(() => {
-            navigate("/chiendich");
-          }, 5000);
-
+          setTimeout(() => navigate("/chiendich"), 5000);
         } else {
-          setServerMessage(`🚨 ${message}`);
           setIsError(true);
+          setServerMessage(`🚨 ${msg}`);
         }
       })
-      .catch(error => {
-        console.error("Lỗi khi gửi khảo sát:", error);
-        setServerMessage("🚨 Không thể kết nối tới server.");
+      .catch(err => {
+        console.error("Lỗi gửi khảo sát:", err);
         setIsError(true);
+        setServerMessage("🚨 Không thể kết nối đến máy chủ.");
       });
-  };
-
-  const handleClosePopup = () => {
-    setServerMessage("");
-    if (isError) {
-      navigate("/"); // quay về trang chủ nếu có lỗi
-    }
   };
 
   if (loading || userId === null) {
@@ -171,7 +130,6 @@ export default function Chiendich01() {
 
   return (
     <>
-      {/* Thông báo popup */}
       {serverMessage && (
         <div className="popup-thongbao">
           <div className="noi-dung-thongbao">
@@ -182,8 +140,9 @@ export default function Chiendich01() {
             <button onClick={() => {
               setServerMessage("");
               setTotalScore(null);
+              setIsError(false);
+              if (isError) navigate("/");
             }}>Đóng</button>
-
           </div>
         </div>
       )}
@@ -191,19 +150,13 @@ export default function Chiendich01() {
       <div className="trang-chien-dich">
         <div className="khung-chien-dich">
           <h1 className="tieu-de">{campaign.name}</h1>
-          <p className="mo-ta">
-            <strong>Thời gian:</strong> {campaign.startDate} - {campaign.endDate}
-          </p>
-          <p className="mo-ta">
-            <strong>Mô tả:</strong> {campaign.description}
-          </p>
+          <p className="mo-ta"><strong>Thời gian:</strong> {campaign.startDate} - {campaign.endDate}</p>
+          <p className="mo-ta"><strong>Mô tả:</strong> {campaign.description}</p>
 
           <form onSubmit={handleSubmit}>
             {campaign.questions.map((q, index) => (
               <div key={q.id} className="khung-cau-hoi">
-                <label className="ten-cau-hoi">
-                  Câu {index + 1}: {q.content}
-                </label>
+                <label className="ten-cau-hoi">Câu {index + 1}: {q.content}</label>
 
                 {q.type === "MULTIPLE_CHOICE" && (
                   <div className="lua-chon-tra-loi">
@@ -211,11 +164,10 @@ export default function Chiendich01() {
                       <label key={option.id} className="muc-lua-chon">
                         <input
                           type="radio"
-                          className="o-chon"
                           name={`question-${q.id}`}
-                          value={option.id}
-                          checked={answers[q.id] === option.id}
-                          onChange={() => handleChange(q.id, option.id)}
+                          value={option.text} // Gửi text thay vì id
+                          checked={answers[q.id] === option.text}
+                          onChange={() => handleChange(q.id, option.text)}
                         />
                         <span>{option.text}</span>
                       </label>
@@ -235,9 +187,7 @@ export default function Chiendich01() {
             ))}
 
             <div className="khung-nut-gui">
-              <button type="submit" className="nut-gui">
-                Gửi khảo sát
-              </button>
+              <button type="submit" className="nut-gui">Gửi khảo sát</button>
             </div>
           </form>
         </div>

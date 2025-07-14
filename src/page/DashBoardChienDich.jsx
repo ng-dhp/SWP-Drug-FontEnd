@@ -4,58 +4,48 @@ import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
 import "./css/DashBoardChienDich.css";
 
 const DashboardCampaign = () => {
-  const [campaignStats, setCampaignStats] = useState(null);
+  const [campaign1, setCampaign1] = useState(null);
+  const [campaign2, setCampaign2] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
+  const token = localStorage.getItem("token");
 
-    fetch("http://localhost:8080/api/v1.0/campaigns/1", {
-      method: "GET",
-      headers: {
-        "Authorization": `Bearer ${token}`,
-        "Content-Type": "application/json"
-      }
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Lỗi khi gọi API");
+  useEffect(() => {
+    Promise.all([
+      fetch("http://localhost:8080/api/v1.0/campaigns/1", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json"
         }
-        return response.json();
-      })
-      .then((data) => {
-        const { improveCount, noImproveCount, successRatePercent } = data;
-        setCampaignStats({ improveCount, noImproveCount, successRatePercent });
+      }).then((res) => res.ok ? res.json() : Promise.reject("Lỗi chiến dịch 1")),
+      fetch("http://localhost:8080/api/v1.0/campaigns/2", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json"
+        }
+      }).then((res) => res.ok ? res.json() : Promise.reject("Lỗi chiến dịch 2")),
+    ])
+      .then(([data1, data2]) => {
+        setCampaign1(data1);
+        setCampaign2(data2);
       })
       .catch((error) => {
-        console.error("Lỗi khi tải dữ liệu chiến dịch:", error);
+        console.error("Lỗi khi tải dữ liệu:", error);
       })
-      .finally(() => {
-        setLoading(false);
-      });
+      .finally(() => setLoading(false));
   }, []);
-
-  if (loading) {
-    return <div>Đang tải dữ liệu chiến dịch...</div>;
-  }
-
-  if (!campaignStats) {
-    return <div>Không có dữ liệu chiến dịch.</div>;
-  }
-
-  // Chuẩn bị dữ liệu cho PieChart
-  const pieData = [
-    { name: "Cải thiện", value: campaignStats.improveCount },
-    { name: "Không cải thiện", value: campaignStats.noImproveCount }
-  ];
 
   const COLORS = ["#00C49F", "#FF8042"];
 
-  return (
-    <div className="dashboard-campaign-container">
-      <h2>Dashboard Chiến dịch</h2>
+  const renderPieChart = (data, title) => {
+    const pieData = [
+      { name: "Cải thiện", value: data.improveCount },
+      { name: "Không cải thiện", value: data.noImproveCount }
+    ];
 
-      <div className="pie-chart-wrapper">
+    return (
+      <div className="campaign-section">
+        <h3>{title}</h3>
         <PieChart width={400} height={300}>
           <Pie
             data={pieData}
@@ -73,12 +63,25 @@ const DashboardCampaign = () => {
           <Tooltip />
           <Legend />
         </PieChart>
+        <div className="text-stats">
+          <p><strong>Số người cải thiện:</strong> {data.improveCount}</p>
+          <p><strong>Số người không cải thiện:</strong> {data.noImproveCount}</p>
+          <p><strong>Tỷ lệ thành công (%):</strong> {data.successRatePercent}</p>
+        </div>
       </div>
+    );
+  };
 
-      <div className="text-stats">
-        <p><strong>Số người cải thiện:</strong> {campaignStats.improveCount}</p>
-        <p><strong>Số người không cải thiện:</strong> {campaignStats.noImproveCount}</p>
-        <p><strong>Tỷ lệ thành công (%):</strong> {campaignStats.successRatePercent}</p>
+  if (loading) return <div>Đang tải dữ liệu chiến dịch...</div>;
+
+  if (!campaign1 || !campaign2) return <div>Không có đủ dữ liệu để hiển thị.</div>;
+
+  return (
+    <div className="dashboard-campaign-container">
+      <h2>Dashboard 2 Chiến dịch</h2>
+      <div className="campaigns-wrapper">
+        {renderPieChart(campaign1, "Chiến dịch 1")}
+        {renderPieChart(campaign2, "Chiến dịch 2")}
       </div>
 
       <Link to="/" className="back-button">

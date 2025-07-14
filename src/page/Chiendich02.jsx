@@ -2,13 +2,14 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./css/Chiendich02.css";
 
-export default function Chiendich03() {
+export default function Chiendich02() {
   const [campaign, setCampaign] = useState(null);
   const [answers, setAnswers] = useState({});
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState(null);
   const [serverMessage, setServerMessage] = useState("");
-  const [totalScore, setTotalScore] = useState(null); // ✅ điểm số
+  const [totalScore, setTotalScore] = useState(null);
+  const [isError, setIsError] = useState(false);
 
   const navigate = useNavigate();
 
@@ -49,7 +50,7 @@ export default function Chiendich03() {
     const token = localStorage.getItem("token");
     if (!token) return;
 
-    fetch("http://localhost:8080/api/v1.0/campaigns/3", {
+    fetch("http://localhost:8080/api/v1.0/campaigns/2", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -92,24 +93,16 @@ export default function Chiendich03() {
       return;
     }
 
+    // ✅ Gửi toàn bộ answerText
     const payload = campaign.questions.map(q => ({
       questionId: q.id,
-      answer: answers[q.id] || null
+      answerText: answers[q.id] || ""
     }));
 
-    // ✅ Tính điểm
-    let score = 0;
-    campaign.questions.forEach(q => {
-      if (q.type === "MULTIPLE_CHOICE") {
-        const selectedOptionId = answers[q.id];
-        const selectedOption = q.options.find(opt => opt.id === selectedOptionId);
-        if (selectedOption) {
-          score += selectedOption.score || 0;
-        }
-      }
-    });
+    // ✅ In ra console để kiểm tra
+    console.log("📤 Payload gửi đi:", payload);
 
-    fetch(`http://localhost:8080/api/v1.0/campaigns/3/submit?userId=${userId}`, {
+    fetch(`http://localhost:8080/api/v1.0/campaigns/2/submit?userId=${userId}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -119,20 +112,21 @@ export default function Chiendich03() {
     })
       .then(res => res.json().then(data => ({ status: res.status, body: data })))
       .then(({ status, body }) => {
+        const msg = body.message || "Gửi khảo sát thành công!";
         if (status >= 200 && status < 300) {
-          setTotalScore(score); // ✅ Hiển thị điểm
-          setServerMessage(body.message || "Gửi khảo sát thành công!");
+          setTotalScore(body.totalScore || null);
+          setServerMessage(msg);
           setAnswers({});
-          setTimeout(() => {
-            navigate("/chiendich");
-          }, 5000);
+          setTimeout(() => navigate("/chiendich"), 5000);
         } else {
-          setServerMessage(body.message || "Gửi khảo sát thất bại!");
+          setIsError(true);
+          setServerMessage(`🚨 ${msg}`);
         }
       })
       .catch(error => {
         console.error("Lỗi khi gửi khảo sát:", error);
-        setServerMessage("Lỗi kết nối hoặc server không phản hồi.");
+        setIsError(true);
+        setServerMessage("🚨 Lỗi kết nối hoặc server không phản hồi.");
       });
   };
 
@@ -146,7 +140,6 @@ export default function Chiendich03() {
 
   return (
     <>
-      {/* Thông báo popup */}
       {serverMessage && (
         <div className="popup-thongbao">
           <div className="noi-dung-thongbao">
@@ -157,6 +150,8 @@ export default function Chiendich03() {
             <button onClick={() => {
               setServerMessage("");
               setTotalScore(null);
+              setIsError(false);
+              if (isError) navigate("/");
             }}>Đóng</button>
           </div>
         </div>
@@ -171,9 +166,7 @@ export default function Chiendich03() {
           <form onSubmit={handleSubmit}>
             {campaign.questions.map((q, index) => (
               <div key={q.id} className="khung-cau-hoi">
-                <label className="ten-cau-hoi">
-                  Câu {index + 1}: {q.content}
-                </label>
+                <label className="ten-cau-hoi">Câu {index + 1}: {q.content}</label>
 
                 {q.type === "MULTIPLE_CHOICE" && (
                   <div className="lua-chon-tra-loi">
@@ -181,11 +174,10 @@ export default function Chiendich03() {
                       <label key={option.id} className="muc-lua-chon">
                         <input
                           type="radio"
-                          className="o-chon"
                           name={`question-${q.id}`}
-                          value={option.id}
-                          checked={answers[q.id] === option.id}
-                          onChange={() => handleChange(q.id, option.id)}
+                          value={option.text} // ✅ gửi option.text thay vì option.id
+                          checked={answers[q.id] === option.text}
+                          onChange={() => handleChange(q.id, option.text)}
                         />
                         <span>{option.text}</span>
                       </label>
