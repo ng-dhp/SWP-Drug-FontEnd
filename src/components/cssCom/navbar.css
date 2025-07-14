@@ -1,11 +1,17 @@
 .navbar {
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  background: linear-gradient(135deg, #0b318f, #021e4a);
   display: flex;
   justify-content: center;
   align-items: center;
-  background: linear-gradient(135deg, #0b318f, #021e4a);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   color: #ffffff;
+    backdrop-filter: blur(6px);
+  background-color: rgba(11, 49, 143, 0.9); /* màu có độ trong */
 }
+
 
 .container {
   display: flex;

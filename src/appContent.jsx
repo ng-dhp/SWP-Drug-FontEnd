@@ -15,23 +15,33 @@ function AppContent() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    const storedLogin = localStorage.getItem("isLoggedIn");
-    if (storedLogin === "true") {
-      setIsLoggedIn(true);
-    }
+    const token = localStorage.getItem("token");
+    setIsLoggedIn(!!token);
   }, []);
 
+  useEffect(() => {
+    const handleStorageChange = () => {
+      setIsLoggedIn(!!localStorage.getItem("token"));
+    };
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, []);
+
+
+
   const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("userEmail");
     setIsLoggedIn(false);
-    localStorage.removeItem("isLoggedIn");
-    navigate("/");
+    navigate("/"); // quay về trang chính
   };
+
 
   const handleLoginSuccess = () => {
     setIsLoggedIn(true);
-    localStorage.setItem("isLoggedIn", "true");
     setShowLoginModal(false);
   };
+
 
   return (
     <div>
@@ -56,7 +66,7 @@ function AppContent() {
           <h2>
             Cùng nhau <span>Phòng ngừa</span> Ma túy
           </h2>
-         <p className="hero-description">
+          <p className="hero-description">
             Hệ thống hỗ trợ cộng đồng với các khóa học trực tuyến, đánh giá rủi
             ro, tư vấn chuyên viên và chương trình giáo dục phòng ngừa ma túy
             hiệu quả.
@@ -165,7 +175,7 @@ function AppContent() {
             <div className="icon-wrapper">💬</div>
             <h4> Tư vấn Chuyên viên</h4>
             <p className="service-subtitle">
-             Đặt lịch hẹn trực tuyến với chuyên viên tư vấn có kinh nghiệm
+              Đặt lịch hẹn trực tuyến với chuyên viên tư vấn có kinh nghiệm
             </p>
             <li>Chuyên viên có bằng cấp</li>
             <li>Đặt lịch linh hoạt</li>
@@ -217,11 +227,11 @@ function AppContent() {
 
       {/* blog chia sẽ kinh nghiệm */}
       <section className="blog-section">
-           <div className="blog-header-center">
-    <div className="hero-tag">💡 Chia sẻ Kinh nghiệm Thực tế</div>
-  </div>
-  <div className="blog-container">
- 
+        <div className="blog-header-center">
+          <div className="hero-tag">💡 Chia sẻ Kinh nghiệm Thực tế</div>
+        </div>
+        <div className="blog-container">
+
           <motion.h3
             className="blog-heading"
             initial={{ opacity: 0 }}
