@@ -1,42 +1,61 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./css/FeedbackForm.css";
+import Navbar from "../components/navbar";
+import LoginModal from "../components/Login";
+import Register from "../components/Register";
 
 export default function FeedbackForm() {
+  const navigate = useNavigate();
   const [userId, setUserId] = useState(null);
   const [consultants, setConsultants] = useState([]);
   const [selectedConsultantId, setSelectedConsultantId] = useState("");
   const [content, setContent] = useState("");
   const [message, setMessage] = useState("");
-  const navigate = useNavigate(); // ✅ Dùng để quay lại trang chủ
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [showRegisterModal, setShowRegisterModal] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
+
+  const token = localStorage.getItem("token");
+
+  const handleLoginSuccess = () => {
+    setIsLoggedIn(true);
+    setShowLoginModal(false);
+    fetchUserId(); // Lấy lại userId sau khi login
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("userEmail");
+    setIsLoggedIn(false);
+    window.location.href = "/";
+  };
+
+  const fetchUserId = async () => {
+    try {
+      const res = await fetch("http://localhost:8080/api/v1.0/profile", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setUserId(data.userId);
+      } else {
+        console.error("❌ Không thể lấy userId");
+      }
+    } catch (err) {
+      console.error("❌ Lỗi fetch userId:", err);
+    }
+  };
 
   useEffect(() => {
-    const fetchUserId = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const res = await fetch("http://localhost:8080/api/v1.0/profile", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        if (res.ok) {
-          const data = await res.json();
-          setUserId(data.userId);
-        } else {
-          console.error("❌ Không thể lấy userId");
-        }
-      } catch (err) {
-        console.error("❌ Lỗi fetch userId:", err);
-      }
-    };
-
-    fetchUserId();
-  }, []);
+    if (token) fetchUserId();
+  }, [token]);
 
   useEffect(() => {
     const fetchConsultants = async () => {
       try {
-        const token = localStorage.getItem("token");
         const res = await fetch("http://localhost:8080/api/v1.0/consultant/getAllConsultant", {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -55,8 +74,8 @@ export default function FeedbackForm() {
       }
     };
 
-    fetchConsultants();
-  }, []);
+    if (token) fetchConsultants();
+  }, [token]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -67,12 +86,11 @@ export default function FeedbackForm() {
     }
 
     try {
-      const token = localStorage.getItem("token");
       const res = await fetch("http://localhost:8080/api/v1.0/feedback/consultant/create", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           content,
@@ -97,43 +115,66 @@ export default function FeedbackForm() {
   };
 
   return (
-    <div className="feedback-form-container">
-      <h2>Gửi phản hồi cho tư vấn viên</h2>
-      <form onSubmit={handleSubmit} className="feedback-form">
-        <label>
-          Chọn tư vấn viên:
-          <select
-            value={selectedConsultantId}
-            onChange={(e) => setSelectedConsultantId(e.target.value)}
-            required
-          >
-            <option value="">-- Chọn --</option>
-            {consultants.map((c) => (
-              <option key={c.consultantId} value={String(c.consultantId)}>
-                {c.name}
-              </option>
-            ))}
-          </select>
-        </label>
+    <>
+      {/* ✅ Navbar đầu trang */}
+      <Navbar
+        isLoggedIn={isLoggedIn}
+        onLogin={() => setShowLoginModal(true)}
+        onRegister={() => setShowRegisterModal(true)}
+        onLogout={handleLogout}
+      />
 
-        <label>
-          Nội dung phản hồi:
-          <textarea
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            placeholder="Viết nội dung phản hồi tại đây..."
-            required
-          />
-        </label>
+      <div className="feedback-form-container">
+        <h2>📬 Gửi phản hồi cho tư vấn viên</h2>
 
-        <button type="submit">Gửi phản hồi</button>
-      </form>
+        <form onSubmit={handleSubmit} className="feedback-form">
+          <label>
+            Chọn tư vấn viên:
+            <select
+              value={selectedConsultantId}
+              onChange={(e) => setSelectedConsultantId(e.target.value)}
+              required
+            >
+              <option value="">-- Chọn --</option>
+              {consultants.map((c) => (
+                <option key={c.consultantId} value={String(c.consultantId)}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+          </label>
 
-      {message && <p className="feedback-message">{message}</p>}
+          <label>
+            Nội dung phản hồi:
+            <textarea
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              placeholder="Viết nội dung phản hồi tại đây..."
+              required
+            />
+          </label>
 
-      <div className="BACK">
-        <button onClick={() => navigate("/")}>🏠 Quay lại trang chủ</button>
+          <button type="submit" disabled={!isLoggedIn}>
+            {isLoggedIn ? "📨 Gửi phản hồi" : "🔐 Vui lòng đăng nhập"}
+          </button>
+        </form>
+
+        {message && <p className="feedback-message">{message}</p>}
+
       </div>
-    </div>
+
+      {/* ✅ Modal đăng nhập */}
+      {showLoginModal && (
+        <LoginModal
+          onClose={() => setShowLoginModal(false)}
+          onLoginSuccess={handleLoginSuccess}
+        />
+      )}
+
+      {/* ✅ Modal đăng ký */}
+      {showRegisterModal && (
+        <Register onClose={() => setShowRegisterModal(false)} />
+      )}
+    </>
   );
 }

@@ -159,12 +159,6 @@ export default function KhaoSat() {
                         </div>
                       ))}
 
-                      <button
-                        className="tro-ve"
-                        onClick={() => (window.location.href = "/")}
-                      >
-                        🏠 Trở về màn hình chính
-                      </button>
                     </div>
                   </>
                 )}
@@ -193,7 +187,7 @@ export default function KhaoSat() {
         />
       )}
       {showRegisterModal && (
-          <Register onClose={() => setShowRegisterModal(false)} />
+        <Register onClose={() => setShowRegisterModal(false)} />
       )}
 
     </div>

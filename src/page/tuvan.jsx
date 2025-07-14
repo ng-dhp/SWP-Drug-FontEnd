@@ -6,6 +6,8 @@ import LoginModal from "../components/Login";
 import TimePicker from "react-time-picker";
 import "react-time-picker/dist/TimePicker.css";
 import "react-clock/dist/Clock.css"; // nếu cần đồng hồ
+import Navbar from "../components/navbar";
+import Register from "../components/Register"; // ✅ Đổi lại tên đúng
 
 
 export default function TuVan() {
@@ -16,11 +18,25 @@ export default function TuVan() {
   const [selectedDoctor, setSelectedDoctor] = useState(null);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [consultants, setConsultants] = useState([]);
+  const [showRegisterModal, setShowRegisterModal] = useState(false);
 
   const [formData, setFormData] = useState({
     date: "",
     time: "",
   });
+
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("userEmail");
+    setIsLoggedIn(false);
+    window.location.href = "/";
+  };
+
+  const handleLoginSuccess = () => {
+    setIsLoggedIn(true);
+    setShowLoginModal(false);
+  };
 
   // Lấy thông tin user
   useEffect(() => {
@@ -125,67 +141,83 @@ export default function TuVan() {
   };
 
   return (
-    <div className="tuvan-container">
-      <h2>🩺 Tư Vấn & Đặt Lịch Hẹn</h2>
+    <>
+      <Navbar
+        isLoggedIn={isLoggedIn}
+        onLogin={() => setShowLoginModal(true)}
+        onRegister={() => setShowRegisterModal(true)}
+        onLogout={handleLogout}
+      />
 
-      {isLoggedIn && (
-        <p className="greeting">👋 Xin chào, <strong>{fullName}</strong></p>
-      )}
+      <div className="tuvan-container">
+        <h2>🩺 Tư Vấn & Đặt Lịch Hẹn</h2>
 
-      <p>🧑‍⚕️ Chọn bác sĩ bạn muốn đặt lịch:</p>
-      <div className="doctor-list">
-        {consultants.map((doctor) => (
-          <div
-            key={doctor.consultantId}
-            className={`doctor-card ${selectedDoctor?.consultantId === doctor.consultantId ? "selected" : ""}`}
-            onClick={() => setSelectedDoctor(doctor)}
-          >
-            <h3>{doctor.name}</h3>
-            <p><strong>Chuyên ngành:</strong> {doctor.specialization}</p>
-            <p><strong>Email:</strong> {doctor.email}</p>
-            <p><strong>Trạng thái:</strong> {doctor.availability ? "🟢 Có sẵn" : "🔴 Không có sẵn"}</p>
-          </div>
-        ))}
+        {isLoggedIn && (
+          <p className="greeting">
+            👋 Xin chào, <strong>{fullName}</strong>
+          </p>
+        )}
+
+        <p>🧑‍⚕️ Chọn bác sĩ bạn muốn đặt lịch:</p>
+        <div className="doctor-list">
+          {consultants.map((doctor) => (
+            <div
+              key={doctor.consultantId}
+              className={`doctor-card ${selectedDoctor?.consultantId === doctor.consultantId ? "selected" : ""
+                }`}
+              onClick={() => setSelectedDoctor(doctor)}
+            >
+              <h3>{doctor.name}</h3>
+              <p><strong>Chuyên ngành:</strong> {doctor.specialization}</p>
+              <p><strong>Email:</strong> {doctor.email}</p>
+              <p><strong>Trạng thái:</strong> {doctor.availability ? "🟢 Có sẵn" : "🔴 Không có sẵn"}</p>
+            </div>
+          ))}
+        </div>
+
+        <h3>📅 Đặt Lịch Hẹn</h3>
+        <form className="tuvan-form" onSubmit={handleSubmit}>
+          <label>
+            Ngày hẹn:
+            <input
+              type="date"
+              name="date"
+              value={formData.date}
+              onChange={handleChange}
+              required
+            />
+          </label>
+          <label>
+            Giờ hẹn:
+            <TimePicker
+              name="time"
+              onChange={(value) => setFormData((prev) => ({ ...prev, time: value }))}
+              value={formData.time}
+              format="HH:mm"
+              disableClock
+              clearIcon={null}
+              required
+            />
+          </label>
+
+          <button type="submit" disabled={!selectedDoctor || !userId}>
+            {isLoggedIn ? "📥 Đặt Lịch" : "🔐 Vui lòng đăng nhập"}
+          </button>
+        </form>
       </div>
 
-      <h3>📅 Đặt Lịch Hẹn</h3>
-      <form className="tuvan-form" onSubmit={handleSubmit}>
-        <label>
-          Ngày hẹn:
-          <input type="date" name="date" value={formData.date} onChange={handleChange} required />
-        </label>
-        <label>
-          Giờ hẹn:
-          <TimePicker
-            name="time"
-            onChange={(value) => setFormData((prev) => ({ ...prev, time: value }))}
-            value={formData.time}
-            format="HH:mm"
-            disableClock
-            clearIcon={null}
-            required
-          />
-        </label>
-
-        <button type="submit" disabled={!selectedDoctor || !userId}>
-          {isLoggedIn ? "📥 Đặt Lịch" : "🔐 Vui lòng đăng nhập"}
-        </button>
-      </form>
-
-      <button className="back-home-button" onClick={() => navigate("/")}>
-        🏠 Về Trang Chủ
-      </button>
-
+      {/* Modal hiển thị */}
       {showLoginModal && (
         <LoginModal
           onClose={() => setShowLoginModal(false)}
-          onLoginSuccess={() => {
-            setIsLoggedIn(true);
-            setShowLoginModal(false);
-            alert("✅ Đăng nhập thành công!");
-          }}
+          onLoginSuccess={handleLoginSuccess}
         />
       )}
-    </div>
+
+      {showRegisterModal && (
+        <Register onClose={() => setShowRegisterModal(false)} />
+      )}
+    </>
   );
+
 }
