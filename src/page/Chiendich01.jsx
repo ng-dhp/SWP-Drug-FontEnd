@@ -102,7 +102,7 @@ export default function Chiendich01() {
     })
       .then(res => res.json().then(data => ({ status: res.status, body: data })))
       .then(({ status, body }) => {
-const msg = body.message || "Gửi khảo sát thành công!";
+        const msg = body.message || "Gửi khảo sát thành công!";
         if (status >= 200 && status < 300) {
           setTotalScore(body.totalScore || null);
           setServerMessage(msg);

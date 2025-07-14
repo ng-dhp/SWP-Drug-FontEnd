@@ -50,7 +50,11 @@ export default function Chiendich02() {
     const token = localStorage.getItem("token");
     if (!token) return;
 
+<<<<<<< HEAD
     fetch("http://localhost:8080/api/v1.0/campaigns/6", {
+=======
+    fetch("http://localhost:8080/api/v1.0/campaigns/2", {
+>>>>>>> origin/Duy
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -102,7 +106,11 @@ export default function Chiendich02() {
     // ✅ In ra console để kiểm tra
     console.log("📤 Payload gửi đi:", payload);
 
+<<<<<<< HEAD
     fetch(`http://localhost:8080/api/v1.0/campaigns/6/submit?userId=${userId}`, {
+=======
+    fetch(`http://localhost:8080/api/v1.0/campaigns/2/submit?userId=${userId}`, {
+>>>>>>> origin/Duy
       method: "POST",
       headers: {
 "Content-Type": "application/json",
