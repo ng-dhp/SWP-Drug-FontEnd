@@ -3,6 +3,10 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./css/tuvan.css";
 import LoginModal from "../components/Login";
+import TimePicker from "react-time-picker";
+import "react-time-picker/dist/TimePicker.css";
+import "react-clock/dist/Clock.css"; // nếu cần đồng hồ
+
 
 export default function TuVan() {
   const navigate = useNavigate();
@@ -150,10 +154,17 @@ export default function TuVan() {
           Ngày hẹn:
           <input type="date" name="date" value={formData.date} onChange={handleChange} required />
         </label>
-
         <label>
           Giờ hẹn:
-          <input type="time" name="time" value={formData.time} onChange={handleChange} required />
+          <TimePicker
+            name="time"
+            onChange={(value) => setFormData((prev) => ({ ...prev, time: value }))}
+            value={formData.time}
+            format="HH:mm"
+            disableClock
+            clearIcon={null}
+            required
+          />
         </label>
 
         <button type="submit" disabled={!selectedDoctor || !userId}>
