@@ -183,7 +183,7 @@ export default function Chiendich01() {
                     onChange={(e) => handleChange(q.id, e.target.value)}
                   />
                 )}
-              </div>
+</div>
             ))}
 
             <div className="khung-nut-gui">

@@ -49,7 +49,6 @@ export default function Chiendich02() {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) return;
-
     fetch("http://localhost:8080/api/v1.0/campaigns/2", {
       method: "GET",
       headers: {
@@ -101,11 +100,10 @@ export default function Chiendich02() {
 
     // ✅ In ra console để kiểm tra
     console.log("📤 Payload gửi đi:", payload);
-
     fetch(`http://localhost:8080/api/v1.0/campaigns/2/submit?userId=${userId}`, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
+"Content-Type": "application/json",
         "Authorization": `Bearer ${token}`
       },
       body: JSON.stringify({ answers: payload })
@@ -184,8 +182,7 @@ export default function Chiendich02() {
                     ))}
                   </div>
                 )}
-
-                {q.type === "TEXT" && (
+{q.type === "TEXT" && (
                   <textarea
                     className="o-nhap-van-ban"
                     placeholder="Nhập câu trả lời..."

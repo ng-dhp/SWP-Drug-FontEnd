@@ -6,30 +6,36 @@ import defaultImage from "../assets/anh_hs.png";
 import Navbar from "../components/navbar";
 import LoginModal from "../components/Login";
 import Register from "../components/Register";
+import CreateCourse from "./CreateCourse";
 
 export default function KhoaHoc() {
   const navigate = useNavigate();
   const [khoaHocData, setKhoaHocData] = useState([]);
   const [userId, setUserId] = useState(null);
+  const [userRole, setUserRole] = useState(""); // ✅ Lưu role để phân quyền
   const [thongBao, setThongBao] = useState("");
   const [thongBaoType, setThongBaoType] = useState("");
-  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
+  const [showCreateCourse, setShowCreateCourse] = useState(false); // ✅ Toggle tạo khóa học
   const token = localStorage.getItem("token");
+  const [isLoggedIn, setIsLoggedIn] = useState(!!token);
 
-  // ✅ Fetch user profile
+  // ✅ Lấy thông tin người dùng
   useEffect(() => {
     if (!token) return;
     fetch("http://localhost:8080/api/v1.0/profile", {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
-      .then((data) => setUserId(data.userId))
+      .then((data) => {
+        setUserId(data.userId);
+        setUserRole(data.roleName); // 👈 Lưu roleName (ADMIN)
+      })
       .catch((err) => console.error("Lỗi lấy profile:", err));
   }, [token]);
 
-  // ✅ Fetch khóa học
+  // ✅ Lấy danh sách khóa học
   useEffect(() => {
     if (!token) return;
     fetch("http://localhost:8080/api/v1.0/khoahoc/getallcourse", {
@@ -40,7 +46,7 @@ export default function KhoaHoc() {
       .catch((err) => console.error("Lỗi getAllCourse:", err));
   }, [token]);
 
-  // ✅ Logout
+  // ✅ Đăng xuất
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("userEmail");
@@ -52,16 +58,17 @@ export default function KhoaHoc() {
   const handleLoginSuccess = () => {
     setIsLoggedIn(true);
     setShowLoginModal(false);
-    window.location.reload(); // hoặc refetch lại dữ liệu
+    window.location.reload();
   };
 
-  // ✅ Đăng ký khóa học
-  const handleDangKy = (courseId) => {
+  // ✅ Đăng ký khóa học + QR thanh toán
+  const handleDangKy = (courseId, giaTien) => {
     if (!userId) {
       setThongBao("❌ Không xác định được người dùng.");
       setThongBaoType("error");
       return;
     }
+
     fetch(`http://localhost:8080/api/v1.0/khoahoc/dangky/${courseId}?userId=${userId}`, {
       method: "POST",
       headers: { Authorization: `Bearer ${token}` },
@@ -73,6 +80,11 @@ export default function KhoaHoc() {
       .then((message) => {
         setThongBao(`✅ ${message}`);
         setThongBaoType("success");
+
+        const encodedInfo = encodeURIComponent("THANH TOAN KHOA HOC");
+        const encodedName = encodeURIComponent("NGUYEN DUC DUY");
+        const qrUrl = `https://img.vietqr.io/image/TPB-0339604456-compact.png?amount=${giaTien}&addInfo=${encodedInfo}&accountName=${encodedName}`;
+        window.open(qrUrl, "_blank");
       })
       .catch((errMsg) => {
         setThongBao(`❌ ${errMsg}`);
@@ -80,7 +92,6 @@ export default function KhoaHoc() {
       });
   };
 
-  // ✅ Trả về giao diện (giữ nguyên như anh đã làm ở trên)
   return (
     <>
       <Navbar
@@ -89,7 +100,32 @@ export default function KhoaHoc() {
         onRegister={() => setShowRegisterModal(true)}
         onLogout={handleLogout}
       />
-      {/* Nội dung khóa học */}
+
+      {/* ✅ Nút tạo khóa học (chỉ admin) */}
+      {userRole === "ADMIN" && (
+        <>
+          <div style={{ textAlign: "center", margin: "20px 0" }}>
+            <button
+              className="khoa-hoc-button"
+              onClick={() => setShowCreateCourse(!showCreateCourse)}
+            >
+              {showCreateCourse ? "Đóng form tạo khóa học" : "➕ Tạo khóa học mới"}
+            </button>
+          </div>
+
+          {showCreateCourse && (
+            <CreateCourse
+              onClose={() => setShowCreateCourse(false)}
+              onCourseCreated={() => {
+                setShowCreateCourse(false);
+                window.location.reload();
+              }}
+            />
+          )}
+
+        </>
+      )}
+
       <section className="khoa-hoc-section">
         <motion.h2
           className="khoa-hoc-title"
@@ -106,6 +142,7 @@ export default function KhoaHoc() {
           </div>
         )}
 
+        {/* ✅ Hiển thị danh sách khóa học */}
         {khoaHocData.length === 1 ? (
           <div className="khoa-hoc-single">
             <motion.div
@@ -137,7 +174,7 @@ export default function KhoaHoc() {
                   </span>
                   <button
                     className="khoa-hoc-button"
-                    onClick={() => handleDangKy(khoaHocData[0].id)}
+                    onClick={() => handleDangKy(khoaHocData[0].id, khoaHocData[0].giaTien)}
                   >
                     Đăng ký khóa học
                   </button>
@@ -177,7 +214,7 @@ export default function KhoaHoc() {
                     </span>
                     <button
                       className="khoa-hoc-button"
-                      onClick={() => handleDangKy(course.id)}
+                      onClick={() => handleDangKy(course.id, course.giaTien)}
                     >
                       Đăng ký khóa học
                     </button>
@@ -187,17 +224,16 @@ export default function KhoaHoc() {
             ))}
           </div>
         )}
+      </section>
 
-      </section>      {/* ... */}
+      {/* Modal đăng nhập/đăng ký */}
       {showLoginModal && (
         <LoginModal
           onClose={() => setShowLoginModal(false)}
           onLoginSuccess={handleLoginSuccess}
         />
       )}
-      {showRegisterModal && (
-        <Register onClose={() => setShowRegisterModal(false)} />
-      )}
+      {showRegisterModal && <Register onClose={() => setShowRegisterModal(false)} />}
     </>
   );
 }

@@ -6,9 +6,13 @@ import Navbar from "./components/navbar";
 import LoginModal from "./components/Login";
 import RegisterModal from "./components/Register";
 import "./AppContent.css";
+import hinh1 from "./assets/hinhmt1.jpg";
+import hinh2 from "./assets/hinhmt2.jpg";
+import hinh3 from "./assets/hinhmt3.jpg";
 
 function AppContent() {
   const navigate = useNavigate();
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
@@ -27,8 +31,15 @@ function AppContent() {
     return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % backgroundImages.length);
+    }, 7000); // 7 giây để xem ảnh rõ ràng hơn
 
+    return () => clearInterval(interval);
+  }, []);
 
+  const backgroundImages = [hinh1, hinh2, hinh3];
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("userEmail");
@@ -36,12 +47,10 @@ function AppContent() {
     navigate("/"); // quay về trang chính
   };
 
-
   const handleLoginSuccess = () => {
     setIsLoggedIn(true);
     setShowLoginModal(false);
   };
-
 
   return (
     <div>
@@ -123,6 +132,30 @@ function AppContent() {
           </div>
         </motion.div>
       </section>
+      <section className="slideshow-wrapper">
+        <div
+          className="slideshow-track"
+          style={{ transform: `translateX(-${currentIndex * 100}vw)` }}
+        >
+          {backgroundImages.map((img, index) => (
+            <img
+              key={index}
+              src={img}
+              alt={`Slide ${index}`}
+              className="slideshow-img"
+            />
+          ))}
+          {/* duplicate for seamless scroll */}
+          {backgroundImages.map((img, index) => (
+            <img
+              key={`dup-${index}`}
+              src={img}
+              alt={`Slide dup ${index}`}
+              className="slideshow-img"
+            />
+          ))}
+        </div>
+      </section>
 
       <section class="service-section">
         <div className="hero-tag">⚡ Dịch vụ Chuyên nghiệp</div>
@@ -143,7 +176,8 @@ function AppContent() {
             <div className="icon-wrapper">📘</div>
             <h4> Khóa học Trực tuyến</h4>
             <p className="service-subtitle">
-              Các khóa đào tạo về nhận thức ma túy, kỹ năng phòng tránh và từ chối
+              Các khóa đào tạo về nhận thức ma túy, kỹ năng phòng tránh và từ
+              chối
             </p>
             <li>Nội dung phân theo độ tuổi</li>
             <li>Học sinh, sinh viên, phụ huynh</li>
@@ -221,91 +255,6 @@ function AppContent() {
             <div className="highlight-icon purple">👥</div>
             <h3>Cộng đồng Hỗ trợ</h3>
             <p>Kết nối với cộng đồng những người cùng chung mục tiêu</p>
-          </div>
-        </div>
-      </section>
-
-      {/* blog chia sẽ kinh nghiệm */}
-      <section className="blog-section">
-        <div className="blog-header-center">
-          <div className="hero-tag">💡 Chia sẻ Kinh nghiệm Thực tế</div>
-        </div>
-        <div className="blog-container">
-
-          <motion.h3
-            className="blog-heading"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ duration: 0.6 }}
-          >
-            Blog & Chia sẻ Kinh nghiệm
-          </motion.h3>
-          <p className="blog-description">
-            Các bài viết chuyên sâu, kinh nghiệm thực tế và hướng dẫn từ các
-            chuyên gia trong lĩnh vực phòng ngừa ma túy
-          </p>
-          <div className="blog-grid">
-            {[
-              {
-                role: "Phụ huynh",
-                title: (
-                  <>
-                    10 Dấu hiệu Nhận biết Thanh thiếu niên
-                    <span className="break-line">
-                      Có nguy cơ Sử dụng Ma túy
-                    </span>
-                  </>
-                ),
-                desc: "Hướng dẫn phụ huynh và giáo viên nhận biết sớm các dấu hiệu cảnh báo để can thiệp kịp thời.",
-                author: "Bs. Nguyễn Văn A",
-                date: "15/12/2024",
-                time: "5 phút đọc",
-              },
-              {
-                role: "Học sinh",
-                title: (
-                  <>
-                    Kỹ năng Từ chối Áp lực Bạn bè trong
-                    <span className="break-line">
-                      Việc Sử dụng Chất kích thích
-                    </span>
-                  </>
-                ),
-                desc: "Những kỹ năng thiết thực giúp học sinh, sinh viên tự tin từ chối lời mời sử dụng ma túy.",
-                author: "ThS. Trần Thị B",
-                date: "12/12/2024",
-                time: "7 phút đọc",
-              },
-              {
-                role: "Giáo viên",
-                title: (
-                  <>
-                    Vai trò của Giáo viên trong Phòng ngừa
-                    <span className="break-line">Ma túy tại Trường học</span>
-                  </>
-                ),
-                desc: "Chiến lược và phương pháp giúp giáo viên xây dựng môi trường học tập an toàn, lành mạnh.",
-                author: "PGS.TS. Lê Văn C",
-                date: "10/12/2024",
-                time: "8 phút đọc",
-              },
-            ].map((item, index) => (
-              <div className="blog-card" key={index}>
-                <div className="blog-role-badge">{item.role}</div>
-                <div className="blog-title">{item.title}</div>
-                <p className="blog-desc">{item.desc}</p>
-                <div className="blog-meta">
-                  <span>👤 {item.author}</span>
-                  <span>📅 {item.date}</span>
-                </div>
-                <div className="blog-footer">
-                  <span className="blog-time">⏱ {item.time}</span>
-                  <a href="#" className="blog-readmore">
-                    Đọc tiếp →
-                  </a>
-                </div>
-              </div>
-            ))}
           </div>
         </div>
       </section>
