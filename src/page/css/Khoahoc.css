@@ -47,9 +47,9 @@ body {
   width: 100%;
 }
 
-
 .khoa-hoc-card {
-  width: 360px; /* ✅ Card luôn cùng kích thước */
+  width: 360px;
+  height: 100%; /* hoặc max-height: 540px nếu muốn cố định */
   background: #e0f2fe;
   border-radius: 1.5rem;
   overflow: hidden;
@@ -68,18 +68,16 @@ body {
   width: 100%;
   height: 200px;
   object-fit: cover;
-  border-radius: 8px;
+  border-radius: 0;
 }
 
-
 .khoa-hoc-content {
-  padding: 1.5rem;
   flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  padding: 1.5rem;
 }
-
 .khoa-hoc-content h3 {
   font-size: 1.25rem;
   font-weight: 600;
@@ -88,6 +86,8 @@ body {
 }
 
 .khoa-hoc-highlights {
+  flex-grow: 1;
+  min-height: 120px; /* ✅ đảm bảo chiều cao tối thiểu */
   margin-top: 0.75rem;
   margin-bottom: auto;
   padding-left: 1.2rem;
@@ -191,10 +191,6 @@ body {
     grid-template-columns: 1fr;
   }
 
-  .khoa-hoc-card {
-    width: 90%;
-    margin: 0 auto;
-  }
 }
 
 @media (min-width: 1600px) {
@@ -206,16 +202,28 @@ body {
   position: fixed;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%) scale(0.95); /* scale nhỏ lúc đầu */
   background: white;
   padding: 2rem 2.5rem;
   border-radius: 1rem;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
   z-index: 9999;
   max-width: 90%;
   width: 400px;
   text-align: center;
-  animation: fadeIn 0.3s ease;
+  opacity: 0;
+  animation: fadeScaleIn 0.3s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+@keyframes fadeScaleIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -48%) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
 }
 
 .thong-bao-modal.success {
@@ -239,20 +247,10 @@ body {
   border-radius: 9999px;
   font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
 .thong-bao-modal button:hover {
   background-color: #1d4ed8;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translate(-50%, -40%);
-  }
-  to {
-    opacity: 1;
-    transform: translate(-50%, -50%);
-  }
+  transform: scale(1.05);
 }

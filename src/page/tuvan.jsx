@@ -138,7 +138,9 @@ export default function TuVan() {
 
       const isAvailable = await checkRes.json();
       if (!isAvailable) {
-        return setFormError("❌ Khung giờ này đã có người đặt. Vui lòng chọn thời gian khác.");
+        return setFormError("❌ Khung giờ này đã có người đặt. Vui lòng chọn thời gian khác."+
+          " ⏰ Mỗi lượt đặt cách nhau 2 tiếng, khung giờ áp dụng từ 08:00 đến 17:00.");
+
       }
 
       const payload = {

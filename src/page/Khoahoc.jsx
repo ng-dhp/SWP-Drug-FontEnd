@@ -6,25 +6,29 @@ import defaultImage from "../assets/anh_hs.png";
 import Navbar from "../components/navbar";
 import LoginModal from "../components/Login";
 import Register from "../components/Register";
-import CreateCourse from "./CreateCourse";
 import hinh1 from "../assets/anh_td.png";
 import hinh2 from "../assets/anh_tuchoi.png";
 import hinh3 from "../assets/anh_phuhuynh.png";
+import hinh4 from "../assets/anh_hs.png";
+import CreateCourse from "./CreateCourse";
+
 
 export default function KhoaHoc() {
   const navigate = useNavigate();
   const [khoaHocData, setKhoaHocData] = useState([]);
   const [userId, setUserId] = useState(null);
-  const [userRole, setUserRole] = useState(""); // ✅ Lưu role để phân quyền
+  const [userRole, setUserRole] = useState("");
   const [thongBao, setThongBao] = useState("");
   const [thongBaoType, setThongBaoType] = useState("");
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
-  const [showCreateCourse, setShowCreateCourse] = useState(false); // ✅ Toggle tạo khóa học
+  const [showCreateCourse, setShowCreateCourse] = useState(false);
   const token = localStorage.getItem("token");
   const [isLoggedIn, setIsLoggedIn] = useState(!!token);
 
-  // ✅ Lấy thông tin người dùng
+  const availableImages = [hinh1, hinh2, hinh3, hinh4]; // ✅ danh sách ảnh random
+
+  // ✅ Lấy profile
   useEffect(() => {
     if (!token) return;
     fetch("http://localhost:8080/api/v1.0/profile", {
@@ -33,19 +37,25 @@ export default function KhoaHoc() {
       .then((res) => res.json())
       .then((data) => {
         setUserId(data.userId);
-        setUserRole(data.roleName); // 👈 Lưu roleName (ADMIN)
+        setUserRole(data.roleName);
       })
       .catch((err) => console.error("Lỗi lấy profile:", err));
   }, [token]);
 
-  // ✅ Lấy danh sách khóa học
+  // ✅ Lấy danh sách khóa học và gán ảnh random
   useEffect(() => {
     if (!token) return;
     fetch("http://localhost:8080/api/v1.0/khoahoc/getallcourse", {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
-      .then((data) => setKhoaHocData(data))
+      .then((data) => {
+        const dataWithImages = data.map((course) => ({
+          ...course,
+          image: availableImages[Math.floor(Math.random() * availableImages.length)],
+        }));
+        setKhoaHocData(dataWithImages);
+      })
       .catch((err) => console.error("Lỗi getAllCourse:", err));
   }, [token]);
   const images = {
@@ -61,7 +71,6 @@ export default function KhoaHoc() {
     window.location.href = "/";
   };
 
-  // ✅ Đăng nhập thành công
   const handleLoginSuccess = () => {
     setIsLoggedIn(true);
     setShowLoginModal(false);
@@ -75,7 +84,6 @@ export default function KhoaHoc() {
       return;
     }
 
-    // Bước 1: Đăng ký khóa học
     fetch(`http://localhost:8080/api/v1.0/khoahoc/dangky/${courseId}?userId=${userId}`, {
       method: "POST",
       headers: { Authorization: `Bearer ${token}` },
@@ -87,8 +95,6 @@ export default function KhoaHoc() {
       .then((message) => {
         setThongBao(`✅ ${message}`);
         setThongBaoType("success");
-
-        // Bước 2: Gọi API thanh toán
         return fetch(`http://localhost:8080/api/v1.0/payments/course/${courseId}/user/${userId}`, {
           method: "POST",
           headers: { Authorization: `Bearer ${token}` },
@@ -96,8 +102,6 @@ export default function KhoaHoc() {
       })
       .then((res) => {
         if (!res.ok) throw new Error("❌ Giao dịch thanh toán không thành công.");
-
-        // 👉 Điều hướng qua trang PaymentProcess, truyền dữ liệu nếu cần
         navigate("/payment-process", {
           state: {
             courseId,
@@ -112,8 +116,6 @@ export default function KhoaHoc() {
       });
   };
 
-
-
   return (
     <>
       <Navbar
@@ -123,7 +125,6 @@ export default function KhoaHoc() {
         onLogout={handleLogout}
       />
 
-      {/* ✅ Nút tạo khóa học (chỉ admin) */}
       {userRole === "ADMIN" && (
         <>
           <div style={{ textAlign: "center", margin: "20px 0" }}>
@@ -144,7 +145,6 @@ export default function KhoaHoc() {
               }}
             />
           )}
-
         </>
       )}
 
@@ -157,9 +157,6 @@ export default function KhoaHoc() {
         >
           Khóa học phòng ngừa sử dụng ma túy
         </motion.h2>
-
-        {/* ✅ Hiển thị danh sách khóa học */}
-
         {khoaHocData.length === 1 ? (
           <div className="khoa-hoc-single">
             <motion.div
@@ -170,8 +167,11 @@ export default function KhoaHoc() {
               transition={{ duration: 0.3 }}
               viewport={{ once: true }}
             >
-
-
+              <img
+                src={khoaHocData[0].image || defaultImage}
+                alt={khoaHocData[0].tenKhoaHoc}
+                className="khoa-hoc-card-img"
+              />
               <div className="khoa-hoc-content">
                 <h3>{khoaHocData[0].tenKhoaHoc}</h3>
                 <ul className="khoa-hoc-highlights">
@@ -202,68 +202,66 @@ export default function KhoaHoc() {
           </div>
         ) : (
           <div className="khoa-hoc-grid">
-           {khoaHocData.map((course, index) => (
-  <motion.div
-    key={course.id}
-    className="khoa-hoc-card"
-    initial={{ opacity: 0, y: 40 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    transition={{ delay: index * 0.1 }}
-    viewport={{ once: true }}
-  >
-    <img
-      src={images[course.tenKhoaHoc] || defaultImage}
-      alt={course.tenKhoaHoc}
-      className="khoa-hoc-card-img"
-    />
-    <div className="khoa-hoc-content">
-      <h3>{course.tenKhoaHoc}</h3>
-      <ul className="khoa-hoc-highlights">
-        <li>👥 Tư vấn viên: {course.consultant?.name || "Chưa rõ"}</li>
-        <li>📍 Địa điểm: {course.diaDiem}</li>
-        <li>
-          🕒 Thời gian:{" "}
-          {new Date(course.thoiGianBatDau).toLocaleString("vi-VN")} →{" "}
-          {new Date(course.thoiGianKetThuc).toLocaleString("vi-VN")}
-        </li>
-        <li>👤 Số lượng tối đa: {course.soLuongToiDa}</li>
-      </ul>
-      <div className="khoa-hoc-footer">
-        <span className="khoa-hoc-price">
-          {course.giaTien === 0 || !course.giaTien
-            ? "Miễn phí"
-            : `${course.giaTien.toLocaleString()} VNĐ`}
-        </span>
-        <button
-          className="khoa-hoc-button"
-          onClick={() => handleDangKy(course.id)}
-        >
-          Đăng ký khóa học
-        </button>
-      </div>
-    </div>
-  </motion.div>
-))}
-          </div >
-        )
-}
-      </section >
-  { thongBao && (
-    <div className={`thong-bao-modal ${thongBaoType}`}>
-      <p>{thongBao}</p>
-      <button onClick={() => setThongBao("")}>OK</button>
-    </div>
-  )}
+            {khoaHocData.map((course, index) => (
+              <motion.div
+                key={course.id}
+                className="khoa-hoc-card"
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+                viewport={{ once: true }}
+              >
+                <img
+                  src={course.image || defaultImage}
+                  alt={course.tenKhoaHoc}
+                  className="khoa-hoc-card-img"
+                />
+                <div className="khoa-hoc-content">
+                  <h3>{course.tenKhoaHoc}</h3>
+                  <ul className="khoa-hoc-highlights">
+                    <li>👥 Tư vấn viên: {course.consultant?.name || "Chưa rõ"}</li>
+                    <li>📍 Địa điểm: {course.diaDiem}</li>
+                    <li>
+                      🕒 Thời gian:{" "}
+                      {new Date(course.thoiGianBatDau).toLocaleString("vi-VN")} →{" "}
+                      {new Date(course.thoiGianKetThuc).toLocaleString("vi-VN")}
+                    </li>
+                    <li>👤 Số lượng tối đa: {course.soLuongToiDa}</li>
+                  </ul>
+                  <div className="khoa-hoc-footer">
+                    <span className="khoa-hoc-price">
+                      {course.giaTien === 0 || !course.giaTien
+                        ? "Miễn phí"
+                        : `${course.giaTien.toLocaleString()} VNĐ`}
+                    </span>
+                    <button
+                      className="khoa-hoc-button"
+                      onClick={() => handleDangKy(course.id, course.giaTien)}
+                    >
+                      Đăng ký khóa học
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        )}
+      </section>
 
-{
-  showLoginModal && (
-    <LoginModal
-      onClose={() => setShowLoginModal(false)}
-      onLoginSuccess={handleLoginSuccess}
-    />
-  )
-}
-{ showRegisterModal && <Register onClose={() => setShowRegisterModal(false)} /> }
+      {thongBao && (
+        <div className={`thong-bao-modal ${thongBaoType}`}>
+          <p>{thongBao}</p>
+          <button onClick={() => setThongBao("")}>OK</button>
+        </div>
+      )}
+
+      {showLoginModal && (
+        <LoginModal
+          onClose={() => setShowLoginModal(false)}
+          onLoginSuccess={handleLoginSuccess}
+        />
+      )}
+      {showRegisterModal && <Register onClose={() => setShowRegisterModal(false)} />}
     </>
   );
 }
