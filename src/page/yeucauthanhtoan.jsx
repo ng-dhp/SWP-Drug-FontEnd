@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from "react";
-import "./css/YeucauThanhToan.css";
+import "./css/yeucauthanhtoan.css";
 
-export default function YeucauThanhToan() {
-    const [payments, setPayments] = useState([]);
-    const [userMap, setUserMap] = useState({});
-    const [courseMap, setCourseMap] = useState({});
-    const [loading, setLoading] = useState(true);
+export default function XuLyThanhToan() {
+    const [danhSachThanhToan, setDanhSachThanhToan] = useState([]);
+    const [mapHocVien, setMapHocVien] = useState({});
+    const [mapKhoaHoc, setMapKhoaHoc] = useState({});
+    const [dangTai, setDangTai] = useState(true);
     const token = localStorage.getItem("token");
 
     useEffect(() => {
         if (!token) return;
 
-        const fetchAllData = async () => {
+        const fetchDuLieu = async () => {
             try {
-                const [paymentRes, userRes, courseRes] = await Promise.all([
+                const [resThanhToan, resNguoiDung, resKhoaHoc] = await Promise.all([
                     fetch("http://localhost:8080/api/v1.0/payments/all", {
                         headers: { Authorization: `Bearer ${token}` },
                     }),
@@ -25,41 +25,37 @@ export default function YeucauThanhToan() {
                     }),
                 ]);
 
-                const paymentsData = await paymentRes.json();
-                const usersDataRaw = await userRes.json();
-                const coursesDataRaw = await courseRes.json();
+                const dataThanhToan = await resThanhToan.json();
+                const duLieuNguoiDung = await resNguoiDung.json();
+                const duLieuKhoaHoc = await resKhoaHoc.json();
 
-                console.log("📌 usersDataRaw:", usersDataRaw);
-                console.log("📌 coursesDataRaw:", coursesDataRaw);
+                const danhSachNguoiDung = Array.isArray(duLieuNguoiDung) ? duLieuNguoiDung : duLieuNguoiDung.content || [];
+                const danhSachKhoaHoc = Array.isArray(duLieuKhoaHoc) ? duLieuKhoaHoc : duLieuKhoaHoc.content || [];
 
-                const usersData = Array.isArray(usersDataRaw) ? usersDataRaw : (usersDataRaw.content || []);
-                const coursesData = Array.isArray(coursesDataRaw) ? coursesDataRaw : (coursesDataRaw.content || []);
-
-
-                const userMapData = {};
-                usersData.forEach(u => {
-                    userMapData[u.userId] = u.fullName;  
+                const mapHocVienTam = {};
+                danhSachNguoiDung.forEach(u => {
+                    mapHocVienTam[u.userId] = u.fullName;
                 });
 
-                const courseMapData = {};
-                coursesData.forEach(c => {
-                    courseMapData[c.id] = c.tenKhoaHoc;
+                const mapKhoaHocTam = {};
+                danhSachKhoaHoc.forEach(k => {
+                    mapKhoaHocTam[k.id] = k.tenKhoaHoc;
                 });
 
-                setPayments(Array.isArray(paymentsData) ? paymentsData : []);
-                setUserMap(userMapData);
-                setCourseMap(courseMapData);
-                setLoading(false);
+                setDanhSachThanhToan(Array.isArray(dataThanhToan) ? dataThanhToan : []);
+                setMapHocVien(mapHocVienTam);
+                setMapKhoaHoc(mapKhoaHocTam);
+                setDangTai(false);
             } catch (err) {
-                console.error("❌ Lỗi tải dữ liệu:", err);
-                setLoading(false);
+                console.error("❌ Lỗi khi tải dữ liệu:", err);
+                setDangTai(false);
             }
         };
 
-        fetchAllData();
+        fetchDuLieu();
     }, [token]);
 
-    const handleMarkCompleted = (paymentId) => {
+    const xuLyXacNhan = (paymentId) => {
         fetch(`http://localhost:8080/api/v1.0/payments/${paymentId}/status?status=COMPLETED`, {
             method: "PUT",
             headers: { Authorization: `Bearer ${token}` },
@@ -70,7 +66,7 @@ export default function YeucauThanhToan() {
             })
             .then(msg => {
                 alert(`✅ ${msg}`);
-                setPayments(prev =>
+                setDanhSachThanhToan(prev =>
                     prev.map(p =>
                         p.paymentId === paymentId ? { ...p, status: "COMPLETED" } : p
                     )
@@ -82,16 +78,16 @@ export default function YeucauThanhToan() {
             });
     };
 
-    if (loading) return <div className="text-center mt-10">Đang tải dữ liệu thanh toán...</div>;
+    if (dangTai) return <div className="dang-tai">Đang tải dữ liệu...</div>;
 
     return (
-        <div className="payment-request-container">
-            <h2 className="text-2xl font-bold mb-4">📄 Danh sách yêu cầu thanh toán</h2>
+        <div className="khung-thanh-toan">
+            <h2 className="tieu-de">📄 Danh sách yêu cầu thanh toán</h2>
 
-            {payments.length === 0 ? (
-                <p>Không có dữ liệu thanh toán nào.</p>
+            {danhSachThanhToan.length === 0 ? (
+                <p>Không có dữ liệu thanh toán.</p>
             ) : (
-                <table className="payment-table">
+                <table className="bang-thanh-toan">
                     <thead>
                         <tr>
                             <th>ID</th>
@@ -104,29 +100,29 @@ export default function YeucauThanhToan() {
                         </tr>
                     </thead>
                     <tbody>
-                        {payments.map(payment => (
-                            <tr key={payment.paymentId}>
-                                <td>{payment.paymentId}</td>
-                                <td>{courseMap[payment.courseId] || "Không rõ"}</td>
-                                <td>{userMap[payment.userId] || "Không rõ"}</td>
+                        {danhSachThanhToan.map(thanhToan => (
+                            <tr key={thanhToan.paymentId}>
+                                <td>{thanhToan.paymentId}</td>
+                                <td>{mapKhoaHoc[thanhToan.courseId] || "Không rõ"}</td>
+                                <td>{mapHocVien[thanhToan.userId] || "Không rõ"}</td>
                                 <td>
-                                    {payment.createdAt
-                                        ? new Date(payment.createdAt).toLocaleString()
+                                    {thanhToan.createdAt
+                                        ? new Date(thanhToan.createdAt).toLocaleString()
                                         : "N/A"}
                                 </td>
-                                <td>{payment.amount?.toLocaleString()} VNĐ</td>
+                                <td>{thanhToan.amount?.toLocaleString()} VNĐ</td>
                                 <td>
-                                    <span className={payment.status === "COMPLETED" ? "status-completed" : "status-pending"}>
-                                        {payment.status}
+                                    <span className={thanhToan.status === "COMPLETED" ? "trang-thai-hoan-tat" : "trang-thai-cho"}>
+                                        {thanhToan.status}
                                     </span>
                                 </td>
                                 <td>
-                                    {payment.status !== "COMPLETED" && (
+                                    {thanhToan.status !== "COMPLETED" && (
                                         <button
-                                            className="btn-confirm"
-                                            onClick={() => handleMarkCompleted(payment.paymentId)}
+                                            className="nut-xac-nhan"
+                                            onClick={() => xuLyXacNhan(thanhToan.paymentId)}
                                         >
-                                            ✅ Xác nhận đã thanh toán
+                                            ✅ Xác nhận thanh toán
                                         </button>
                                     )}
                                 </td>
