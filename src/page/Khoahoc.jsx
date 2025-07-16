@@ -6,6 +6,9 @@ import defaultImage from "../assets/anh_hs.png";
 import Navbar from "../components/navbar";
 import LoginModal from "../components/Login";
 import Register from "../components/Register";
+import hinh1 from "../assets/anh_td.png";
+import hinh2 from "../assets/anh_tuchoi.png";
+import hinh3 from "../assets/anh_phuhuynh.png";
 
 export default function KhoaHoc() {
   const navigate = useNavigate();
@@ -40,6 +43,11 @@ export default function KhoaHoc() {
       .catch((err) => console.error("Lỗi getAllCourse:", err));
   }, [token]);
 
+const images = {
+  "Tư duy tích cực & Lối sống lành mạnh": hinh1,
+  "Kỹ năng từ chối và phòng vệ": hinh2,
+  "Hướng dẫn dành cho phụ huynh": hinh3,
+};
   // ✅ Logout
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -100,12 +108,7 @@ export default function KhoaHoc() {
           Khóa học phòng ngừa sử dụng ma túy
         </motion.h2>
 
-        {thongBao && (
-          <div className={`alert ${thongBaoType === "success" ? "alert-success" : "alert-error"}`}>
-            {thongBao}
-          </div>
-        )}
-
+      
         {khoaHocData.length === 1 ? (
           <div className="khoa-hoc-single">
             <motion.div
@@ -116,7 +119,8 @@ export default function KhoaHoc() {
               transition={{ duration: 0.3 }}
               viewport={{ once: true }}
             >
-              <img src={defaultImage} alt={khoaHocData[0].tenKhoaHoc} />
+
+
               <div className="khoa-hoc-content">
                 <h3>{khoaHocData[0].tenKhoaHoc}</h3>
                 <ul className="khoa-hoc-highlights">
@@ -147,48 +151,59 @@ export default function KhoaHoc() {
           </div>
         ) : (
           <div className="khoa-hoc-grid">
-            {khoaHocData.map((course, index) => (
-              <motion.div
-                key={course.id}
-                className="khoa-hoc-card"
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                viewport={{ once: true }}
-              >
-                <img src={defaultImage} alt={course.tenKhoaHoc} />
-                <div className="khoa-hoc-content">
-                  <h3>{course.tenKhoaHoc}</h3>
-                  <ul className="khoa-hoc-highlights">
-                    <li>👥 Tư vấn viên: {course.consultant?.name || "Chưa rõ"}</li>
-                    <li>📍 Địa điểm: {course.diaDiem}</li>
-                    <li>
-                      🕒 Thời gian:{" "}
-                      {new Date(course.thoiGianBatDau).toLocaleString("vi-VN")} →{" "}
-                      {new Date(course.thoiGianKetThuc).toLocaleString("vi-VN")}
-                    </li>
-                    <li>👤 Số lượng tối đa: {course.soLuongToiDa}</li>
-                  </ul>
-                  <div className="khoa-hoc-footer">
-                    <span className="khoa-hoc-price">
-                      {course.giaTien === 0 || !course.giaTien
-                        ? "Miễn phí"
-                        : `${course.giaTien.toLocaleString()} VNĐ`}
-                    </span>
-                    <button
-                      className="khoa-hoc-button"
-                      onClick={() => handleDangKy(course.id)}
-                    >
-                      Đăng ký khóa học
-                    </button>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
+           {khoaHocData.map((course, index) => (
+  <motion.div
+    key={course.id}
+    className="khoa-hoc-card"
+    initial={{ opacity: 0, y: 40 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    transition={{ delay: index * 0.1 }}
+    viewport={{ once: true }}
+  >
+    <img
+      src={images[course.tenKhoaHoc] || defaultImage}
+      alt={course.tenKhoaHoc}
+      className="khoa-hoc-card-img"
+    />
+    <div className="khoa-hoc-content">
+      <h3>{course.tenKhoaHoc}</h3>
+      <ul className="khoa-hoc-highlights">
+        <li>👥 Tư vấn viên: {course.consultant?.name || "Chưa rõ"}</li>
+        <li>📍 Địa điểm: {course.diaDiem}</li>
+        <li>
+          🕒 Thời gian:{" "}
+          {new Date(course.thoiGianBatDau).toLocaleString("vi-VN")} →{" "}
+          {new Date(course.thoiGianKetThuc).toLocaleString("vi-VN")}
+        </li>
+        <li>👤 Số lượng tối đa: {course.soLuongToiDa}</li>
+      </ul>
+      <div className="khoa-hoc-footer">
+        <span className="khoa-hoc-price">
+          {course.giaTien === 0 || !course.giaTien
+            ? "Miễn phí"
+            : `${course.giaTien.toLocaleString()} VNĐ`}
+        </span>
+        <button
+          className="khoa-hoc-button"
+          onClick={() => handleDangKy(course.id)}
+        >
+          Đăng ký khóa học
+        </button>
+      </div>
+    </div>
+  </motion.div>
+))}
           </div>
         )}
 
-      </section>      {/* ... */}
+      </section>  
+      {thongBao && (
+  <div className={`thong-bao-modal ${thongBaoType}`}>
+    <p>{thongBao}</p>
+    <button onClick={() => setThongBao("")}>OK</button>
+  </div>
+)}
+
       {showLoginModal && (
         <LoginModal
           onClose={() => setShowLoginModal(false)}

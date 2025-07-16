@@ -38,6 +38,14 @@ function AppContent() {
 
     return () => clearInterval(interval);
   }, []);
+  useEffect(() => {
+  const quoteInterval = setInterval(() => {
+    setCurrentQuoteIndex((prevIndex) => (prevIndex + 1) % quotes.length);
+  }, 8000); // đổi câu mỗi 8 giây
+
+  return () => clearInterval(quoteInterval);
+}, []);
+
 
   const backgroundImages = [hinh1, hinh2, hinh3];
   const handleLogout = () => {
@@ -51,8 +59,34 @@ function AppContent() {
     setIsLoggedIn(true);
     setShowLoginModal(false);
   };
+const quotes = [
+  "🧠 Ma túy là kẻ dối trá tài tình – nó hứa hẹn cảm giác thoải mái nhất thời, để rồi âm thầm đánh cắp mọi điều quý giá nhất trong cuộc sống của bạn.",
+  "🚫 Không có liều đầu tiên, sẽ không có những lần sau cùng đầy hối tiếc.",
+  "👨‍👩‍👧‍👦 Phòng ngừa ma túy là bảo vệ tương lai – của bạn, gia đình và cả cộng đồng.",
+  "💪 Sự mạnh mẽ là nói KHÔNG với ma túy ngay từ lần đầu tiên.",
+  "📚 Giáo dục là liều vaccine tốt nhất chống lại ma túy.",
+  "⚠️ Đừng để một phút tò mò đánh đổi cả tương lai.",
+];
+const marqueeString = quotes
+  .concat(quotes)
+  .join("                         ");
+
+
+
+// Chuyển câu sau mỗi N giây
+useEffect(() => {
+  const interval = setInterval(() => {
+    setCurrentQuoteIndex((prev) => (prev + 1) % quotes.length);
+  }, 15000); // đổi câu sau 15s (tuỳ bạn điều chỉnh)
+
+  return () => clearInterval(interval);
+}, []);
+
+
+
 
   return (
+    
     <div>
       {/* Navbar */}
       <Navbar
@@ -132,6 +166,17 @@ function AppContent() {
           </div>
         </motion.div>
       </section>
+
+<div className="marquee-container">
+  <div className="marquee-track">
+    <div className="marquee-text">{marqueeString}</div>
+  </div>
+</div>
+
+
+
+
+
       <section className="slideshow-wrapper">
         <div
           className="slideshow-track"
@@ -258,6 +303,8 @@ function AppContent() {
           </div>
         </div>
       </section>
+
+
 
       {/* Footer */}
       <footer>

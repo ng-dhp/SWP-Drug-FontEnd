@@ -7,12 +7,27 @@ body {
 }
 
 .khoa-hoc-section {
-  background: linear-gradient(to bottom, #f7fafc, #ffffff);
+  background: linear-gradient(135deg, #f0f4ff 0%, #dbeafe 40%, #fdf2f8 100%);
   padding: 4rem 1rem;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
+  position: relative;
+  z-index: 1;
+}
+
+.khoa-hoc-section::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.3), transparent 40%),
+                    radial-gradient(circle at 80% 30%, rgba(255, 255, 255, 0.2), transparent 50%);
+  z-index: 0;
+  pointer-events: none;
 }
 
 .khoa-hoc-title {
@@ -24,14 +39,17 @@ body {
 }
 
 .khoa-hoc-grid {
-  display: grid;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;     /* ✅ Canh giữa */
   gap: 2rem;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   max-width: 1200px;
   width: 100%;
 }
 
+
 .khoa-hoc-card {
+  width: 360px; /* ✅ Card luôn cùng kích thước */
   background: #e0f2fe;
   border-radius: 1.5rem;
   overflow: hidden;
@@ -46,13 +64,13 @@ body {
   box-shadow: 0 15px 25px rgba(0, 0, 0, 0.1);
 }
 
-.khoa-hoc-card img {
+.khoa-hoc-card-img {
   width: 100%;
   height: 200px;
   object-fit: cover;
-  background-color: #cbd5e1;
-  border-bottom: 1px solid #bae6fd;
+  border-radius: 8px;
 }
+
 
 .khoa-hoc-content {
   padding: 1.5rem;
@@ -113,7 +131,7 @@ body {
 }
 
 .khoa-hoc-single {
-  max-width: 350px;
+  max-width: 360px;
   margin: 2rem auto;
 }
 
@@ -159,7 +177,7 @@ body {
   padding: 0.6rem 1.4rem;
   border-radius: 9999px;
   transition: all 0.3s ease;
-cursor: pointer;
+  cursor: pointer;
 }
 
 .back-button:hover {
@@ -170,7 +188,12 @@ cursor: pointer;
 /* Responsive */
 @media (max-width: 768px) {
   .khoa-hoc-grid {
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    grid-template-columns: 1fr;
+  }
+
+  .khoa-hoc-card {
+    width: 90%;
+    margin: 0 auto;
   }
 }
 
@@ -179,30 +202,57 @@ cursor: pointer;
     max-width: 90vw;
   }
 }
-.khoa-hoc-section {
-  background: linear-gradient(135deg, #f0f4ff 0%, #dbeafe 40%, #fdf2f8 100%);
-  padding: 4rem 1rem;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-.khoa-hoc-section::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.3), transparent 40%),
-                    radial-gradient(circle at 80% 30%, rgba(255, 255, 255, 0.2), transparent 50%);
-  z-index: 0;
-
-  /* ✅ Thêm dòng này để không chặn click */
-  pointer-events: none;
+.thong-bao-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 2rem 2.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  z-index: 9999;
+  max-width: 90%;
+  width: 400px;
+  text-align: center;
+  animation: fadeIn 0.3s ease;
 }
 
-.khoa-hoc-section {
-  position: relative;
-  z-index: 1;
+.thong-bao-modal.success {
+  border: 2px solid #10b981;
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.thong-bao-modal.error {
+  border: 2px solid #ef4444;
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+.thong-bao-modal button {
+  margin-top: 1.5rem;
+  padding: 0.5rem 1.2rem;
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 9999px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.thong-bao-modal button:hover {
+  background-color: #1d4ed8;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -40%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
 }
