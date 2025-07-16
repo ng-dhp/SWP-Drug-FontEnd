@@ -723,3 +723,37 @@ footer a:hover {
 .blog-readmore:hover {
   text-decoration: underline;
 }
+.slideshow-wrapper {
+  width: 100%;
+  height: 400px; /* chỉnh chiều cao khung */
+  overflow: hidden;
+  position: relative;
+  background-color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.slideshow-track {
+  display: flex;
+  animation: scroll-slide 25s linear infinite;
+}
+
+.slideshow-img {
+  height: 100%;             /* ảnh vừa với chiều cao khung */
+  width: auto;              /* tự tính chiều ngang */
+  object-fit: contain;      /* hiển thị đủ toàn bộ ảnh */
+  flex-shrink: 0;
+  margin-right: 20px;       /* khoảng cách giữa các ảnh */
+  display: block;
+}
+
+/* Animation trượt ngang */
+@keyframes scroll-slide {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
