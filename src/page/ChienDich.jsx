@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import CreateCampaign from "./CreateCampaign";
 import "./css/ChienDich.css";
 import Navbar from "../components/navbar";
 import LoginModal from "../components/Login";
@@ -11,18 +12,44 @@ const ChienDich = () => {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
+  const [roleName, setRoleName] = useState(""); // 🆕 Thêm state role
+  const [isCreateVisible, setIsCreateVisible] = useState(false); // 🆕 Modal tạo chiến dịch
 
-  const handleLoginSuccess = () => {
+  const handleLoginSuccess = async () => {
     setIsLoggedIn(true);
     setShowLoginModal(false);
+    await fetchUserProfile(); // Gọi luôn sau login
   };
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("userEmail");
     setIsLoggedIn(false);
+    setRoleName(""); // reset role
     window.location.href = "/";
   };
+
+  // 🆕 Gọi API lấy role
+  const fetchUserProfile = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    try {
+      const res = await fetch("http://localhost:8080/api/v1.0/profile", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      setRoleName(data.roleName); // ví dụ: "STAFF", "MANAGER", "USER"
+    } catch (err) {
+      console.error("Lỗi lấy thông tin người dùng:", err);
+    }
+  };
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      fetchUserProfile();
+    }
+  }, [isLoggedIn]);
 
   const checkAndJoin = async (campaignId, routePath) => {
     const token = localStorage.getItem("token");
@@ -58,7 +85,6 @@ const ChienDich = () => {
 
   return (
     <>
-      {/* ✅ Navbar luôn nằm trên cùng */}
       <Navbar
         isLoggedIn={isLoggedIn}
         onLogin={() => setShowLoginModal(true)}
@@ -77,6 +103,21 @@ const ChienDich = () => {
           </motion.h1>
         </header>
 
+        {/* ✅ Hiển thị nút tạo nếu là Staff hoặc Manager */}
+        {["STAFF", "MANAGER"].includes(roleName) && (
+          <motion.button
+            className="join-button create-button"
+            onClick={() => setIsCreateVisible(true)}
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            style={{ margin: "1rem auto", display: "block" }}
+          >
+            + Tạo Chiến Dịch
+          </motion.button>
+        )}
+
+        {/* Danh sách chiến dịch... */}
         <div className="event-container">
           {/* Chiến dịch 1 */}
           <motion.div
@@ -134,7 +175,12 @@ const ChienDich = () => {
         </div>
       </div>
 
-      {/* ✅ Modal đăng nhập */}
+      {/* Modal Tạo chiến dịch */}
+      {isCreateVisible && (
+        <CreateCampaign onClose={() => setIsCreateVisible(false)} onCreate={() => {}} />
+      )}
+
+      {/* Modal đăng nhập */}
       {showLoginModal && (
         <LoginModal
           onClose={() => setShowLoginModal(false)}
@@ -142,7 +188,7 @@ const ChienDich = () => {
         />
       )}
 
-      {/* ✅ Modal đăng ký */}
+      {/* Modal đăng ký */}
       {showRegisterModal && (
         <Register onClose={() => setShowRegisterModal(false)} />
       )}

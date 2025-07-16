@@ -25,6 +25,8 @@ export default function TuVan() {
     time: "",
   });
   const [formError, setFormError] = useState("");
+  const [formSuccess, setFormSuccess] = useState("");
+
 
 
 
@@ -159,12 +161,13 @@ export default function TuVan() {
 
       const text = await res.text();
       if (res.ok) {
-        alert("🎉 Đặt lịch thành công!");
-        setFormData({ date: "", time: "" });
-        setSelectedDoctor(null);
+        setFormSuccess("🎉 Đặt lịch thành công!");
+        setFormError(""); // clear lỗi nếu có
       } else {
         setFormError(`❌ Lỗi: ${text}`);
+        setFormSuccess(""); // clear thành công nếu có
       }
+
     } catch (err) {
       setFormError("❌ Lỗi không xác định: " + err.message);
     }
@@ -235,7 +238,11 @@ export default function TuVan() {
           <button type="submit" disabled={!selectedDoctor || !userId}>
             {isLoggedIn ? "📥 Đặt Lịch" : "🔐 Vui lòng đăng nhập"}
           </button>
-          {formError && <p className="form-error">{formError}</p>}
+          <div className="form-message">
+            {formSuccess && <p className="form-success">{formSuccess}</p>}
+            {formError && <p className="form-error">{formError}</p>}
+          </div>
+
         </form>
       </div>
 

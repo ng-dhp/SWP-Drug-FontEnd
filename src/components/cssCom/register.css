@@ -9,7 +9,6 @@
   justify-content: center;
   align-items: center;
   overflow-y: auto; /* ✅ Cho phép cuộn nếu form cao hơn màn hình */
-  padding: 40px 0; /* ✅ Thêm khoảng cách trên/dưới để nút "Đóng" không bị cắt */
   z-index: 9999;
 }
 
