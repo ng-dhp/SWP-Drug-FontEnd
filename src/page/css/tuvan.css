@@ -85,6 +85,7 @@
   gap: 1.5rem;
   align-items: center;
   margin-bottom: 2rem;
+  
 }
 .tuvan-form label {
   flex: 1 1 300px;
@@ -157,4 +158,18 @@
     top: 0.5rem;
     right: 0.5rem;
   }
+}
+.form-message {
+  margin-top: 10px;
+}
+
+.form-success {
+  color: green;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.form-error {
+  color: red;
+  font-weight: bold;
 }

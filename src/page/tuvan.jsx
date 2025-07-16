@@ -24,6 +24,10 @@ export default function TuVan() {
     date: "",
     time: "",
   });
+  const [formError, setFormError] = useState("");
+  const [formSuccess, setFormSuccess] = useState("");
+
+
 
 
   const handleLogout = () => {
@@ -98,26 +102,57 @@ export default function TuVan() {
   };
 
   const handleSubmit = async (e) => {
+
     e.preventDefault();
+    setFormError(""); 
+    setFormSuccess("");
 
     if (!isLoggedIn) return setShowLoginModal(true);
-    if (!selectedDoctor) return alert("❗ Vui lòng chọn bác sĩ!");
-    if (!userId) return alert("❗ Không tìm thấy ID người dùng.");
+    if (!selectedDoctor) return setFormError("❗ Vui lòng chọn bác sĩ.");
+    if (!userId) return setFormError("❗ Không tìm thấy ID người dùng.");
 
     const token = localStorage.getItem("token");
-    if (!token) return alert("❗ Token không hợp lệ!");
+    if (!token) return setFormError("❗ Token không hợp lệ!");
+    const hour = parseInt(formData.time?.split(":")[0]);
+    if (hour < 8 || hour > 15) {
+      return setFormError("❗ Vui lòng chọn giờ trong khoảng từ 08:00 đến 15:00.");
+    }
 
-    const payload = {
-      userId: userId,
-      consultantId: selectedDoctor.consultantId,
-      date: formData.date,
-      startTime: formData.time,
-      message: "",
-      status: "Pending",
-      location: "Phòng 203 - Tòa B",
-    };
 
+    const { date, time } = formData;
+
+    const checkUrl = `http://localhost:8080/api/v1.0/appointment/check-slot-availability?consultantId=${selectedDoctor.consultantId}&date=${date}&startTime=${time}`;
     try {
+      const checkRes = await fetch(checkUrl, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!checkRes.ok) {
+        const errorText = await checkRes.text();
+        return setFormError(`❌ Lỗi kiểm tra slot: ${errorText}`);
+      }
+
+      const isAvailable = await checkRes.json();
+      if (!isAvailable) {
+        return setFormError("❌ Khung giờ này đã có người đặt. Vui lòng chọn thời gian khác."+
+          " ⏰ Mỗi lượt đặt cách nhau 2 tiếng, khung giờ áp dụng từ 08:00 đến 17:00.");
+
+      }
+
+      const payload = {
+        userId,
+        consultantId: selectedDoctor.consultantId,
+        date,
+        startTime: time,
+        message: "",
+        status: "Pending",
+        location: "Phòng 203 - Tòa B",
+      };
+
       const res = await fetch("http://localhost:8080/api/v1.0/appointment/create", {
         method: "POST",
         headers: {
@@ -129,16 +164,18 @@ export default function TuVan() {
 
       const text = await res.text();
       if (res.ok) {
-        alert("🎉 Đặt lịch thành công!");
-        setFormData({ date: "", time: "" });
-        setSelectedDoctor(null);
+        setFormSuccess("🎉 Đặt lịch thành công!");
+        setFormError(""); // clear lỗi nếu có
       } else {
-        alert(`❌ Lỗi: ${text}`);
+        setFormError(`❌ Lỗi: ${text}`);
+        setFormSuccess(""); // clear thành công nếu có
       }
+
     } catch (err) {
-      alert("❌ Lỗi không xác định: " + err.message);
+      setFormError("❌ Lỗi không xác định: " + err.message);
     }
   };
+
 
   return (
     <>
@@ -200,9 +237,15 @@ export default function TuVan() {
             />
           </label>
 
+
           <button type="submit" disabled={!selectedDoctor || !userId}>
             {isLoggedIn ? "📥 Đặt Lịch" : "🔐 Vui lòng đăng nhập"}
           </button>
+          <div className="form-message">
+            {formSuccess && <p className="form-success">{formSuccess}</p>}
+            {formError && <p className="form-error">{formError}</p>}
+          </div>
+
         </form>
       </div>
 
