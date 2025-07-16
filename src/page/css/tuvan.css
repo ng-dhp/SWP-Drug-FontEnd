@@ -158,3 +158,11 @@
     right: 0.5rem;
   }
 }
+.form-error {
+  color: red;
+  margin-top: 10px;
+  font-weight: bold;
+  text-align: center;
+  padding-left: 230px;
+}
+

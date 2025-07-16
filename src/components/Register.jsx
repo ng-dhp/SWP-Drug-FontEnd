@@ -9,7 +9,7 @@ export default function RegisterModal({ onClose }) {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [dob, setDob] = useState(null); // now a Date object
+  const [dob, setDob] = useState(null); 
   const [gender, setGender] = useState("");
   const [phone, setPhone] = useState("");
   const [errors, setErrors] = useState({});
@@ -151,9 +151,9 @@ export default function RegisterModal({ onClose }) {
             {errors.dob && <p className="error">{errors.dob}</p>}
           </div>
 
-          <div className="form-group">
+          <div className="form-group1">
             <label>Giới tính:</label>
-            <select value={gender} onChange={(e) => setGender(e.target.value)} required>
+            <select className="gioitinh" value={gender} onChange={(e) => setGender(e.target.value)} required>
               <option value="">Chọn giới tính</option>
               <option value="Male">Nam</option>
               <option value="Female">Nữ</option>
