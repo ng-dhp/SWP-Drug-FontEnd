@@ -108,8 +108,21 @@ export default function Navbar({ onLogin, onRegister, isLoggedIn, onLogout }) {
             )}
 
             {roleName === "STAFF" && (
-              <Link to="/xulyyeucau">Xử lý yêu cầu</Link>
+              <div
+                className="dropdown"
+                onMouseEnter={() => setIsDropdownOpen(true)}
+                onMouseLeave={() => setIsDropdownOpen(false)}
+              >
+                <span className="dropdown-toggle cursor-pointer">Xử lý yêu cầu</span>
+                {isDropdownOpen && (
+                  <div className="dropdown-menu bg-white shadow-md absolute z-50 p-2 rounded">
+                    <Link to="/xulyyeucau">Yêu cầu khảo sát</Link>
+                    <Link to="/yeucauthanhtoan">Yêu cầu thanh toán</Link>
+                  </div>
+                )}
+              </div>
             )}
+
 
             {roleName === "CONSULTANT" && (
               <Link to="/lichhen">Lịch hẹn</Link>

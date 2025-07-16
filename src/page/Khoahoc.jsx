@@ -12,6 +12,7 @@ import hinh3 from "../assets/anh_phuhuynh.png";
 import hinh4 from "../assets/anh_hs.png";
 import CreateCourse from "./CreateCourse";
 
+
 export default function KhoaHoc() {
   const navigate = useNavigate();
   const [khoaHocData, setKhoaHocData] = useState([]);
@@ -57,6 +58,11 @@ export default function KhoaHoc() {
       })
       .catch((err) => console.error("Lỗi getAllCourse:", err));
   }, [token]);
+  const images = {
+    "Tư duy tích cực & Lối sống lành mạnh": hinh1,
+    "Kỹ năng từ chối và phòng vệ": hinh2,
+    "Hướng dẫn dành cho phụ huynh": hinh3,
+  };
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -151,7 +157,6 @@ export default function KhoaHoc() {
         >
           Khóa học phòng ngừa sử dụng ma túy
         </motion.h2>
-
         {khoaHocData.length === 1 ? (
           <div className="khoa-hoc-single">
             <motion.div
