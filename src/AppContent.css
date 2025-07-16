@@ -757,3 +757,40 @@ footer a:hover {
     transform: translateX(-50%);
   }
 }
+.marquee-container {
+  width: 100%;
+  overflow: hidden;
+  background-color: #1e40af;
+  height: 60px; /* Chiều cao vùng chữ chạy */
+  display: flex;
+  align-items: center;
+  padding-left: 20px; /* Khoảng cách lề trái */
+}
+
+.marquee-track {
+  display: inline-block;
+  white-space: nowrap;
+  animation: scroll-left 30s linear infinite;
+  will-change: transform;
+}
+
+.marquee-container:hover .marquee-track {
+  animation-play-state: paused;
+  cursor: pointer;
+}
+
+.marquee-text {
+  display: inline-block;
+  color: white;
+  font-size: 1.3rem;   /* Tăng kích cỡ chữ */
+  font-weight: 500;    /* Chữ đậm nhẹ */
+}
+  
+@keyframes scroll-left {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}

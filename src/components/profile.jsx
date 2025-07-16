@@ -16,6 +16,8 @@ export default function Profile() {
   const [courseSessions, setCourseSessions] = useState({});
   const [consultantSessions, setConsultantSessions] = useState([]);
   const navigate = useNavigate();
+  const [paymentList, setPaymentList] = useState([]);
+
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -103,6 +105,13 @@ export default function Profile() {
       });
   };
 
+  const isCoursePaid = (courseId) => {
+    return paymentList.some(
+      payment => payment.courseId === courseId && payment.status === "COMPLETED"
+    );
+  };
+
+
   const handleFetchMyCourses = () => {
     const token = localStorage.getItem("token");
     if (!token) return alert("Vui lòng đăng nhập.");
@@ -147,14 +156,23 @@ export default function Profile() {
             });
 
         } else {
-          return fetch(`http://localhost:8080/api/v1.0/khoahoc/khoahoc-cuatoi/${userData.userId}`, {
-            headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-          })
-            .then(res => res.json())
-            .then((data) => {
-              setMyCourses(Array.isArray(data) ? data : []);
+          return Promise.all([
+            fetch(`http://localhost:8080/api/v1.0/khoahoc/khoahoc-cuatoi/${userData.userId}`, {
+              headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+            }),
+            fetch("http://localhost:8080/api/v1.0/payments/all", {
+              headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+            })
+          ])
+            .then(async ([coursesRes, paymentsRes]) => {
+              const coursesData = await coursesRes.json();
+              const paymentsData = await paymentsRes.json();
+
+              setMyCourses(Array.isArray(coursesData) ? coursesData : []);
+              setPaymentList(Array.isArray(paymentsData) ? paymentsData : []);
               setShowCourses(true);
             });
+
         }
       })
       .catch(err => {
@@ -162,6 +180,56 @@ export default function Profile() {
         alert("Không thể tải dữ liệu khóa học hoặc lịch dạy.");
       });
   };
+  const handleThanhToanNgay = (courseId, amount) => {
+    if (!profile?.userId) return alert("Không xác định được người dùng.");
+    const token = localStorage.getItem("token");
+
+    // 🔍 Kiểm tra xem đã có payment chưa
+    const existing = paymentList.find(
+      (p) => p.courseId === courseId &&
+        p.userId === profile.userId &&
+        (p.status === "PENDING" || p.status === "CREATED")
+    );
+
+    if (existing) {
+      // 👉 Nếu đã có, dùng lại để chuyển trang thanh toán
+      navigate("/payment-process", {
+        state: {
+          courseId,
+          userId: profile.userId,
+          amount,
+          paymentId: existing.id, // có thể truyền thêm nếu cần
+        },
+      });
+      return;
+    }
+
+    // ✅ Nếu chưa có, tạo mới
+    fetch(`http://localhost:8080/api/v1.0/payments/course/${courseId}/user/${profile.userId}`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("❌ Giao dịch thanh toán không thành công.");
+        return res.json(); // trả về payment mới
+      })
+      .then((payment) => {
+        navigate("/payment-process", {
+          state: {
+            courseId,
+            userId: profile.userId,
+            amount,
+            paymentId: payment.id,
+          },
+        });
+      })
+      .catch((err) => {
+        console.error("❌ Lỗi thanh toán:", err);
+        alert("Không thể tạo giao dịch thanh toán.");
+      });
+  };
+
+
 
 
   const getCourseInfoById = (courseId) => {
@@ -350,7 +418,21 @@ export default function Profile() {
                         {new Date(course.thoiGianBatDau).toLocaleString()} → {new Date(course.thoiGianKetThuc).toLocaleString()}
                       </p>
                       <p><strong>👨‍⚕️ Tư vấn viên:</strong> {course.consultant?.name || "Không rõ"} ({course.consultant?.email || "N/A"})</p>
-                      <button onClick={() => fetchSessionsForCourse(course.courseId)}>📖 Chi tiết buổi học</button>
+
+                      {!isCoursePaid(course.courseId) ? (
+                        <>
+                          <p className="text-red-600 font-semibold">⚠️ Vui lòng thanh toán để tham gia khóa học.</p>
+                          <button
+                            className="btn-update"
+                            onClick={() => handleThanhToanNgay(course.courseId, course.giaTien)}
+                          >
+                            💳 Thanh toán ngay
+                          </button>
+                        </>
+                      ) : (
+                        <button onClick={() => fetchSessionsForCourse(course.courseId)}>📖 Chi tiết buổi học</button>
+                      )}
+
 
                       {courseSessions[course.courseId] && (
                         <div className="session-list">

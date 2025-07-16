@@ -7,7 +7,7 @@ import KhoaHoc from "./page/Khoahoc.jsx"; //
 import ChienDich from "./page/ChienDich";
 import Chiendich01 from "./page/Chiendich01.jsx"; //
 import Chiendich02 from "./page/Chiendich02.jsx";
-import PaymentProcess from "./page/PaymentProcess"; 
+import PaymentProcess from "./page/PaymentProcess";
 
 
 
@@ -26,6 +26,7 @@ import DashBoardFeedback from "./page/DashBoardFeedback.jsx";
 import GuiYeuCau from "./page/guiyeucau.jsx";
 import GuiYeuCauCrafft from "./page/guiyeucaucrafft.jsx";
 import Diemdanh from "./page/Diemdanh.jsx";
+import YeucauThanhToan from "./page/yeucauthanhtoan.jsx";
 
 
 
@@ -49,7 +50,7 @@ export default function App() {
 
 
         <Route path="/khoahoc" element={<KhoaHoc />} />
-        
+
         <Route path="/dashboard-survey" element={<DashboardSurvey />} />
         <Route path="/dashboard-campaign" element={<DashboardChienDich />} />
         <Route path="/dashboard-request" element={<DashboardYeuCau />} />
@@ -61,8 +62,10 @@ export default function App() {
         <Route path="/quanly" element={<QuanLy />} />
 
         <Route path="/xulyyeucau" element={<XuLyYeuCau />} />
+        <Route path="/yeucauthanhtoan" element={<YeucauThanhToan />} />
+
         <Route path="/guiyeucau" element={<GuiYeuCau />} />
-          <Route path="/lichhen" element={<Lichhen />} />
+        <Route path="/lichhen" element={<Lichhen />} />
 
 
         <Route path="/guiyeucaucrafft" element={<GuiYeuCauCrafft />} />
