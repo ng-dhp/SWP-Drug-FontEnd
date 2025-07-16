@@ -61,7 +61,6 @@ export default function KhoaHoc() {
     window.location.reload();
   };
 
-  // ✅ Đăng ký khóa học + QR thanh toán
   const handleDangKy = (courseId, giaTien) => {
     if (!userId) {
       setThongBao("❌ Không xác định được người dùng.");
@@ -69,6 +68,7 @@ export default function KhoaHoc() {
       return;
     }
 
+    // Bước 1: Đăng ký khóa học
     fetch(`http://localhost:8080/api/v1.0/khoahoc/dangky/${courseId}?userId=${userId}`, {
       method: "POST",
       headers: { Authorization: `Bearer ${token}` },
@@ -81,16 +81,31 @@ export default function KhoaHoc() {
         setThongBao(`✅ ${message}`);
         setThongBaoType("success");
 
-        const encodedInfo = encodeURIComponent("THANH TOAN KHOA HOC");
-        const encodedName = encodeURIComponent("NGUYEN DUC DUY");
-        const qrUrl = `https://img.vietqr.io/image/TPB-0339604456-compact.png?amount=${giaTien}&addInfo=${encodedInfo}&accountName=${encodedName}`;
-        window.open(qrUrl, "_blank");
+        // Bước 2: Gọi API thanh toán
+        return fetch(`http://localhost:8080/api/v1.0/payments/course/${courseId}/user/${userId}`, {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
+        });
+      })
+      .then((res) => {
+        if (!res.ok) throw new Error("❌ Giao dịch thanh toán không thành công.");
+
+        // 👉 Điều hướng qua trang PaymentProcess, truyền dữ liệu nếu cần
+        navigate("/payment-process", {
+          state: {
+            courseId,
+            userId,
+            amount: giaTien,
+          },
+        });
       })
       .catch((errMsg) => {
-        setThongBao(`❌ ${errMsg}`);
+        setThongBao(`❌ ${errMsg.message || errMsg}`);
         setThongBaoType("error");
       });
   };
+
+
 
   return (
     <>

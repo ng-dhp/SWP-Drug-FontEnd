@@ -104,7 +104,8 @@ export default function TuVan() {
   const handleSubmit = async (e) => {
 
     e.preventDefault();
-    setFormError(""); // 🔄 Xóa lỗi cũ
+    setFormError(""); 
+    setFormSuccess("");
 
     if (!isLoggedIn) return setShowLoginModal(true);
     if (!selectedDoctor) return setFormError("❗ Vui lòng chọn bác sĩ.");
