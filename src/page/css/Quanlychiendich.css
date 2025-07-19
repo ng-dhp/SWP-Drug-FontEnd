@@ -1,0 +1,42 @@
+.quanly-chiendich {
+  padding: 20px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.campaign-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+.campaign-card {
+  border: 1px solid #ccc;
+  padding: 16px;
+  border-radius: 12px;
+  background-color: #f9f9f9;
+  box-shadow: 1px 1px 5px rgba(0,0,0,0.1);
+}
+
+.campaign-card h3 {
+  margin-bottom: 8px;
+}
+
+.toggle-btn {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.toggle-btn.enable {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.toggle-btn.disable {
+  background-color: #f44336;
+  color: white;
+}

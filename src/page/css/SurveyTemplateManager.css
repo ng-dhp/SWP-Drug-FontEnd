@@ -1,0 +1,62 @@
+.quanly-khaosat {
+  padding: 1rem;
+}
+
+.tieu-de {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.khung-khaosat {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #ccc;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.noi-dung-khaosat {
+  max-width: 70%;
+}
+
+.ten-khaosat {
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.mo-ta {
+  color: #666;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+.trangthai-hoatdong {
+  color: green;
+  font-weight: bold;
+}
+
+.trangthai-ngung {
+  color: red;
+  font-weight: bold;
+}
+
+.nut-chucnang {
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.nut-kichhoat {
+  background-color: #28a745;
+}
+
+.nut-ngung {
+  background-color: #dc3545;
+}

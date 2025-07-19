@@ -7,10 +7,7 @@ import anh_assist from "../assets/anh_assist.png";
 import anh_crafft from "../assets/anh_crafft.png";
 import Navbar from "../components/navbar";
 import LoginModal from "../components/Login";
-import Register from "../components/Register"; // ✅ Đổi lại tên đúng
-
-
-
+import Register from "../components/Register";
 
 export default function KhaoSat() {
   const [templates, setTemplates] = useState([]);
@@ -18,8 +15,6 @@ export default function KhaoSat() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
-
-
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -30,7 +25,7 @@ export default function KhaoSat() {
       return;
     }
 
-    fetch("http://localhost:8080/api/v1.0/admin/dashboard/getAll-templates", {
+    fetch("http://localhost:8080/api/v1.0/admin/dashboard/getAll-templates-admin", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -42,7 +37,8 @@ export default function KhaoSat() {
         return res.json();
       })
       .then((data) => {
-        setTemplates(data);
+        const activeTemplates = data.filter((t) => t.active); // 🔥 Chỉ lấy những khảo sát đang hoạt động
+        setTemplates(activeTemplates);
         setLoading(false);
       })
       .catch((err) => {
@@ -62,36 +58,6 @@ export default function KhaoSat() {
     setIsLoggedIn(true);
     setShowLoginModal(false);
   };
-
-
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      console.warn("❌ Không có token, không thể gọi API.");
-      setLoading(false);
-      return;
-    }
-
-    fetch("http://localhost:8080/api/v1.0/admin/dashboard/getAll-templates", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("Lỗi khi lấy dữ liệu khảo sát");
-        return res.json();
-      })
-      .then((data) => {
-        setTemplates(data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("❌ Lỗi khi fetch templates:", err);
-        setLoading(false);
-      });
-  }, []);
 
   return (
     <div className="wrapper">
@@ -132,33 +98,36 @@ export default function KhaoSat() {
                     </p>
 
                     <div className="survey-cards">
-                      {templates.map((template) => (
-                        <div className="survey-card" key={template.templateId}>
-                          <img
-                            src={
-                              template.surveyType === "ASSIST" ? anh_assist : anh_crafft
-                            }
-                            alt={`Khảo sát ${template.surveyType}`}
-                            className="survey-image-top"
-                          />
-                          <h3>{template.name}</h3>
-                          <div className="survey-details">
-                            <p className="survey-summary">{template.description}</p>
-                            <ul
-                              className={`survey-features ${template.surveyType === "ASSIST" ? "blue" : "purple"
-                                }`}
-                            >
-                              <li>Độ tuổi: {template.ageGroup}</li>
-                              <li>Giới tính: {template.genderGroup}</li>
-                              <li>Mức độ rủi ro: {template.riskLevel}</li>
-                            </ul>
+                      {templates.length === 0 ? (
+                        <p>⚠️ Hiện không có khảo sát nào khả dụng.</p>
+                      ) : (
+                        templates.map((template) => (
+                          <div className="survey-card" key={template.templateId}>
+                            <img
+                              src={template.surveyType === "ASSIST" ? anh_assist : anh_crafft}
+                              alt={`Khảo sát ${template.surveyType}`}
+                              className="survey-image-top"
+                            />
+                            <h3>{template.name}</h3>
+                            <div className="survey-details">
+                              <p className="survey-summary">{template.description}</p>
+                              <ul className={`survey-features ${template.surveyType === "ASSIST" ? "blue" : "purple"}`}>
+                                <li>Độ tuổi: {template.ageGroup}</li>
+                                <li>Giới tính: {template.genderGroup}</li>
+                                <li>Mức độ rủi ro: {template.riskLevel}</li>
+                              </ul>
+                            </div>
+                            {template.active ? (
+                              <Link to={template.surveyType.toLowerCase()}>
+                                <button className="start-button">📋 Bắt đầu</button>
+                              </Link>
+                            ) : (
+                              <div className="inactive-message">⛔ Tạm ngưng khảo sát</div>
+                            )}
                           </div>
-                          <Link to={template.surveyType.toLowerCase()}>
-                            <button className="start-button">📋 Bắt đầu</button>
-                          </Link>
-                        </div>
-                      ))}
+                        ))
 
+                      )}
                     </div>
                   </>
                 )}
@@ -166,7 +135,7 @@ export default function KhaoSat() {
             }
           />
 
-          {/* Các route khảo sát */}
+          {/* Route khảo sát */}
           <Route path="assist" element={<AssistSurvey />} />
           <Route path="crafft" element={<CrafftSurvey />} />
         </Routes>
@@ -179,7 +148,6 @@ export default function KhaoSat() {
         </small>
       </footer>
 
-
       {showLoginModal && (
         <LoginModal
           onClose={() => setShowLoginModal(false)}
@@ -189,8 +157,6 @@ export default function KhaoSat() {
       {showRegisterModal && (
         <Register onClose={() => setShowRegisterModal(false)} />
       )}
-
     </div>
   );
-
 }

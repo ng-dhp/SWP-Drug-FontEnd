@@ -99,6 +99,10 @@ export default function Navbar({ onLogin, onRegister, isLoggedIn, onLogout }) {
                     <div className="dropdown-menu bg-white shadow-md absolute z-50 p-2 rounded">
                       <Link to="/quanlykhoahoc">Quản lý Khóa Học</Link>
                       <Link to="/quanly">Quản lý Người Dùng</Link>
+                      <Link to="/quanlykhaosat">Quản lý Khảo Sát</Link>
+                      <Link to="/quanlychiendich">Quản lý Chiến Dịch</Link>
+
+
                     </div>
                   )}
                 </div>
@@ -108,7 +112,7 @@ export default function Navbar({ onLogin, onRegister, isLoggedIn, onLogout }) {
                   onMouseEnter={() => setIsDashboardOpen(true)}
                   onMouseLeave={() => setIsDashboardOpen(false)}
                 >
-                  <span className="dropdown-toggle cursor-pointer">Dashboard</span>
+                  <span className="dropdown-toggle cursor-pointer">Báo cáo</span>
                   {isDashboardOpen && (
                     <div className="dropdown-menu bg-white shadow-md absolute z-50 p-2 rounded">
                       <Link to="/dashboard-survey">Báo Cáo Khảo Sát</Link>

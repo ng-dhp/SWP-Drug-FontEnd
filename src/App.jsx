@@ -9,6 +9,7 @@ import Chiendich01 from "./page/Chiendich01.jsx"; //
 import Chiendich02 from "./page/Chiendich02.jsx";
 import PaymentProcess from "./page/PaymentProcess";
 import QuanLyKhoaHoc from "./page/Quanlykhoahoc.jsx";
+import SurveyTemplateManager  from "./page/SurveyTemplateManager.jsx"; // Quản lý khảo sát
 
 
 
@@ -28,7 +29,7 @@ import GuiYeuCau from "./page/guiyeucau.jsx";
 import GuiYeuCauCrafft from "./page/guiyeucaucrafft.jsx";
 import Diemdanh from "./page/Diemdanh.jsx";
 import YeucauThanhToan from "./page/yeucauthanhtoan.jsx";
-
+import QuanLyChiendich from "./page/Quanlychiendich.jsx";
 
 
 
@@ -62,6 +63,8 @@ export default function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/quanly" element={<QuanLy />} />
         <Route path="/quanlykhoahoc" element={<QuanLyKhoaHoc />} />
+        <Route path="/quanlykhaosat" element={<SurveyTemplateManager />} />
+        <Route path="/quanlychiendich" element={<QuanLyChiendich />} />
 
         <Route path="/xulyyeucau" element={<XuLyYeuCau />} />
         <Route path="/yeucauthanhtoan" element={<YeucauThanhToan />} />

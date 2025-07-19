@@ -17,6 +17,8 @@ export default function Profile() {
   const [consultantSessions, setConsultantSessions] = useState([]);
   const navigate = useNavigate();
   const [paymentList, setPaymentList] = useState([]);
+  const [campaignSubmissions, setCampaignSubmissions] = useState([]);
+
 
 
   useEffect(() => {
@@ -43,22 +45,35 @@ export default function Profile() {
           fetch("http://localhost:8080/api/v1.0/my-requests/view-request-retake-survey", { headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` } }),
           fetch("http://localhost:8080/api/v1.0/appointment/myAppointment", { headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` } }),
           fetch(`http://localhost:8080/api/v1.0/feedback/user/${userId}`, { headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` } }),
-          fetch("http://localhost:8080/api/v1.0/consultant/getAllConsultant", { headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` } })
+          fetch("http://localhost:8080/api/v1.0/consultant/getAllConsultant", { headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` } }),
+          fetch(`http://localhost:8080/api/v1.0/campaigns/1/submissions/review?userId=${userId}`, {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }),
         ]);
+
       })
-      .then(async ([surveyRes, requestRes, apptRes, fbRes, consultantRes]) => {
-        const [survey, requests, appts, fb, consultants] = await Promise.all([
+      .then(async ([surveyRes, requestRes, apptRes, fbRes, consultantRes, campaignRes]) => {
+        const [survey, requests, appts, fb, consultants, campaignSubs] = await Promise.all([
           surveyRes.ok ? surveyRes.json() : [],
           requestRes.ok ? requestRes.json() : [],
           apptRes.ok ? apptRes.json() : [],
           fbRes.ok ? fbRes.json() : [],
-          consultantRes.ok ? consultantRes.json() : []
+          consultantRes.ok ? consultantRes.json() : [],
+          campaignRes.ok ? campaignRes.json() : [] // ✅ thêm dòng này
         ]);
+
         setSurveyHistory(Array.isArray(survey) ? survey : []);
         setRequestHistory(Array.isArray(requests) ? requests : []);
         setAppointments(Array.isArray(appts) ? appts : appts ? [appts] : []);
         setFeedbacks(Array.isArray(fb) ? fb : []);
         setConsultants(Array.isArray(consultants) ? consultants : []);
+        setCampaignSubmissions(Array.isArray(campaignSubs) ? campaignSubs : []);
+console.log("✅ Campaign submissions sau khi fetch:", campaignSubs);
+
+
         setLoading(false);
       })
       .catch(err => {
@@ -139,7 +154,13 @@ export default function Profile() {
                 }),
                 fetch("http://localhost:8080/api/v1.0/khoahoc/getallcourse", {
                   headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-                })
+                }),
+                fetch(`http://localhost:8080/api/v1.0/campaigns/1/submissions/review?userId=${userId}`, {
+                  headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                  },
+                }),
               ]);
             })
             .then(async ([sessionsRes, allCoursesRes]) => {
@@ -383,6 +404,39 @@ export default function Profile() {
             </div>
           ))}
         </div>
+        <div className="campaign-submissions">
+          <h2 className="tittle-thongtin">📊 Lịch sử khảo sát chiến dịch</h2>
+
+          {campaignSubmissions.length === 0 ? (
+            <p>Không có bài khảo sát nào.</p>
+          ) : (
+            campaignSubmissions.map((submission, idx) => (
+              <div key={idx} className="survey-item">
+                <h3>🧾 Lần làm số {submission.attemptNumber}</h3>
+                <p><strong>📅 Ngày gửi:</strong> {new Date(submission.submittedAt).toLocaleString()}</p>
+                <p><strong>🧮 Tổng điểm:</strong> {submission.totalScore}</p>
+
+                <details>
+                  <summary>📋 Chi tiết câu trả lời</summary>
+                  {submission.answers && submission.answers.length > 0 ? (
+                    <ul>
+                      {submission.answers.map((ans, i) => (
+                        <li key={i}>
+                          <strong>❓ {ans.question}</strong><br />
+                          <em>📝 Trả lời:</em> {ans.answer}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p>Không có câu trả lời nào.</p>
+                  )}
+                </details>
+              </div>
+            ))
+          )}
+        </div>
+
+
       </div>
 
       {showCourses && (
