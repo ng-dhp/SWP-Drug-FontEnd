@@ -45,18 +45,30 @@ export default function KhoaHoc() {
   // ✅ Lấy danh sách khóa học và gán ảnh random
   useEffect(() => {
     if (!token) return;
-    fetch("http://localhost:8080/api/v1.0/khoahoc/getallcourse", {
+
+    fetch("http://localhost:8080/api/v1.0/khoahoc/all", {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
       .then((data) => {
-        const dataWithImages = data.map((course) => ({
-          ...course,
-          image: availableImages[Math.floor(Math.random() * availableImages.length)],
-        }));
+        const dataWithImages = data
+          .filter((course) => course.active === true) // ✅ chỉ lấy active === true
+          .map((course) => ({
+            id: course.id,
+            tenKhoaHoc: course.courseName,
+            diaDiem: course.location,
+            thoiGianBatDau: course.startTime,
+            thoiGianKetThuc: course.endTime,
+            giaTien: course.price,
+            soLuongToiDa: course.maxCapacity,
+            active: course.active,
+            consultant: course.consultant,
+            image: availableImages[Math.floor(Math.random() * availableImages.length)],
+          }));
         setKhoaHocData(dataWithImages);
       })
-      .catch((err) => console.error("Lỗi getAllCourse:", err));
+
+      .catch((err) => console.error("Lỗi load khoá học:", err));
   }, [token]);
   const images = {
     "Tư duy tích cực & Lối sống lành mạnh": hinh1,

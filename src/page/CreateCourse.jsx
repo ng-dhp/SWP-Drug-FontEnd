@@ -3,14 +3,15 @@ import "./css/CreateCourse.css";
 
 export default function CreateCourse({ onCourseCreated, onClose }) {
   const [formData, setFormData] = useState({
-    tenKhoaHoc: "",
+    courseName: "",
     consultantId: "",
-    giaTien: "",
-    diaDiem: "",
-    thoiGianBatDau: "",
-    thoiGianKetThuc: "",
-    soLuongToiDa: "",
+    price: "",
+    location: "",
+    startTime: "",
+    endTime: "",
+    maxCapacity: "",
   });
+
 
   const [consultants, setConsultants] = useState([]);
   const [message, setMessage] = useState("");
@@ -44,16 +45,17 @@ export default function CreateCourse({ onCourseCreated, onClose }) {
     e.preventDefault();
 
     const payload = {
-      ...formData,
-      giaTien: parseFloat(formData.giaTien),
-      soLuongToiDa: parseInt(formData.soLuongToiDa),
-      // ❗️ Không dùng toISOString để tránh nhảy giờ
-      thoiGianBatDau: formData.thoiGianBatDau,
-      thoiGianKetThuc: formData.thoiGianKetThuc,
+      courseName: formData.courseName,
+      price: parseFloat(formData.price),
+      location: formData.location,
+      startTime: formData.startTime,
+      endTime: formData.endTime,
+      maxCapacity: parseInt(formData.maxCapacity),
       consultant: {
         consultantId: parseInt(formData.consultantId),
       },
     };
+
 
     console.log("🔼 Payload gửi lên backend:", payload);
 
@@ -77,14 +79,15 @@ export default function CreateCourse({ onCourseCreated, onClose }) {
 
       // Reset form
       setFormData({
-        tenKhoaHoc: "",
+        courseName: "",
         consultantId: "",
-        giaTien: "",
-        diaDiem: "",
-        thoiGianBatDau: "",
-        thoiGianKetThuc: "",
-        soLuongToiDa: "",
+        price: "",
+        location: "",
+        startTime: "",
+        endTime: "",
+        maxCapacity: "",
       });
+
 
       if (onCourseCreated) onCourseCreated();
     } catch (err) {
@@ -102,9 +105,9 @@ export default function CreateCourse({ onCourseCreated, onClose }) {
         <form className="create-course-form" onSubmit={handleSubmit}>
           <input
             type="text"
-            name="tenKhoaHoc"
+            name="courseName"
             placeholder="Tên khóa học"
-            value={formData.tenKhoaHoc}
+            value={formData.courseName}
             onChange={handleChange}
             required
           />
@@ -114,7 +117,6 @@ export default function CreateCourse({ onCourseCreated, onClose }) {
             value={formData.consultantId}
             onChange={handleChange}
             required
-            className="consultant-select"
           >
             <option value="">-- Chọn tư vấn viên --</option>
             {consultants.map((c) => (
@@ -126,46 +128,47 @@ export default function CreateCourse({ onCourseCreated, onClose }) {
 
           <input
             type="number"
-            name="giaTien"
+            name="price"
             placeholder="Giá tiền (VNĐ)"
-            value={formData.giaTien}
+            value={formData.price}
             onChange={handleChange}
             required
           />
 
           <input
             type="text"
-            name="diaDiem"
+            name="location"
             placeholder="Địa điểm"
-            value={formData.diaDiem}
+            value={formData.location}
             onChange={handleChange}
             required
           />
 
           <input
             type="datetime-local"
-            name="thoiGianBatDau"
-            value={formData.thoiGianBatDau}
+            name="startTime"
+            value={formData.startTime}
             onChange={handleChange}
             required
           />
 
           <input
             type="datetime-local"
-            name="thoiGianKetThuc"
-            value={formData.thoiGianKetThuc}
+            name="endTime"
+            value={formData.endTime}
             onChange={handleChange}
             required
           />
 
           <input
             type="number"
-            name="soLuongToiDa"
+            name="maxCapacity"
             placeholder="Số lượng tối đa"
-            value={formData.soLuongToiDa}
+            value={formData.maxCapacity}
             onChange={handleChange}
             required
           />
+
 
           <button type="submit">Tạo khóa học</button>
 

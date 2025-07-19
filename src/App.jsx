@@ -8,6 +8,7 @@ import ChienDich from "./page/ChienDich";
 import Chiendich01 from "./page/Chiendich01.jsx"; //
 import Chiendich02 from "./page/Chiendich02.jsx";
 import PaymentProcess from "./page/PaymentProcess";
+import QuanLyKhoaHoc from "./page/Quanlykhoahoc.jsx";
 
 
 
@@ -60,6 +61,7 @@ export default function App() {
         <Route path="/feedbackform" element={<FeedbackForm />}></Route>
         <Route path="/profile" element={<Profile />} />
         <Route path="/quanly" element={<QuanLy />} />
+        <Route path="/quanlykhoahoc" element={<QuanLyKhoaHoc />} />
 
         <Route path="/xulyyeucau" element={<XuLyYeuCau />} />
         <Route path="/yeucauthanhtoan" element={<YeucauThanhToan />} />
