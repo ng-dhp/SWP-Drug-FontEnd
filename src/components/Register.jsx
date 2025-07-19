@@ -9,7 +9,7 @@ export default function RegisterModal({ onClose }) {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [dob, setDob] = useState(null); 
+  const [dob, setDob] = useState(null);
   const [gender, setGender] = useState("");
   const [phone, setPhone] = useState("");
   const [errors, setErrors] = useState({});
@@ -23,25 +23,36 @@ export default function RegisterModal({ onClose }) {
 
     const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
     if (!email) newErrors.email = "Email không được để trống";
-    else if (!emailRegex.test(email)) newErrors.email = "Email không đúng định dạng";
+    else if (!emailRegex.test(email))
+      newErrors.email = "Email không đúng định dạng";
 
     if (!password) newErrors.password = "Mật khẩu không được để trống";
-    else if (password.length < 8) newErrors.password = "Mật khẩu phải có ít nhất 8 ký tự";
+    else if (password.length < 8)
+      newErrors.password = "Mật khẩu phải có ít nhất 8 ký tự";
+   if (!dob) {
+  newErrors.dob = "Ngày sinh không được để trống";
+} else {
+  const today = new Date();
+  const minAllowedDate = new Date(
+    today.getFullYear() - 12,
+    today.getMonth(),
+    today.getDate()
+  );
+  if (dob > minAllowedDate) {
+    newErrors.dob = "Bạn phải từ 12 tuổi trở lên.";
+  } else if (dob.getFullYear() < 1900) {
+    newErrors.dob = "Năm sinh không hợp lệ (từ 1900 trở lên)";
+  }
+}
 
-    if (!dob) {
-      newErrors.dob = "Ngày sinh không được để trống";
-    } else {
-      const year = dob.getFullYear();
-      if (year < 1900) {
-        newErrors.dob = "Năm sinh phải từ 1900 trở lên";
-      }
-    }
+
 
     if (!gender) newErrors.gender = "Giới tính không được để trống";
 
-    const phoneRegex = /^\d{10,11}$/;
+    const phoneRegex = /^\d{10}$/;
     if (!phone) newErrors.phone = "Số điện thoại không được để trống";
-    else if (!phoneRegex.test(phone)) newErrors.phone = "Số điện thoại phải có 10 hoặc 11 chữ số";
+    else if (!phoneRegex.test(phone))
+      newErrors.phone = "Số điện thoại phải có 10 chữ số";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -81,7 +92,9 @@ export default function RegisterModal({ onClose }) {
         setPhone("");
       } else {
         const errorData = await response.json();
-        alert("Đăng ký thất bại: " + (errorData.message || "Lỗi không xác định."));
+        alert(
+          "Đăng ký thất bại: " + (errorData.message || "Lỗi không xác định.")
+        );
       }
     } catch (error) {
       console.error("Lỗi khi gọi API:", error);
@@ -136,24 +149,33 @@ export default function RegisterModal({ onClose }) {
 
           <div className="form-group">
             <label>Ngày sinh:</label>
-            <DatePicker
-              selected={dob}
-              onChange={(date) => setDob(date)}
-              dateFormat="dd/MM/yyyy"
-              placeholderText="Nhập ngày tháng năm (VD:22/06/2004)"
-              className="custom-datepicker"
-              showMonthDropdown
-              showYearDropdown
-              dropdownMode="select"
-              maxDate={new Date()}
-              isClearable
-            />
+           <DatePicker
+  selected={dob}
+  onChange={(date) => setDob(date)}
+  dateFormat="dd/MM/yyyy"
+  placeholderText="Nhập ngày tháng năm (VD:22/06/2004)"
+  className="custom-datepicker"
+  showMonthDropdown
+  showYearDropdown
+  dropdownMode="select"
+  minDate={new Date(1900, 0, 1)}   // Vẫn giới hạn tối thiểu năm 1900
+  maxDate={new Date()}             // Không khóa năm 2013, cho chọn tới hiện tại
+  isClearable
+/>
+
+
+
             {errors.dob && <p className="error">{errors.dob}</p>}
           </div>
 
           <div className="form-group1">
             <label>Giới tính:</label>
-            <select className="gioitinh" value={gender} onChange={(e) => setGender(e.target.value)} required>
+            <select
+              className="gioitinh"
+              value={gender}
+              onChange={(e) => setGender(e.target.value)}
+              required
+            >
               <option value="">Chọn giới tính</option>
               <option value="Male">Nam</option>
               <option value="Female">Nữ</option>
@@ -173,10 +195,14 @@ export default function RegisterModal({ onClose }) {
             {errors.phone && <p className="error">{errors.phone}</p>}
           </div>
 
-          <button type="submit" className="nutdangky">Đăng Ký</button>
+          <button type="submit" className="nutdangky">
+            Đăng Ký
+          </button>
         </form>
 
-        <button className="close-button" onClick={onClose}>Đóng</button>
+        <button className="close-button" onClick={onClose}>
+          Đóng
+        </button>
 
         {showOtpModal && (
           <div className="modal-overlay" onClick={handleOverlayClick}>

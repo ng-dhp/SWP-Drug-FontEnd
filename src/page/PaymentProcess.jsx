@@ -26,13 +26,13 @@ export default function PaymentProcess() {
   // ✅ Lấy tên khóa học
   useEffect(() => {
     if (!token || !courseId) return;
-    fetch("http://localhost:8080/api/v1.0/khoahoc/getallcourse", {
+    fetch("http://localhost:8080/api/v1.0/khoahoc/all", {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
       .then((data) => {
         const khoaHoc = data.find((kh) => kh.id === courseId);
-        if (khoaHoc) setTenKhoaHoc(khoaHoc.tenKhoaHoc);
+        if (khoaHoc) setTenKhoaHoc(khoaHoc.courseName);
       })
       .catch((err) => console.error("Lỗi lấy danh sách khóa học:", err));
   }, [token, courseId]);

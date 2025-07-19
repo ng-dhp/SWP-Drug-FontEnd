@@ -34,12 +34,31 @@ const ChienDich = () => {
     }
 
     try {
+      // Lấy profile
       const profileRes = await fetch("http://localhost:8080/api/v1.0/profile", {
         headers: { Authorization: `Bearer ${token}` },
       });
       const profileData = await profileRes.json();
       const userId = profileData.userId;
 
+      // ✅ Kiểm tra campaign có đang active không
+      const allCampaignRes = await fetch("http://localhost:8080/api/v1.0/campaigns/all", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const campaigns = await allCampaignRes.json();
+      const thisCampaign = campaigns.find(c => c.id === campaignId);
+
+      if (!thisCampaign) {
+        alert("Chiến dịch không tồn tại.");
+        return;
+      }
+
+      if (!thisCampaign.active) {
+        alert("Chiến dịch này đã tạm ngưng khảo sát.");
+        return;
+      }
+
+      // Kiểm tra trạng thái người dùng
       const statusRes = await fetch(
         `http://localhost:8080/api/v1.0/campaigns/${campaignId}/status?userId=${userId}`,
         { headers: { Authorization: `Bearer ${token}` } }
@@ -51,12 +70,14 @@ const ChienDich = () => {
         return;
       }
 
+      // ✅ Điều hướng nếu đủ điều kiện
       navigate(routePath);
     } catch (err) {
       console.error("Lỗi khi kiểm tra trạng thái:", err);
       alert("Không thể kiểm tra trạng thái. Vui lòng thử lại.");
     }
   };
+
 
   return (
     <>

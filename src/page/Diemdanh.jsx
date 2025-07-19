@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./css/diemdanh.css"; // Đảm bảo import file CSS
+import "./css/diemdanh.css";
 
 export default function Diemdanh() {
   const [studentList, setStudentList] = useState([]);
@@ -72,7 +72,6 @@ export default function Diemdanh() {
         setAllCourses(Array.isArray(courses) ? courses : []);
         setSessions(Array.isArray(sessionData) ? sessionData : []);
 
-        const token = localStorage.getItem("token");
         const statusMap = {};
 
         for (const student of students) {
@@ -101,6 +100,8 @@ export default function Diemdanh() {
       });
   }, []);
 
+  const getCourseById = (id) => allCourses.find((c) => c.id === id);
+
   const getCourseName = (courseId) => {
     const course = allCourses.find((c) => c.id === courseId);
     return course ? course.tenKhoaHoc : `Khóa ${courseId}`;
@@ -110,6 +111,23 @@ export default function Diemdanh() {
     const token = localStorage.getItem("token");
     if (!token) {
       alert("⚠️ Bạn chưa đăng nhập hoặc phiên đăng nhập đã hết hạn.");
+      return;
+    }
+
+    const session = sessions.find((s) => s.sessionId === sessionId);
+    const course = getCourseById(session?.courseId);
+
+    if (!session || !course) {
+      alert("Không xác định được thông tin khóa học.");
+      return;
+    }
+
+    const now = new Date();
+    const start = new Date(session.sessionDate);
+    const end = new Date(start.getTime() + 2 * 60 * 60 * 1000); // +2 tiếng mặc định
+
+    if (now < start || now > end) {
+      alert("⏰ Chỉ được điểm danh trong thời gian diễn ra buổi học.");
       return;
     }
 
@@ -136,12 +154,11 @@ export default function Diemdanh() {
       })
       .catch((err) => {
         console.error("❌ Lỗi khi điểm danh:", err);
-        alert("❌ Điểm danh thất bại. Có thể bạn chưa đăng nhập.");
+        alert("❌ Điểm danh thất bại.");
       });
   };
 
-  if (loading)
-    return <div className="text-center mt-10">Đang tải dữ liệu...</div>;
+  if (loading) return <div className="text-center mt-10">Đang tải dữ liệu...</div>;
 
   return (
     <div className="diemdanh-container">
@@ -154,10 +171,16 @@ export default function Diemdanh() {
         <div className="session-list">
           {sessions.map((session) => {
             const studentsInCourse = studentList.filter((s) => s.courseId === session.courseId);
+            const course = getCourseById(session.courseId);
             return (
               <div key={session.sessionId} className="session-block">
                 <h3>📘 {getCourseName(session.courseId)} - Buổi {session.sessionIndex}</h3>
                 <p>📅 Ngày: {new Date(session.sessionDate).toLocaleString()}</p>
+                {course && (
+                  <p>🕐 Thời gian học: {new Date(session.sessionDate).toLocaleTimeString()} - {
+                    new Date(new Date(session.sessionDate).getTime() + 2 * 60 * 60 * 1000).toLocaleTimeString()
+                  }</p>
+                )}
 
                 {studentsInCourse.length === 0 ? (
                   <p>Không có học viên nào đăng ký khóa này.</p>

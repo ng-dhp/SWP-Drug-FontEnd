@@ -3,20 +3,21 @@ import "./css/CreateCourse.css";
 
 export default function CreateCourse({ onCourseCreated, onClose }) {
   const [formData, setFormData] = useState({
-    tenKhoaHoc: "",
+    courseName: "",
     consultantId: "",
-    giaTien: "",
-    diaDiem: "",
-    thoiGianBatDau: "",
-    thoiGianKetThuc: "",
-    soLuongToiDa: "",
+    price: "",
+    location: "",
+    startTime: "",
+    endTime: "",
+    maxCapacity: "",
   });
+
 
   const [consultants, setConsultants] = useState([]);
   const [message, setMessage] = useState("");
   const token = localStorage.getItem("token");
 
-  // 📥 Gọi API lấy danh sách tư vấn viên
+  // 🔄 Lấy danh sách tư vấn viên từ API
   useEffect(() => {
     if (!token) return;
 
@@ -33,29 +34,28 @@ export default function CreateCourse({ onCourseCreated, onClose }) {
       .catch((err) => console.error("❌ Lỗi khi load tư vấn viên:", err));
   }, [token]);
 
-  // Thay đổi dữ liệu form
+  // ✏️ Xử lý thay đổi input
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Gửi dữ liệu tạo khóa học
+  // 📤 Gửi dữ liệu lên backend để tạo khóa học
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const payload = {
-      ...formData,
-      giaTien: parseFloat(formData.giaTien),
-      soLuongToiDa: parseInt(formData.soLuongToiDa),
-      thoiGianBatDau: new Date(formData.thoiGianBatDau).toISOString(),
-      thoiGianKetThuc: new Date(formData.thoiGianKetThuc).toISOString(),
+      courseName: formData.courseName,
+      price: parseFloat(formData.price),
+      location: formData.location,
+      startTime: formData.startTime,
+      endTime: formData.endTime,
+      maxCapacity: parseInt(formData.maxCapacity),
       consultant: {
         consultantId: parseInt(formData.consultantId),
       },
     };
+
 
     console.log("🔼 Payload gửi lên backend:", payload);
 
@@ -69,24 +69,25 @@ export default function CreateCourse({ onCourseCreated, onClose }) {
         body: JSON.stringify(payload),
       });
 
-      console.log("📥 Kết quả response:", res);
-
       if (!res.ok) {
-        const errText = await res.text();
-        console.error("❌ Chi tiết lỗi từ server:", errText);
-        throw new Error(errText);
+        const errorText = await res.text();
+        console.error("❌ Lỗi từ server:", errorText);
+        throw new Error(errorText);
       }
 
       setMessage("✅ Khóa học đã được tạo thành công!");
+
+      // Reset form
       setFormData({
-        tenKhoaHoc: "",
+        courseName: "",
         consultantId: "",
-        giaTien: "",
-        diaDiem: "",
-        thoiGianBatDau: "",
-        thoiGianKetThuc: "",
-        soLuongToiDa: "",
+        price: "",
+        location: "",
+        startTime: "",
+        endTime: "",
+        maxCapacity: "",
       });
+
 
       if (onCourseCreated) onCourseCreated();
     } catch (err) {
@@ -98,21 +99,20 @@ export default function CreateCourse({ onCourseCreated, onClose }) {
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        <button className="modal-close" onClick={onClose}>
-          ×
-        </button>
+        <button className="modal-close" onClick={onClose}>×</button>
         <h3>Thêm Khóa Học Mới</h3>
+
         <form className="create-course-form" onSubmit={handleSubmit}>
           <input
             type="text"
-            name="tenKhoaHoc"
+            name="courseName"
             placeholder="Tên khóa học"
-            value={formData.tenKhoaHoc}
+            value={formData.courseName}
             onChange={handleChange}
             required
           />
 
-          <select className="consultant-select"
+          <select
             name="consultantId"
             value={formData.consultantId}
             onChange={handleChange}
@@ -128,43 +128,50 @@ export default function CreateCourse({ onCourseCreated, onClose }) {
 
           <input
             type="number"
-            name="giaTien"
+            name="price"
             placeholder="Giá tiền (VNĐ)"
-            value={formData.giaTien}
+            value={formData.price}
             onChange={handleChange}
             required
           />
+
           <input
             type="text"
-            name="diaDiem"
+            name="location"
             placeholder="Địa điểm"
-            value={formData.diaDiem}
+            value={formData.location}
             onChange={handleChange}
             required
           />
+
           <input
             type="datetime-local"
-            name="thoiGianBatDau"
-            value={formData.thoiGianBatDau}
+            name="startTime"
+            value={formData.startTime}
             onChange={handleChange}
             required
           />
+
           <input
             type="datetime-local"
-            name="thoiGianKetThuc"
-            value={formData.thoiGianKetThuc}
+            name="endTime"
+            value={formData.endTime}
             onChange={handleChange}
             required
           />
+
           <input
             type="number"
-            name="soLuongToiDa"
+            name="maxCapacity"
             placeholder="Số lượng tối đa"
-            value={formData.soLuongToiDa}
+            value={formData.maxCapacity}
             onChange={handleChange}
             required
           />
+
+
           <button type="submit">Tạo khóa học</button>
+
           {message && <p className="message">{message}</p>}
         </form>
       </div>
