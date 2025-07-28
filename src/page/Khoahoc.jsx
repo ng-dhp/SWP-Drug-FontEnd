@@ -107,6 +107,7 @@ export default function KhoaHoc() {
       .then((message) => {
         setThongBao(`✅ ${message}`);
         setThongBaoType("success");
+
         return fetch(`http://localhost:8080/api/v1.0/payments/course/${courseId}/user/${userId}`, {
           method: "POST",
           headers: { Authorization: `Bearer ${token}` },
@@ -114,19 +115,21 @@ export default function KhoaHoc() {
       })
       .then((res) => {
         if (!res.ok) throw new Error("❌ Giao dịch thanh toán không thành công.");
-        navigate("/payment-process", {
-          state: {
-            courseId,
-            userId,
-            amount: giaTien,
-          },
-        });
+        return res.json();
+      })
+      .then((paymentData) => {
+        if (paymentData.qrCodeUrl) {
+          window.open(paymentData.qrCodeUrl, "_blank"); // ✅ Mở trang thanh toán
+        } else {
+          throw new Error("❌ Không nhận được đường dẫn thanh toán.");
+        }
       })
       .catch((errMsg) => {
         setThongBao(`❌ ${errMsg.message || errMsg}`);
         setThongBaoType("error");
       });
   };
+
 
   return (
     <>

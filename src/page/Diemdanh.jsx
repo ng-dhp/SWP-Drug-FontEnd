@@ -49,7 +49,7 @@ export default function Diemdanh() {
               Authorization: `Bearer ${token}`,
             },
           }),
-          fetch("http://localhost:8080/api/v1.0/khoahoc/getallcourse", {
+          fetch("http://localhost:8080/api/v1.0/khoahoc/all", {
             headers: {
               "Content-Type": "application/json",
               Authorization: `Bearer ${token}`,

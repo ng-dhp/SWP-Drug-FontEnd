@@ -20,7 +20,7 @@ export default function XuLyThanhToan() {
                     fetch("http://localhost:8080/api/v1.0/profileAllUser", {
                         headers: { Authorization: `Bearer ${token}` },
                     }),
-                    fetch("http://localhost:8080/api/v1.0/khoahoc/getallcourse", {
+                    fetch("http://localhost:8080/api/v1.0/khoahoc/all", {
                         headers: { Authorization: `Bearer ${token}` },
                     }),
                 ]);
@@ -39,8 +39,9 @@ export default function XuLyThanhToan() {
 
                 const mapKhoaHocTam = {};
                 danhSachKhoaHoc.forEach(k => {
-                    mapKhoaHocTam[k.id] = k.tenKhoaHoc;
+                    mapKhoaHocTam[k.id] = k.courseName; // Dùng đúng tên field từ API mới
                 });
+
 
                 setDanhSachThanhToan(Array.isArray(dataThanhToan) ? dataThanhToan : []);
                 setMapHocVien(mapHocVienTam);

@@ -18,6 +18,8 @@ export default function Profile() {
   const navigate = useNavigate();
   const [paymentList, setPaymentList] = useState([]);
   const [campaignSubmissions, setCampaignSubmissions] = useState([]);
+  const [showPayments, setShowPayments] = useState(false);
+
 
 
 
@@ -71,7 +73,7 @@ export default function Profile() {
         setFeedbacks(Array.isArray(fb) ? fb : []);
         setConsultants(Array.isArray(consultants) ? consultants : []);
         setCampaignSubmissions(Array.isArray(campaignSubs) ? campaignSubs : []);
-console.log("✅ Campaign submissions sau khi fetch:", campaignSubs);
+        console.log("✅ Campaign submissions sau khi fetch:", campaignSubs);
 
 
         setLoading(false);
@@ -136,7 +138,9 @@ console.log("✅ Campaign submissions sau khi fetch:", campaignSubs);
     })
       .then((res) => res.json())
       .then((userData) => {
+        const userId = userData.userId;
         const userName = userData.fullName;
+
 
         if (userData.roleName === "CONSULTANT") {
           return fetch("http://localhost:8080/api/v1.0/consultant/getAllConsultant", {
@@ -152,7 +156,7 @@ console.log("✅ Campaign submissions sau khi fetch:", campaignSubs);
                 fetch(`http://localhost:8080/api/v1.0/khoahoc/consultant/${matched.consultantId}/sessions`, {
                   headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
                 }),
-                fetch("http://localhost:8080/api/v1.0/khoahoc/getallcourse", {
+                fetch("http://localhost:8080/api/v1.0/khoahoc/all", {
                   headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
                 }),
                 fetch(`http://localhost:8080/api/v1.0/campaigns/1/submissions/review?userId=${userId}`, {
@@ -255,7 +259,7 @@ console.log("✅ Campaign submissions sau khi fetch:", campaignSubs);
 
   const getCourseInfoById = (courseId) => {
     const course = allCourses.find(c => Number(c.id) === Number(courseId));
-    return course ? { tenKhoaHoc: course.tenKhoaHoc } : { tenKhoaHoc: `Khóa ${courseId}` };
+    return course ? { tenKhoaHoc: course.courseName } : { tenKhoaHoc: `Khóa ${courseId}` };
   };
 
 
@@ -336,7 +340,16 @@ console.log("✅ Campaign submissions sau khi fetch:", campaignSubs);
             📋 Điểm danh
           </button>
         )}
+
+        {profile.roleName !== "CONSULTANT" && (
+          <button className="btn-update" onClick={() => navigate("/lich-su-thanh-toan")}>
+            🧾 Lịch sử thanh toán
+          </button>
+        )}
+
+
       </div>
+
 
 
 
@@ -466,21 +479,21 @@ console.log("✅ Campaign submissions sau khi fetch:", campaignSubs);
                 <ul>
                   {myCourses.map((course) => (
                     <li key={course.courseId} className="course-item">
-                      <h3>🎓 {course.tenKhoaHoc}</h3>
-                      <p><strong>📍 Địa điểm:</strong> {course.diaDiem}</p>
+                      <h3>🎓 {course.courseName}</h3>
+                      <p><strong>📍 Địa điểm:</strong> {course.location}</p>
                       <p><strong>📅 Thời gian:</strong>
-                        {new Date(course.thoiGianBatDau).toLocaleString()} → {new Date(course.thoiGianKetThuc).toLocaleString()}
+                        {new Date(course.startTime).toLocaleString()} → {new Date(course.endTime).toLocaleString()}
                       </p>
+
                       <p><strong>👨‍⚕️ Tư vấn viên:</strong> {course.consultant?.name || "Không rõ"} ({course.consultant?.email || "N/A"})</p>
 
                       {!isCoursePaid(course.courseId) ? (
                         <>
-                          <p className="text-red-600 font-semibold">⚠️ Vui lòng thanh toán để tham gia khóa học.</p>
+                          <p className="text-red-600 font-semibold">⚠️ Vui lòng đợi nhân viên xác nhận.</p>
                           <button
                             className="btn-update"
-                            onClick={() => handleThanhToanNgay(course.courseId, course.giaTien)}
                           >
-                            💳 Thanh toán ngay
+                            Vui lòng đợi
                           </button>
                         </>
                       ) : (
