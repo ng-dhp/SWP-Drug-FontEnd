@@ -1,28 +1,21 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import OTPModal from "./OTPModal";
 import "./cssCom/register.css";
-import { registerUser } from "../api/ServiceAPI"; 
+import { registerUser } from "../api/ServiceAPI";
 
 export default function RegisterModal({ onClose }) {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [yob, setYob] = useState("");
+  const [dob, setDob] = useState(null);
   const [gender, setGender] = useState("");
   const [phone, setPhone] = useState("");
   const [errors, setErrors] = useState({});
   const [showOtpModal, setShowOtpModal] = useState(false);
   const navigate = useNavigate();
-
-  const formatYearInput = (value) => {
-    let cleaned = value.replace(/[^0-9]/g, "");
-    return cleaned.slice(0, 4);
-  };
-
-  const handleYobChange = (e) => {
-    setYob(formatYearInput(e.target.value));
-  };
 
   const validateForm = () => {
     const newErrors = {};
@@ -36,11 +29,16 @@ export default function RegisterModal({ onClose }) {
     if (!password) newErrors.password = "Mật khẩu không được để trống";
     else if (password.length < 8) newErrors.password = "Mật khẩu phải có ít nhất 8 ký tự";
 
-    const yobRegex = /^\d{4}$/;
-    const currentYear = new Date().getFullYear();
-    if (!yob) newErrors.yob = "Năm sinh không được để trống";
-    else if (!yobRegex.test(yob) || yob < 1900 || yob > currentYear) {
-      newErrors.yob = `Năm sinh phải từ 1900 đến ${currentYear}`;
+    if (!dob) {
+      newErrors.dob = "Ngày sinh không được để trống";
+    } else {
+      const today = new Date();
+      const minAllowedDate = new Date(today.getFullYear() - 12, today.getMonth(), today.getDate());
+      if (dob > minAllowedDate) {
+        newErrors.dob = "Bạn phải từ 12 tuổi trở lên.";
+      } else if (dob.getFullYear() < 1900) {
+        newErrors.dob = "Năm sinh không hợp lệ (từ 1900 trở lên)";
+      }
     }
 
     if (!gender) newErrors.gender = "Giới tính không được để trống";
@@ -61,7 +59,7 @@ export default function RegisterModal({ onClose }) {
       fullName: fullName.trim(),
       email,
       password,
-      yob,
+      yob: dob.getFullYear(),
       gender,
       phone,
     };
@@ -72,7 +70,7 @@ export default function RegisterModal({ onClose }) {
       setFullName("");
       setEmail("");
       setPassword("");
-      setYob("");
+      setDob(null);
       setGender("");
       setPhone("");
     } catch (error) {
@@ -127,16 +125,21 @@ export default function RegisterModal({ onClose }) {
           </div>
 
           <div className="form-group">
-            <label>Năm sinh:</label>
-            <input
-              type="text"
-              placeholder="yyyy"
-              value={yob}
-              onChange={handleYobChange}
-              maxLength="4"
-              required
+            <label>Ngày sinh:</label>
+            <DatePicker
+              selected={dob}
+              onChange={(date) => setDob(date)}
+              dateFormat="dd/MM/yyyy"
+              placeholderText="VD: 22/06/2004"
+              className="custom-datepicker"
+              showMonthDropdown
+              showYearDropdown
+              dropdownMode="select"
+              minDate={new Date(1900, 0, 1)}
+              maxDate={new Date()}
+              isClearable
             />
-            {errors.yob && <p className="error">{errors.yob}</p>}
+            {errors.dob && <p className="error">{errors.dob}</p>}
           </div>
 
           <div className="form-group">
