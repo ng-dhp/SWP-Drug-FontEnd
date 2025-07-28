@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import API_ENDPOINTS from "../APIconfig"; // Điều chỉnh path nếu cần
 import "./css/Chiendich02.css";
 
 export default function Chiendich02() {
@@ -21,7 +22,7 @@ export default function Chiendich02() {
       return;
     }
 
-    fetch("http://localhost:8080/api/v1.0/profile", {
+    fetch(API_ENDPOINTS.PROFILE, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -49,7 +50,8 @@ export default function Chiendich02() {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) return;
-    fetch("http://localhost:8080/api/v1.0/campaigns/2", {
+
+    fetch(API_ENDPOINTS.CAMPAIGN_BY_ID(2), {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -92,18 +94,17 @@ export default function Chiendich02() {
       return;
     }
 
-    // ✅ Gửi toàn bộ answerText
     const payload = campaign.questions.map(q => ({
       questionId: q.id,
       answerText: answers[q.id] || ""
     }));
 
-    // ✅ In ra console để kiểm tra
     console.log("📤 Payload gửi đi:", payload);
-    fetch(`http://localhost:8080/api/v1.0/campaigns/2/submit?userId=${userId}`, {
+
+    fetch(API_ENDPOINTS.SUBMIT_CAMPAIGN_SURVEY(2, userId), {
       method: "POST",
       headers: {
-"Content-Type": "application/json",
+        "Content-Type": "application/json",
         "Authorization": `Bearer ${token}`
       },
       body: JSON.stringify({ answers: payload })
@@ -173,7 +174,7 @@ export default function Chiendich02() {
                         <input
                           type="radio"
                           name={`question-${q.id}`}
-                          value={option.text} // ✅ gửi option.text thay vì option.id
+                          value={option.text}
                           checked={answers[q.id] === option.text}
                           onChange={() => handleChange(q.id, option.text)}
                         />
@@ -182,7 +183,8 @@ export default function Chiendich02() {
                     ))}
                   </div>
                 )}
-{q.type === "TEXT" && (
+
+                {q.type === "TEXT" && (
                   <textarea
                     className="o-nhap-van-ban"
                     placeholder="Nhập câu trả lời..."

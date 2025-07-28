@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./css/AssistSurvey.css";
+import API_ENDPOINTS from "../APIconfig";
 
 const getOptions = (questionId) => {
   if (questionId === 1) {
@@ -56,13 +57,6 @@ function AssistSurvey() {
 
   const riskySubstances = ["cocaine", "stimulants", "sedatives", "opioids"];
 
-  // Ghi log surveyId khi có
-  useEffect(() => {
-    if (surveyId) {
-      console.log("Survey ID hiện tại:", surveyId);
-    }
-  }, [surveyId]);
-
   useEffect(() => {
     const saved = localStorage.getItem("assistSurveyData");
     if (saved) {
@@ -97,16 +91,13 @@ function AssistSurvey() {
 
   const fetchSurvey = async () => {
     try {
-      const res = await fetch(
-        "http://localhost:8080/api/v1.0/survey-template/start?templateId=1",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      const res = await fetch(API_ENDPOINTS.START_ASSIST_SURVEY(1), {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
 
       const contentType = res.headers.get("content-type");
       if (!res.ok) {
@@ -129,7 +120,6 @@ function AssistSurvey() {
       const data = await res.json();
       setSurveyId(data.surveyId);
       setFetchedQuestions(data.answers);
-      console.log("Survey ID (từ server):", data.surveyId);
     } catch (err) {
       alert("❌ Không thể kết nối đến máy chủ.");
       console.error(err);
@@ -168,17 +158,14 @@ function AssistSurvey() {
     };
 
     try {
-      const res = await fetch(
-        `http://localhost:8080/api/v1.0/survey-template/survey/${surveyId}/submit`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-          body: JSON.stringify(payload),
-        }
-      );
+      const res = await fetch(API_ENDPOINTS.SUBMIT_ASSIST_SURVEY(surveyId), {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify(payload),
+      });
 
       const contentType = res.headers.get("content-type");
       if (!res.ok) {

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import API_ENDPOINTS from "../APIconfig"; 
 import "./css/Chiendich01.css";
 
 export default function Chiendich01() {
@@ -13,7 +14,6 @@ export default function Chiendich01() {
 
   const navigate = useNavigate();
 
-  // ✅ Lấy userId
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -21,7 +21,7 @@ export default function Chiendich01() {
       return;
     }
 
-    fetch("http://localhost:8080/api/v1.0/profile", {
+    fetch(API_ENDPOINTS.PROFILE, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -42,12 +42,11 @@ export default function Chiendich01() {
       });
   }, []);
 
-  // ✅ Lấy dữ liệu chiến dịch
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) return;
 
-    fetch("http://localhost:8080/api/v1.0/campaigns/1", {
+    fetch(API_ENDPOINTS.CAMPAIGN_BY_ID(1), {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -66,7 +65,6 @@ export default function Chiendich01() {
       });
   }, []);
 
-  // ✅ Cập nhật câu trả lời
   const handleChange = (questionId, value) => {
     setAnswers(prev => ({
       ...prev,
@@ -74,7 +72,6 @@ export default function Chiendich01() {
     }));
   };
 
-  // ✅ Gửi khảo sát
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -84,7 +81,6 @@ export default function Chiendich01() {
       return;
     }
 
-    // ✅ Tạo payload chỉ có answerText
     const payload = campaign.questions.map(q => ({
       questionId: q.id,
       answerText: answers[q.id] || ""
@@ -92,7 +88,7 @@ export default function Chiendich01() {
 
     console.log("📤 Payload gửi đi:", payload);
 
-    fetch(`http://localhost:8080/api/v1.0/campaigns/1/submit?userId=${userId}`, {
+    fetch(API_ENDPOINTS.SUBMIT_CAMPAIGN_SURVEY(1, userId), {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -165,7 +161,7 @@ export default function Chiendich01() {
                         <input
                           type="radio"
                           name={`question-${q.id}`}
-                          value={option.text} // Gửi text thay vì id
+                          value={option.text}
                           checked={answers[q.id] === option.text}
                           onChange={() => handleChange(q.id, option.text)}
                         />
@@ -183,7 +179,7 @@ export default function Chiendich01() {
                     onChange={(e) => handleChange(q.id, e.target.value)}
                   />
                 )}
-</div>
+              </div>
             ))}
 
             <div className="khung-nut-gui">

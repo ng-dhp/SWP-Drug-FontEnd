@@ -1,18 +1,18 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import CreateCampaign from "./CreateCampaign";
-import EditCampaign from "./EditCampaign";
-import "./css/ChienDich.css";
 import Navbar from "../components/navbar";
 import LoginModal from "../components/Login";
 import Register from "../components/Register";
+import API_ENDPOINTS from "../APIconfig";
+import "./css/ChienDich.css";
 
 const ChienDich = () => {
   const navigate = useNavigate();
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
+  const [loading, setLoading] = useState(false);
 
   const handleLoginSuccess = () => {
     setIsLoggedIn(true);
@@ -33,20 +33,30 @@ const ChienDich = () => {
       return;
     }
 
+    setLoading(true);
+
     try {
       // Lấy profile
-      const profileRes = await fetch("http://localhost:8080/api/v1.0/profile", {
+      const profileRes = await fetch(API_ENDPOINTS.PROFILE, {
         headers: { Authorization: `Bearer ${token}` },
       });
+
+      if (!profileRes.ok) {
+        alert("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.");
+        handleLogout();
+        return;
+      }
+
       const profileData = await profileRes.json();
       const userId = profileData.userId;
 
-      // ✅ Kiểm tra campaign có đang active không
-      const allCampaignRes = await fetch("http://localhost:8080/api/v1.0/campaigns/all", {
+      // Lấy danh sách chiến dịch
+      const allCampaignRes = await fetch(API_ENDPOINTS.CAMPAIGN_ALL, {
         headers: { Authorization: `Bearer ${token}` },
       });
+
       const campaigns = await allCampaignRes.json();
-      const thisCampaign = campaigns.find(c => c.id === campaignId);
+      const thisCampaign = campaigns.find((c) => c.id === campaignId);
 
       if (!thisCampaign) {
         alert("Chiến dịch không tồn tại.");
@@ -58,11 +68,11 @@ const ChienDich = () => {
         return;
       }
 
-      // Kiểm tra trạng thái người dùng
-      const statusRes = await fetch(
-        `http://localhost:8080/api/v1.0/campaigns/${campaignId}/status?userId=${userId}`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      // Kiểm tra trạng thái người dùng trong chiến dịch
+      const statusRes = await fetch(API_ENDPOINTS.CAMPAIGN_STATUS(campaignId, userId), {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
       const statusData = await statusRes.json();
 
       if (statusData.status === "COMPLETED") {
@@ -70,18 +80,18 @@ const ChienDich = () => {
         return;
       }
 
-      // ✅ Điều hướng nếu đủ điều kiện
+      // Điều hướng nếu đủ điều kiện
       navigate(routePath);
     } catch (err) {
       console.error("Lỗi khi kiểm tra trạng thái:", err);
       alert("Không thể kiểm tra trạng thái. Vui lòng thử lại.");
+    } finally {
+      setLoading(false);
     }
   };
 
-
   return (
     <>
-      {/* ✅ Navbar luôn nằm trên cùng */}
       <Navbar
         isLoggedIn={isLoggedIn}
         onLogin={() => setShowLoginModal(true)}
@@ -123,8 +133,12 @@ const ChienDich = () => {
             <p className="event-description">
               🎯 Mô tả: Các buổi hội thảo, trưng bày, và giao lưu nhằm tăng cường ý thức cộng đồng về tác hại của chất gây nghiện.
             </p>
-            <button className="join-button" onClick={() => checkAndJoin(1, "/chiendich01")}>
-              Tham gia
+            <button
+              className="join-button"
+              disabled={loading}
+              onClick={() => checkAndJoin(1, "/chiendich01")}
+            >
+              {loading ? "Đang kiểm tra..." : "Tham gia"}
             </button>
           </motion.div>
 
@@ -150,26 +164,22 @@ const ChienDich = () => {
             <p className="event-description">
               🎯 Mô tả: Buổi nói chuyện chuyên đề kết hợp hoạt động nhóm nhằm nâng cao kỹ năng phòng chống ma túy cho học sinh.
             </p>
-            <button className="join-button" onClick={() => checkAndJoin(2, "/chiendich02")}>
-              Tham gia
+            <button
+              className="join-button"
+              disabled={loading}
+              onClick={() => checkAndJoin(2, "/chiendich02")}
+            >
+              {loading ? "Đang kiểm tra..." : "Tham gia"}
             </button>
           </motion.div>
         </div>
-
       </div>
 
-      {/* ✅ Modal đăng nhập */}
+      {/* Modal */}
       {showLoginModal && (
-        <LoginModal
-          onClose={() => setShowLoginModal(false)}
-          onLoginSuccess={handleLoginSuccess}
-        />
+        <LoginModal onClose={() => setShowLoginModal(false)} onLoginSuccess={handleLoginSuccess} />
       )}
-
-      {/* ✅ Modal đăng ký */}
-      {showRegisterModal && (
-        <Register onClose={() => setShowRegisterModal(false)} />
-      )}
+      {showRegisterModal && <Register onClose={() => setShowRegisterModal(false)} />}
     </>
   );
 };

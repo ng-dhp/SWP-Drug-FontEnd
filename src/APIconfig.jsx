@@ -28,7 +28,17 @@ const API_ENDPOINTS = {
     `${BASE_URL}/khoahoc/${courseId}/sessions?userId=${userId}`,
   PROFILE_ALL_USERS: `${BASE_URL}/profileAllUser`,
   UPDATE_ROLE: (userId) => `${BASE_URL}/${userId}/roles`,
-
+  START_ASSIST_SURVEY: (templateId = 1) =>
+    `${BASE_URL}/survey-template/start?templateId=${templateId}`,
+  
+  SUBMIT_ASSIST_SURVEY: (surveyId) =>
+    `${BASE_URL}/survey-template/survey/${surveyId}/submit`,
+  
+    CAMPAIGN_ALL: `${BASE_URL}/campaigns/all`,
+    CAMPAIGN_STATUS: (campaignId, userId) => `${BASE_URL}/campaigns/${campaignId}/status?userId=${userId}`,
+    CAMPAIGN_BY_ID: (campaignId) => `${BASE_URL}/campaigns/${campaignId}`,
+    SUBMIT_CAMPAIGN_SURVEY: (campaignId, userId) => `${BASE_URL}/campaigns/${campaignId}/submit?userId=${userId}`,
+  
 
   STAFF: {
     SURVEY_REQUESTS: `${BASE_URL}/staff/survey/get-user-requests`,
