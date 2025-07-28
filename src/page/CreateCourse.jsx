@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./css/CreateCourse.css";
+import API_ENDPOINTS from "../APIconfig";
 
 export default function CreateCourse({ onCourseCreated, onClose }) {
   const [formData, setFormData] = useState({
@@ -12,7 +13,6 @@ export default function CreateCourse({ onCourseCreated, onClose }) {
     maxCapacity: "",
   });
 
-
   const [consultants, setConsultants] = useState([]);
   const [message, setMessage] = useState("");
   const token = localStorage.getItem("token");
@@ -21,7 +21,7 @@ export default function CreateCourse({ onCourseCreated, onClose }) {
   useEffect(() => {
     if (!token) return;
 
-    fetch("http://localhost:8080/api/v1.0/consultant/getAllConsultant", {
+    fetch(API_ENDPOINTS.CONSULTANTS, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -56,11 +56,10 @@ export default function CreateCourse({ onCourseCreated, onClose }) {
       },
     };
 
-
     console.log("🔼 Payload gửi lên backend:", payload);
 
     try {
-      const res = await fetch("http://localhost:8080/api/v1.0/khoahoc", {
+      const res = await fetch(`${API_ENDPOINTS.ALL_COURSES.replace("/all", "")}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -87,7 +86,6 @@ export default function CreateCourse({ onCourseCreated, onClose }) {
         endTime: "",
         maxCapacity: "",
       });
-
 
       if (onCourseCreated) onCourseCreated();
     } catch (err) {
@@ -169,9 +167,7 @@ export default function CreateCourse({ onCourseCreated, onClose }) {
             required
           />
 
-
           <button type="submit">Tạo khóa học</button>
-
           {message && <p className="message">{message}</p>}
         </form>
       </div>

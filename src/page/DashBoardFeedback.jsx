@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./css/DashBoardFeedback.css";
+import API_ENDPOINTS from "../APIconfig";
 
 export default function DashBoardFeedback() {
   const [dsPhanHoi, setDsPhanHoi] = useState([]);
@@ -13,7 +14,7 @@ export default function DashBoardFeedback() {
 
   // Lấy phản hồi
   useEffect(() => {
-    fetch("http://localhost:8080/api/v1.0/feedback/consultant", {
+    fetch(API_ENDPOINTS.FEEDBACK_CONSULTANT, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => {
@@ -29,7 +30,7 @@ export default function DashBoardFeedback() {
 
   // Lấy danh sách tư vấn viên
   useEffect(() => {
-    fetch("http://localhost:8080/api/v1.0/consultant/getAllConsultant", {
+    fetch(API_ENDPOINTS.CONSULTANTS, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => {
@@ -42,7 +43,7 @@ export default function DashBoardFeedback() {
 
   // Lấy danh sách người dùng
   useEffect(() => {
-    fetch("http://localhost:8080/api/v1.0/profileAllUser", {
+    fetch(API_ENDPOINTS.PROFILE_ALL_USERS, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => {

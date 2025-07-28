@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "./css/DashBoardSurvey.css";
 
+import API_ENDPOINTS from "../APIconfig";
+
 const DashboardSurvey = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [surveyData, setSurveyData] = useState([]);
@@ -11,17 +13,36 @@ const DashboardSurvey = () => {
   const [loadingDetail, setLoadingDetail] = useState(false);
   const [errorDetail, setErrorDetail] = useState("");
 
+  // Hàm gọi API: lấy toàn bộ khảo sát
+  const fetchAllSurveys = async () => {
+    const res = await fetch(API_ENDPOINTS.DASHBOARD.GET_ALL_SURVEYS, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    });
+
+    if (!res.ok) throw new Error("Không thể lấy dữ liệu khảo sát từ API");
+    return res.json();
+  };
+
+  // Hàm gọi API: lấy chi tiết khảo sát
+  const fetchSurveyDetail = async (surveyId) => {
+    const res = await fetch(API_ENDPOINTS.DASHBOARD.SURVEY_DETAIL(surveyId), {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    });
+
+    if (!res.ok) throw new Error("Không thể lấy chi tiết khảo sát");
+    return res.json();
+  };
+
   useEffect(() => {
-    const fetchSurveyData = async () => {
+    const getData = async () => {
       try {
-        const res = await fetch("http://localhost:8080/api/v1.0/admin/dashboard/getAll-surveys", {
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${localStorage.getItem("token")}`
-          },
-        });
-        if (!res.ok) throw new Error("Không thể lấy dữ liệu khảo sát từ API");
-        const data = await res.json();
+        const data = await fetchAllSurveys();
         setSurveyData(data);
       } catch (err) {
         setError(err.message);
@@ -29,7 +50,7 @@ const DashboardSurvey = () => {
         setLoading(false);
       }
     };
-    fetchSurveyData();
+    getData();
   }, []);
 
   const translateStatus = (status) => {
@@ -45,7 +66,7 @@ const DashboardSurvey = () => {
     }
   };
 
-  const filteredSurveys = surveyData.filter(s =>
+  const filteredSurveys = surveyData.filter((s) =>
     s.recommendation?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -53,14 +74,7 @@ const DashboardSurvey = () => {
     setLoadingDetail(true);
     setErrorDetail("");
     try {
-      const res = await fetch(`http://localhost:8080/api/v1.0/admin/dashboard/surveyDetail/${surveyId}`, {
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${localStorage.getItem("token")}`
-        }
-      });
-      if (!res.ok) throw new Error("Không thể lấy chi tiết khảo sát");
-      const data = await res.json();
+      const data = await fetchSurveyDetail(surveyId);
       setDetailData(data);
     } catch (err) {
       setErrorDetail(err.message);
@@ -141,7 +155,7 @@ const DashboardSurvey = () => {
 
                 <h4>Các câu trả lời</h4>
                 <ul>
-                  {detailData.answers.map(ans => (
+                  {detailData.answers.map((ans) => (
                     <li key={ans.questionId}>
                       <p><strong>Câu {ans.questionId}:</strong> {ans.questionText}</p>
                       <p><em>Trả lời:</em> {ans.answerText || "—"}</p>

@@ -1,19 +1,22 @@
 import React, { useEffect, useState } from "react";
-import "./css/DashBoardYeuCau.css"; // 👉 Nhớ tạo file này
+import "./css/DashBoardYeuCau.css";
+import API_ENDPOINTS from "../APIconfig"; 
 
 export default function DashboardYeuCau() {
   const [requests, setRequests] = useState([]);
   const token = localStorage.getItem("token");
 
   useEffect(() => {
-    fetch("http://localhost:8080/api/v1.0/admin/dashboard/get-surveys-requests-resolved", {
+    fetch(API_ENDPOINTS.DASHBOARD_RESOLVED_REQUESTS, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     })
       .then((res) => res.json())
       .then((data) => setRequests(data))
-      .catch((err) => console.error("❌ Lỗi khi lấy danh sách yêu cầu đã xử lý:", err));
+      .catch((err) =>
+        console.error("❌ Lỗi khi lấy danh sách yêu cầu đã xử lý:", err)
+      );
   }, [token]);
 
   return (
@@ -39,7 +42,9 @@ export default function DashboardYeuCau() {
               <td>{req.templateId}</td>
               <td>{req.reason}</td>
               <td>{new Date(req.requestDate).toLocaleString()}</td>
-              <td className={`status ${req.status.toLowerCase()}`}>{req.status}</td>
+              <td className={`status ${req.status.toLowerCase()}`}>
+                {req.status}
+              </td>
               <td>{req.rejectionReason || "-"}</td>
             </tr>
           ))}

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
 import "./css/DashBoardChienDich.css";
+import API_ENDPOINTS from "../APIconfig"; 
 
 const DashboardCampaign = () => {
   const [campaign1, setCampaign1] = useState(null);
@@ -12,17 +13,18 @@ const DashboardCampaign = () => {
 
   useEffect(() => {
     Promise.all([
-      fetch("http://localhost:8080/api/v1.0/campaigns/1", {
+      fetch(API_ENDPOINTS.CAMPAIGN_BY_ID(1), {
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json"
-        }
+          "Content-Type": "application/json",
+        },
       }).then((res) => res.ok ? res.json() : Promise.reject("Lỗi chiến dịch 1")),
-      fetch("http://localhost:8080/api/v1.0/campaigns/2", {
+
+      fetch(API_ENDPOINTS.CAMPAIGN_BY_ID(2), {
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json"
-        }
+          "Content-Type": "application/json",
+        },
       }).then((res) => res.ok ? res.json() : Promise.reject("Lỗi chiến dịch 2")),
     ])
       .then(([data1, data2]) => {
@@ -40,7 +42,7 @@ const DashboardCampaign = () => {
   const renderPieChart = (data, title) => {
     const pieData = [
       { name: "Cải thiện", value: data.improveCount },
-      { name: "Không cải thiện", value: data.noImproveCount }
+      { name: "Không cải thiện", value: data.noImproveCount },
     ];
 
     return (
@@ -73,7 +75,6 @@ const DashboardCampaign = () => {
   };
 
   if (loading) return <div>Đang tải dữ liệu chiến dịch...</div>;
-
   if (!campaign1 || !campaign2) return <div>Không có đủ dữ liệu để hiển thị.</div>;
 
   return (

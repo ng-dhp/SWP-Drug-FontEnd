@@ -39,12 +39,26 @@ const API_ENDPOINTS = {
 
   SUBMIT_CRAFFT_SURVEY: (surveyId) =>
     `${BASE_URL}/survey-template/survey/${surveyId}/submit`,
+
+  CREATE_COURSE: `${BASE_URL}/khoahoc`,
+
+  FEEDBACK_CONSULTANT: `${BASE_URL}/feedback/consultant`,
+
+  DASHBOARD_RESOLVED_REQUESTS: `${BASE_URL}/admin/dashboard/get-surveys-requests-resolved`,
+
+
+
   
     CAMPAIGN_ALL: `${BASE_URL}/campaigns/all`,
     CAMPAIGN_STATUS: (campaignId, userId) => `${BASE_URL}/campaigns/${campaignId}/status?userId=${userId}`,
     CAMPAIGN_BY_ID: (campaignId) => `${BASE_URL}/campaigns/${campaignId}`,
     SUBMIT_CAMPAIGN_SURVEY: (campaignId, userId) => `${BASE_URL}/campaigns/${campaignId}/submit?userId=${userId}`,
   
+
+    DASHBOARD: {
+  GET_ALL_SURVEYS: `${BASE_URL}/admin/dashboard/getAll-surveys`,
+  SURVEY_DETAIL: (surveyId) => `${BASE_URL}/admin/dashboard/surveyDetail/${surveyId}`,
+},
 
   STAFF: {
     SURVEY_REQUESTS: `${BASE_URL}/staff/survey/get-user-requests`,
