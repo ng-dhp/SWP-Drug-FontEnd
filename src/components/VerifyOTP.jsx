@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./cssCom/OTPModal.css";
+import { resetPasswordWithOtp } from "../api/ServiceAPI";
 
 export default function OTPModal({ email, onVerify, onClose }) {
   const [otp, setOtp] = useState("");
@@ -17,28 +18,14 @@ export default function OTPModal({ email, onVerify, onClose }) {
     }
 
     try {
-      const response = await fetch("http://localhost:8080/api/v1.0/reset-password", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, otp, newPassword }),
-      });
-
-      if (response.ok) {
-        setSuccess("Đặt lại mật khẩu thành công!");
-        onVerify();
-      } else {
-        // Kiểm tra nếu có body trả về mới parse
-        const text = await response.text();
-        const data = text ? JSON.parse(text) : {};
-        setError(data.message || "Đặt lại mật khẩu thất bại");
-      }
+      await resetPasswordWithOtp({ email, otp, newPassword });
+      setSuccess("Đặt lại mật khẩu thành công!");
+      onVerify(); // Gọi callback từ parent
     } catch (err) {
       console.error("Lỗi khi đặt lại mật khẩu:", err);
+      setError(err.message);
     }
   };
-
 
   return (
     <div className="otp-backdrop">
@@ -62,7 +49,6 @@ export default function OTPModal({ email, onVerify, onClose }) {
           onChange={(e) => setNewPassword(e.target.value)}
         />
 
-        {error && <p className="otp-error">{error}</p>}
         {success && <p className="otp-success">{success}</p>}
 
         <div className="otp-buttons">

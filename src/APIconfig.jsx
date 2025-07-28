@@ -6,6 +6,7 @@ const API_ENDPOINTS = {
   REGISTER: `${BASE_URL}/register`,
   FORGOT_PASSWORD: `${BASE_URL}/forgot-password`,
   SEND_OTP: `${BASE_URL}/send-reset-otp`,
+  RESET_PASSWORD: `${BASE_URL}/reset-password`,
   VERIFY_OTP: `${BASE_URL}/verify-otp`,
   PROFILE: `${BASE_URL}/profile`,
   UPDATE_PROFILE: `${BASE_URL}/update-my-profile`,
@@ -27,6 +28,15 @@ const API_ENDPOINTS = {
     `${BASE_URL}/khoahoc/${courseId}/sessions?userId=${userId}`,
   PROFILE_ALL_USERS: `${BASE_URL}/profileAllUser`,
   UPDATE_ROLE: (userId) => `${BASE_URL}/${userId}/roles`,
+
+
+  STAFF: {
+    SURVEY_REQUESTS: `${BASE_URL}/staff/survey/get-user-requests`,
+    APPROVE_SURVEY: (id) => `${BASE_URL}/staff/survey/request/${id}/approve`,
+    REJECT_SURVEY: (id, reason) =>
+      `${BASE_URL}/staff/survey/request/${id}/reject?rejectionReason=${encodeURIComponent(reason)}`,
+  },
+
 };
 
 export default API_ENDPOINTS;
