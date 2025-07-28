@@ -4,6 +4,8 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import OTPModal from "./OTPModal";
 import "./cssCom/register.css";
+import { registerUser } from "../api/AuthAPI"; // Đường dẫn đúng với cấu trúc project của bạn
+
 
 export default function RegisterModal({ onClose }) {
   const [fullName, setFullName] = useState("");
@@ -29,23 +31,21 @@ export default function RegisterModal({ onClose }) {
     if (!password) newErrors.password = "Mật khẩu không được để trống";
     else if (password.length < 8)
       newErrors.password = "Mật khẩu phải có ít nhất 8 ký tự";
-   if (!dob) {
-  newErrors.dob = "Ngày sinh không được để trống";
-} else {
-  const today = new Date();
-  const minAllowedDate = new Date(
-    today.getFullYear() - 12,
-    today.getMonth(),
-    today.getDate()
-  );
-  if (dob > minAllowedDate) {
-    newErrors.dob = "Bạn phải từ 12 tuổi trở lên.";
-  } else if (dob.getFullYear() < 1900) {
-    newErrors.dob = "Năm sinh không hợp lệ (từ 1900 trở lên)";
-  }
-}
-
-
+    if (!dob) {
+      newErrors.dob = "Ngày sinh không được để trống";
+    } else {
+      const today = new Date();
+      const minAllowedDate = new Date(
+        today.getFullYear() - 12,
+        today.getMonth(),
+        today.getDate()
+      );
+      if (dob > minAllowedDate) {
+        newErrors.dob = "Bạn phải từ 12 tuổi trở lên.";
+      } else if (dob.getFullYear() < 1900) {
+        newErrors.dob = "Năm sinh không hợp lệ (từ 1900 trở lên)";
+      }
+    }
 
     if (!gender) newErrors.gender = "Giới tính không được để trống";
 
@@ -74,31 +74,16 @@ export default function RegisterModal({ onClose }) {
     };
 
     try {
-      const response = await fetch("http://localhost:8080/api/v1.0/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(userData),
-      });
-
-      if (response.ok) {
-        setShowOtpModal(true);
-        setFullName("");
-        setEmail("");
-        setPassword("");
-        setDob(null);
-        setGender("");
-        setPhone("");
-      } else {
-        const errorData = await response.json();
-        alert(
-          "Đăng ký thất bại: " + (errorData.message || "Lỗi không xác định.")
-        );
-      }
+      await registerUser(userData); // dùng API đã tách
+      setShowOtpModal(true);
+      setFullName("");
+      setEmail("");
+      setPassword("");
+      setDob(null);
+      setGender("");
+      setPhone("");
     } catch (error) {
-      console.error("Lỗi khi gọi API:", error);
-      alert("Không thể kết nối đến máy chủ.");
+      alert("Đăng ký thất bại: " + error.message);
     }
   };
 
@@ -149,21 +134,19 @@ export default function RegisterModal({ onClose }) {
 
           <div className="form-group">
             <label>Ngày sinh:</label>
-           <DatePicker
-  selected={dob}
-  onChange={(date) => setDob(date)}
-  dateFormat="dd/MM/yyyy"
-  placeholderText="Nhập ngày tháng năm (VD:22/06/2004)"
-  className="custom-datepicker"
-  showMonthDropdown
-  showYearDropdown
-  dropdownMode="select"
-  minDate={new Date(1900, 0, 1)}   // Vẫn giới hạn tối thiểu năm 1900
-  maxDate={new Date()}             // Không khóa năm 2013, cho chọn tới hiện tại
-  isClearable
-/>
-
-
+            <DatePicker
+              selected={dob}
+              onChange={(date) => setDob(date)}
+              dateFormat="dd/MM/yyyy"
+              placeholderText="Nhập ngày tháng năm (VD:22/06/2004)"
+              className="custom-datepicker"
+              showMonthDropdown
+              showYearDropdown
+              dropdownMode="select"
+              minDate={new Date(1900, 0, 1)} // Vẫn giới hạn tối thiểu năm 1900
+              maxDate={new Date()} // Không khóa năm 2013, cho chọn tới hiện tại
+              isClearable
+            />
 
             {errors.dob && <p className="error">{errors.dob}</p>}
           </div>

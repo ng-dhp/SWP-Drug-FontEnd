@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./cssCom/quanly.css";
+import { fetchAllUsers, updateUserRole } from "../api/userAPI";
 
 export default function QuanLy() {
   const [users, setUsers] = useState([]);
@@ -10,51 +11,33 @@ export default function QuanLy() {
   const roleOptions = ["USER", "STAFF", "MANAGER", "CONSULTANT"];
   const token = localStorage.getItem("token");
 
-  // ✅ Tách hàm fetch users để gọi lại sau khi cập nhật
-  const fetchUsers = () => {
-    fetch("http://localhost:8080/api/v1.0/profileAllUser", {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setUsers(data);
-        const initialRoles = {};
-        data.forEach((user) => {
-          initialRoles[user.userId] = user.roleName;
-        });
-        setSelectedRoles(initialRoles);
-      })
-      .catch((err) => console.error("❌ Lỗi khi lấy danh sách user:", err));
+  const loadUsers = async () => {
+    try {
+      const data = await fetchAllUsers(token);
+      setUsers(data);
+      const initialRoles = {};
+      data.forEach((user) => {
+        initialRoles[user.userId] = user.roleName;
+      });
+      setSelectedRoles(initialRoles);
+    } catch (err) {
+      console.error("❌ Lỗi khi load người dùng:", err);
+    }
   };
 
-  // Lấy danh sách người dùng khi load lần đầu
   useEffect(() => {
-    fetchUsers();
+    loadUsers();
   }, [token]);
 
-  // ✅ Gọi lại fetchUsers() sau khi cập nhật role
-  const handleUpdateRole = (userId) => {
+  const handleUpdateRole = async (userId) => {
     const newRole = selectedRoles[userId];
-    fetch(`http://localhost:8080/api/v1.0/${userId}/roles`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ roleName: newRole }),
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("Cập nhật thất bại");
-        alert("✅ Cập nhật role thành công");
-        fetchUsers(); // 🔄 Load lại dữ liệu
-      })
-      .catch((err) => {
-        console.error("❌ Lỗi cập nhật role:", err);
-        alert("❌ Cập nhật role thất bại");
-      });
+    try {
+      await updateUserRole(token, userId, newRole);
+      alert("✅ Cập nhật role thành công");
+      loadUsers();
+    } catch (err) {
+      alert("❌ Cập nhật role thất bại");
+    }
   };
 
   return (

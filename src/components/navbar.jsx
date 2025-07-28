@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import logo from "../assets/logo01.png";
+import API_ENDPOINTS from "../APIconfig.jsx"; 
 import "./cssCom/navbar.css";
 
 export default function Navbar({ onLogin, onRegister, isLoggedIn, onLogout }) {
@@ -10,8 +11,6 @@ export default function Navbar({ onLogin, onRegister, isLoggedIn, onLogout }) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isDashboardOpen, setIsDashboardOpen] = useState(false);
 
-
-  // Bản dịch role sang tiếng Việt
   const roleMap = {
     Admin: "Quản trị viên",
     User: "Người dùng",
@@ -28,7 +27,7 @@ export default function Navbar({ onLogin, onRegister, isLoggedIn, onLogout }) {
         return;
       }
 
-      fetch("http://localhost:8080/api/v1.0/profile", {
+      fetch(API_ENDPOINTS.PROFILE, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -72,7 +71,7 @@ export default function Navbar({ onLogin, onRegister, isLoggedIn, onLogout }) {
           </Link>
         </motion.div>
 
-        {/* Menu điều hướng */}
+        {/* Navigation Menu */}
         <motion.div
           initial={{ opacity: 0, y: -30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -86,7 +85,6 @@ export default function Navbar({ onLogin, onRegister, isLoggedIn, onLogout }) {
             <Link to="/chiendich">Chiến dịch</Link>
             <Link to="/feedbackform">Đánh giá</Link>
 
-            {/* Menu riêng theo role */}
             {roleName === "ADMIN" && (
               <>
                 <div
@@ -101,8 +99,6 @@ export default function Navbar({ onLogin, onRegister, isLoggedIn, onLogout }) {
                       <Link to="/quanly">Quản lý Người Dùng</Link>
                       <Link to="/quanlykhaosat">Quản lý Khảo Sát</Link>
                       <Link to="/quanlychiendich">Quản lý Chiến Dịch</Link>
-
-
                     </div>
                   )}
                 </div>
@@ -125,7 +121,6 @@ export default function Navbar({ onLogin, onRegister, isLoggedIn, onLogout }) {
               </>
             )}
 
-
             {roleName === "STAFF" && (
               <div
                 className="dropdown"
@@ -141,7 +136,6 @@ export default function Navbar({ onLogin, onRegister, isLoggedIn, onLogout }) {
                 )}
               </div>
             )}
-
 
             {roleName === "CONSULTANT" && (
               <Link to="/lichhen">Lịch hẹn</Link>

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import ForgetPass from "./ForgetPass";
 import Register from "./Register";
+import API_ENDPOINTS from "../APIconfig"; // Sử dụng API config
 import "./cssCom/Login.css";
 
 export default function LoginModal({ onClose, onLoginSuccess }) {
@@ -17,7 +18,7 @@ export default function LoginModal({ onClose, onLoginSuccess }) {
     e.preventDefault();
 
     try {
-      const response = await fetch("http://localhost:8080/api/v1.0/login", {
+      const response = await fetch(API_ENDPOINTS.LOGIN, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

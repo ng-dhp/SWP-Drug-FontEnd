@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import VerifyOTP from "./VerifyOTP";
+import API_ENDPOINTS from "../APIconfig"; // ✅ import endpoint config
 
 export default function ForgetPass({ onClose }) {
   const [email, setEmail] = useState("");
@@ -16,7 +17,8 @@ export default function ForgetPass({ onClose }) {
 
     try {
       setIsSending(true);
-      const response = await fetch(`http://localhost:8080/api/v1.0/send-reset-otp?email=${encodeURIComponent(email)}`, {
+      const url = `${API_ENDPOINTS.SEND_OTP}?email=${encodeURIComponent(email)}`;
+      const response = await fetch(url, {
         method: "POST",
       });
 
@@ -24,8 +26,15 @@ export default function ForgetPass({ onClose }) {
         alert("Mã OTP đã được gửi đến email của bạn.");
         setStep("verify"); // ✅ Chuyển sang giao diện xác minh OTP
       } else {
-        const data = await response.json();
-        alert(data.message || "Không thể gửi mã OTP. Vui lòng thử lại.");
+        let errorMsg = "Không thể gửi mã OTP. Vui lòng thử lại.";
+        try {
+          const data = await response.json();
+          errorMsg = data.message || errorMsg;
+        } catch (jsonErr) {
+          const text = await response.text(); // fallback nếu không phải JSON
+          console.warn("Phản hồi không hợp lệ:", text);
+        }
+        alert(errorMsg);
       }
     } catch (error) {
       console.error("Lỗi gửi OTP:", error);
