@@ -33,6 +33,12 @@ const API_ENDPOINTS = {
   
   SUBMIT_ASSIST_SURVEY: (surveyId) =>
     `${BASE_URL}/survey-template/survey/${surveyId}/submit`,
+
+  START_CRAFFT_SURVEY: (templateId = 2) =>
+    `${BASE_URL}/survey-template/start?templateId=${templateId}`,
+
+  SUBMIT_CRAFFT_SURVEY: (surveyId) =>
+    `${BASE_URL}/survey-template/survey/${surveyId}/submit`,
   
     CAMPAIGN_ALL: `${BASE_URL}/campaigns/all`,
     CAMPAIGN_STATUS: (campaignId, userId) => `${BASE_URL}/campaigns/${campaignId}/status?userId=${userId}`,
