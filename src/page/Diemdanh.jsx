@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import API_ENDPOINTS from "../APIconfig"; 
 import "./css/diemdanh.css";
 
 export default function Diemdanh() {
@@ -20,7 +21,7 @@ export default function Diemdanh() {
     let fullName = "";
     let consultantId = null;
 
-    fetch("http://localhost:8080/api/v1.0/profile", {
+    fetch(API_ENDPOINTS.PROFILE, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
@@ -29,7 +30,7 @@ export default function Diemdanh() {
       .then((res) => res.json())
       .then((profileData) => {
         fullName = profileData.fullName;
-        return fetch("http://localhost:8080/api/v1.0/consultant/getAllConsultant", {
+        return fetch(API_ENDPOINTS.ALL_CONSULTANTS, {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
@@ -43,19 +44,19 @@ export default function Diemdanh() {
         consultantId = match.consultantId;
 
         return Promise.all([
-          fetch(`http://localhost:8080/api/v1.0/khoahoc/danhsach-dangky/${consultantId}`, {
+          fetch(API_ENDPOINTS.STUDENTS_BY_CONSULTANT(consultantId), {
             headers: {
               "Content-Type": "application/json",
               Authorization: `Bearer ${token}`,
             },
           }),
-          fetch("http://localhost:8080/api/v1.0/khoahoc/all", {
+          fetch(API_ENDPOINTS.ALL_COURSES, {
             headers: {
               "Content-Type": "application/json",
               Authorization: `Bearer ${token}`,
             },
           }),
-          fetch(`http://localhost:8080/api/v1.0/khoahoc/consultant/${consultantId}/sessions`, {
+          fetch(API_ENDPOINTS.SESSIONS_BY_CONSULTANT(consultantId), {
             headers: {
               "Content-Type": "application/json",
               Authorization: `Bearer ${token}`,
@@ -76,7 +77,7 @@ export default function Diemdanh() {
 
         for (const student of students) {
           const res = await fetch(
-            `http://localhost:8080/api/v1.0/khoahoc/${student.courseId}/sessions?userId=${student.userId}`,
+            API_ENDPOINTS.SESSIONS_BY_COURSE_AND_USER(student.courseId, student.userId),
             {
               headers: {
                 "Content-Type": "application/json",
@@ -124,14 +125,14 @@ export default function Diemdanh() {
 
     const now = new Date();
     const start = new Date(session.sessionDate);
-    const end = new Date(start.getTime() + 2 * 60 * 60 * 1000); // +2 tiếng mặc định
+    const end = new Date(start.getTime() + 2 * 60 * 60 * 1000); // +2 tiếng
 
     if (now < start || now > end) {
       alert("⏰ Chỉ được điểm danh trong thời gian diễn ra buổi học.");
       return;
     }
 
-    fetch("http://localhost:8080/api/v1.0/khoahoc/session/diemdanh", {
+    fetch(API_ENDPOINTS.DIEM_DANH, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

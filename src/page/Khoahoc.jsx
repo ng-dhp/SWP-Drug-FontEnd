@@ -11,7 +11,7 @@ import hinh2 from "../assets/anh_tuchoi.png";
 import hinh3 from "../assets/anh_phuhuynh.png";
 import hinh4 from "../assets/anh_hs.png";
 import CreateCourse from "./CreateCourse";
-
+import API_ENDPOINTS from "../APIconfig";
 
 export default function KhoaHoc() {
   const navigate = useNavigate();
@@ -26,12 +26,12 @@ export default function KhoaHoc() {
   const token = localStorage.getItem("token");
   const [isLoggedIn, setIsLoggedIn] = useState(!!token);
 
-  const availableImages = [hinh1, hinh2, hinh3, hinh4]; // ✅ danh sách ảnh random
+  const availableImages = [hinh1, hinh2, hinh3, hinh4];
 
   // ✅ Lấy profile
   useEffect(() => {
     if (!token) return;
-    fetch("http://localhost:8080/api/v1.0/profile", {
+    fetch(API_ENDPOINTS.PROFILE, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
@@ -42,17 +42,16 @@ export default function KhoaHoc() {
       .catch((err) => console.error("Lỗi lấy profile:", err));
   }, [token]);
 
-  // ✅ Lấy danh sách khóa học và gán ảnh random
+  // ✅ Lấy danh sách khóa học
   useEffect(() => {
     if (!token) return;
-
-    fetch("http://localhost:8080/api/v1.0/khoahoc/all", {
+    fetch(API_ENDPOINTS.ALL_COURSES, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
       .then((data) => {
         const dataWithImages = data
-          .filter((course) => course.active === true) // ✅ chỉ lấy active === true
+          .filter((course) => course.active === true)
           .map((course) => ({
             id: course.id,
             tenKhoaHoc: course.courseName,
@@ -67,14 +66,8 @@ export default function KhoaHoc() {
           }));
         setKhoaHocData(dataWithImages);
       })
-
       .catch((err) => console.error("Lỗi load khoá học:", err));
   }, [token]);
-  const images = {
-    "Tư duy tích cực & Lối sống lành mạnh": hinh1,
-    "Kỹ năng từ chối và phòng vệ": hinh2,
-    "Hướng dẫn dành cho phụ huynh": hinh3,
-  };
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -96,7 +89,7 @@ export default function KhoaHoc() {
       return;
     }
 
-    fetch(`http://localhost:8080/api/v1.0/khoahoc/dangky/${courseId}?userId=${userId}`, {
+    fetch(API_ENDPOINTS.COURSE_REGISTER(courseId, userId), {
       method: "POST",
       headers: { Authorization: `Bearer ${token}` },
     })
@@ -105,31 +98,43 @@ export default function KhoaHoc() {
         return res.text();
       })
       .then((message) => {
-        setThongBao(`✅ ${message}`);
+        const noiDungThongBao =
+          message.includes("Registered successfully")
+            ? "✅ Đăng ký khóa học thành công."
+            : message;
+
+        setThongBao(noiDungThongBao);
         setThongBaoType("success");
 
-        return fetch(`http://localhost:8080/api/v1.0/payments/course/${courseId}/user/${userId}`, {
+        return fetch(API_ENDPOINTS.CREATE_PAYMENT(courseId, userId), {
           method: "POST",
           headers: { Authorization: `Bearer ${token}` },
         });
       })
+
       .then((res) => {
         if (!res.ok) throw new Error("❌ Giao dịch thanh toán không thành công.");
         return res.json();
       })
       .then((paymentData) => {
         if (paymentData.qrCodeUrl) {
-          window.open(paymentData.qrCodeUrl, "_blank"); // ✅ Mở trang thanh toán
+          window.open(paymentData.qrCodeUrl, "_blank");
         } else {
           throw new Error("❌ Không nhận được đường dẫn thanh toán.");
         }
       })
       .catch((errMsg) => {
-        setThongBao(`❌ ${errMsg.message || errMsg}`);
+        let msg = errMsg.message || errMsg;
+        if (typeof msg === "string" && msg.includes("User already registered")) {
+          msg = "❌ Bạn đã đăng ký khóa học này rồi.";
+        } else {
+          msg = `❌ ${msg}`;
+        }
+        setThongBao(msg);
         setThongBaoType("error");
       });
-  };
 
+  };
 
   return (
     <>
@@ -172,6 +177,7 @@ export default function KhoaHoc() {
         >
           Khóa học phòng ngừa sử dụng ma túy
         </motion.h2>
+
         {khoaHocData.length === 1 ? (
           <div className="khoa-hoc-single">
             <motion.div

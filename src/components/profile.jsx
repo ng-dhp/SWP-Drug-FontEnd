@@ -40,6 +40,8 @@ export default function Profile() {
     const token = localStorage.getItem("token");
     if (!token) {
       setLoading(false);
+      alert("Vui lòng đăng nhập để tiếp tục.");
+      navigate("/login");
       return;
     }
 
@@ -65,13 +67,25 @@ export default function Profile() {
         ]);
       })
       .then(async ([surveyRes, requestRes, apptRes, fbRes, consultantRes, campaignRes]) => {
+        const parseJsonSafe = async (res) => {
+          console.log(`Response Status: ${res.status}, Content-Type: ${res.headers.get("content-type")}`);
+          try {
+            if (res.ok && res.headers.get("content-type")?.includes("application/json")) {
+              return await res.json();
+            }
+          } catch (e) {
+            console.warn("❌ Lỗi phân tích JSON:", e);
+          }
+          return [];
+        };
+
         const [survey, requests, appts, fb, consultants, campaignSubs] = await Promise.all([
-          surveyRes.ok ? surveyRes.json() : [],
-          requestRes.ok ? requestRes.json() : [],
-          apptRes.ok ? apptRes.json() : [],
-          fbRes.ok ? fbRes.json() : [],
-          consultantRes.ok ? consultantRes.json() : [],
-          campaignRes.ok ? campaignRes.json() : [],
+          parseJsonSafe(surveyRes),
+          parseJsonSafe(requestRes),
+          parseJsonSafe(apptRes),
+          parseJsonSafe(fbRes),
+          parseJsonSafe(consultantRes),
+          parseJsonSafe(campaignRes),
         ]);
 
         setSurveyHistory(Array.isArray(survey) ? survey : []);
@@ -83,10 +97,11 @@ export default function Profile() {
         setLoading(false);
       })
       .catch((err) => {
-        console.error("Lỗi khi tải dữ liệu:", err);
+        console.error("❌ Lỗi khi tải dữ liệu:", err);
+        alert("Không thể tải thông tin cá nhân. Vui lòng thử lại.");
         setLoading(false);
       });
-  }, []);
+  }, [navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -103,7 +118,7 @@ export default function Profile() {
 
     updateProfile(token, payload)
       .then(() => {
-        alert("✅ Cập nhật thành công!");
+        alert("✅ Cập nhật thông tin thành công!");
         setProfile((prev) => ({
           ...prev,
           fullName: editData.name,
@@ -114,14 +129,18 @@ export default function Profile() {
         }));
       })
       .catch((err) => {
-        console.error("Lỗi cập nhật:", err);
-        alert("❌ Cập nhật thất bại.");
+        console.error("❌ Lỗi cập nhật thông tin:", err);
+        alert("❌ Cập nhật thông tin thất bại. Vui lòng thử lại.");
       });
   };
 
   const handleFetchMyCourses = () => {
     const token = localStorage.getItem("token");
-    if (!token) return alert("Vui lòng đăng nhập.");
+    if (!token) {
+      alert("Vui lòng đăng nhập để xem khóa học.");
+      navigate("/login");
+      return;
+    }
 
     fetchProfile(token)
       .then((userData) => {
@@ -130,7 +149,9 @@ export default function Profile() {
 
         if (userData.roleName === "CONSULTANT") {
           return fetchConsultants(token)
+            .then((res) => res.json()) // chuyển response -> JSON
             .then((consultants) => consultants.find((c) => c.name === userName))
+
             .then((matched) => {
               if (!matched) throw new Error("Không tìm thấy tư vấn viên phù hợp.");
               return Promise.all([
@@ -141,6 +162,8 @@ export default function Profile() {
             .then(async ([sessionsRes, allCoursesRes]) => {
               const sessionsData = await sessionsRes.json();
               const allCoursesData = await allCoursesRes.json();
+              console.log("Consultant Sessions:", sessionsData);
+              console.log("All Courses:", allCoursesData);
               setConsultantSessions(Array.isArray(sessionsData) ? sessionsData : []);
               setAllCourses(Array.isArray(allCoursesData) ? allCoursesData : []);
               setShowCourses(true);
@@ -151,8 +174,11 @@ export default function Profile() {
             fetchPayments(token),
           ])
             .then(async ([coursesRes, paymentsRes]) => {
+              console.log("Courses Response Status:", coursesRes.status);
               const coursesData = await coursesRes.json();
               const paymentsData = await paymentsRes.json();
+              console.log("Courses Data:", coursesData);
+              console.log("Payments Data:", paymentsData);
               setMyCourses(Array.isArray(coursesData) ? coursesData : []);
               setPaymentList(Array.isArray(paymentsData) ? paymentsData : []);
               setShowCourses(true);
@@ -161,22 +187,29 @@ export default function Profile() {
       })
       .catch((err) => {
         console.error("❌ Lỗi khi lấy dữ liệu khóa học/lịch dạy:", err);
-        alert("Không thể tải dữ liệu khóa học hoặc lịch dạy.");
+        alert("Không thể tải dữ liệu khóa học hoặc lịch dạy. Vui lòng thử lại.");
       });
   };
 
   const fetchSessionsForCourse = (courseId) => {
     const token = localStorage.getItem("token");
-    if (!token || !profile?.userId) return;
+    if (!token || !profile?.userId) {
+      alert("Vui lòng đăng nhập để xem buổi học.");
+      return;
+    }
 
     fetchCourseSessions(courseId, profile.userId, token)
       .then((data) => {
+        console.log(`Course Sessions for ${courseId}:`, data);
         setCourseSessions((prev) => ({
           ...prev,
           [courseId]: Array.isArray(data) ? data : [],
         }));
       })
-      .catch((err) => console.error("Lỗi khi lấy buổi học:", err));
+      .catch((err) => {
+        console.error("❌ Lỗi khi lấy buổi học:", err);
+        alert("Không thể tải danh sách buổi học.");
+      });
   };
 
   const handleThanhToanNgay = (courseId, amount) => {
@@ -224,12 +257,12 @@ export default function Profile() {
   };
 
   const getCourseInfoById = (courseId) => {
-    const course = allCourses.find((c) => c.courseId === courseId);
+    const course = allCourses.find((c) => String(c.id) === String(courseId));
     return course || { tenKhoaHoc: "Không rõ" };
   };
 
   const isCoursePaid = (courseId) => {
-    return paymentList.some((p) => p.courseId === courseId && p.status === "PAID");
+    return paymentList.some((p) => p.courseId === courseId && p.status === "SUCCESS");
   };
 
   return (
@@ -240,19 +273,19 @@ export default function Profile() {
         <>
           <h2 className="tittle-thongtin">Thông tin cá nhân</h2>
           <ul className="thongtin">
-            <li><strong>👤 Họ tên:</strong> {profile.fullName}</li>
-            <li><strong>📧 Email:</strong> {profile.email}</li>
-            <li><strong>🎂 Năm sinh:</strong> {profile.yob}</li>
+            <li><strong>👤 Họ tên:</strong> {profile.fullName || "Chưa cập nhật"}</li>
+            <li><strong>📧 Email:</strong> {profile.email || "Chưa cập nhật"}</li>
+            <li><strong>🎂 Năm sinh:</strong> {profile.yob || "Chưa cập nhật"}</li>
             <li>
               <strong>⚥ Giới tính:</strong>{" "}
               {profile.gender === "Male"
                 ? "Nam"
                 : profile.gender === "Female"
-                ? "Nữ"
-                : "Chưa cập nhật"}
+                  ? "Nữ"
+                  : "Chưa cập nhật"}
             </li>
-            <li><strong>📱 Số điện thoại:</strong> {profile.phone}</li>
-            <li><strong>🛡️ Vai trò:</strong> {profile.roleName}</li>
+            <li><strong>📱 Số điện thoại:</strong> {profile.phone || "Chưa cập nhật"}</li>
+            <li><strong>🛡️ Vai trò:</strong> {profile.roleName || "Chưa xác định"}</li>
           </ul>
 
           {(profile.roleName === "CONSULTANT" || profile.roleName === "USER") && (
@@ -265,6 +298,7 @@ export default function Profile() {
                   name="name"
                   value={editData.name}
                   onChange={handleChange}
+                  placeholder="Nhập họ tên"
                 />
               </label>
               {profile.roleName === "CONSULTANT" && (
@@ -275,6 +309,7 @@ export default function Profile() {
                     name="specialization"
                     value={editData.specialization}
                     onChange={handleChange}
+                    placeholder="Nhập chuyên ngành"
                   />
                 </label>
               )}
@@ -285,6 +320,7 @@ export default function Profile() {
                   name="yob"
                   value={editData.yob}
                   onChange={handleChange}
+                  placeholder="Nhập năm sinh"
                 />
               </label>
               {profile.roleName === "USER" && (
@@ -308,6 +344,7 @@ export default function Profile() {
                   name="phone"
                   value={editData.phone}
                   onChange={handleChange}
+                  placeholder="Nhập số điện thoại"
                 />
               </label>
               <button className="btn-update" onClick={handleUpdate}>
@@ -349,10 +386,10 @@ export default function Profile() {
                 surveyHistory.map((survey) => (
                   <div key={survey.surveyId} className="survey-item">
                     <h3>
-                      {survey.surveyType} - {survey.status}
+                      {survey.surveyType || "Không rõ"} - {survey.status || "Không rõ"}
                     </h3>
-                    <p><strong>📅 Ngày làm:</strong> {survey.takenDate}</p>
-                    <p><strong>🧮 Tổng điểm:</strong> {survey.totalScore}</p>
+                    <p><strong>📅 Ngày làm:</strong> {survey.takenDate || "Chưa cập nhật"}</p>
+                    <p><strong>🧮 Tổng điểm:</strong> {survey.totalScore || 0}</p>
                     <p>
                       <strong>🩺 Đánh giá:</strong> {survey.recommendation || "Chưa có"}
                     </p>
@@ -361,10 +398,10 @@ export default function Profile() {
                       <ul>
                         {(survey.answers || []).map((ans) => (
                           <li key={ans.questionId}>
-                            <strong>Câu {ans.questionId}:</strong> {ans.questionText}
+                            <strong>Câu {ans.questionId}:</strong> {ans.questionText || "Không rõ"}
                             <br />
                             <em>Trả lời:</em> {ans.answerText || "Chưa trả lời"} |{" "}
-                            <em>Điểm:</em> {ans.score}
+                            <em>Điểm:</em> {ans.score || 0}
                           </li>
                         ))}
                       </ul>
@@ -382,13 +419,13 @@ export default function Profile() {
                 requestHistory.map((req) => (
                   <div key={req.id} className="request-item">
                     <p><strong>📄 Mã yêu cầu:</strong> {req.id}</p>
-                    <p><strong>📘 Tên khảo sát:</strong> {req.name}</p>
+                    <p><strong>📘 Tên khảo sát:</strong> {req.name || "Không rõ"}</p>
                     <p>
                       <strong>🗓 Ngày yêu cầu:</strong>{" "}
-                      {new Date(req.requestDate).toLocaleString()}
+                      {req.requestDate ? new Date(req.requestDate).toLocaleString() : "Chưa cập nhật"}
                     </p>
-                    <p><strong>🧾 Lý do:</strong> {req.reason}</p>
-                    <p><strong>📌 Trạng thái:</strong> {req.status}</p>
+                    <p><strong>🧾 Lý do:</strong> {req.reason || "Không có"}</p>
+                    <p><strong>📌 Trạng thái:</strong> {req.status || "Không rõ"}</p>
                     {req.status === "REJECTED" && (
                       <p>
                         <strong>❌ Lý do từ chối:</strong>{" "}
@@ -408,7 +445,7 @@ export default function Profile() {
                 appointments.map((appointment) => (
                   <div key={appointment.appointmentId} className="appointment-item">
                     <p><strong>🆔 Mã cuộc hẹn:</strong> {appointment.appointmentId}</p>
-                    <p><strong>📅 Ngày:</strong> {appointment.date}</p>
+                    <p><strong>📅 Ngày:</strong> {appointment.date || "Chưa cập nhật"}</p>
                     <p>
                       <strong>🕒 Thời gian:</strong>{" "}
                       {appointment.startTime
@@ -419,12 +456,12 @@ export default function Profile() {
                         ? appointment.endTime.slice(0, 5)
                         : "Không rõ"}
                     </p>
-                    <p><strong>📍 Địa điểm:</strong> {appointment.location}</p>
+                    <p><strong>📍 Địa điểm:</strong> {appointment.location || "Không rõ"}</p>
                     <p>
                       <strong>👨‍⚕️ Tư vấn viên:</strong>{" "}
                       {getConsultantName(appointment.consultantId)}
                     </p>
-                    <p><strong>📌 Trạng thái:</strong> {appointment.status}</p>
+                    <p><strong>📌 Trạng thái:</strong> {appointment.status || "Không rõ"}</p>
                   </div>
                 ))
               )}
@@ -442,8 +479,8 @@ export default function Profile() {
                       <strong>👨‍⚕️ Tư vấn viên:</strong>{" "}
                       {getConsultantName(fb.consultantId)}
                     </p>
-                    <p><strong>📅 Ngày gửi:</strong> {fb.date}</p>
-                    <p><strong>📝 Nội dung:</strong> {fb.content}</p>
+                    <p><strong>📅 Ngày gửi:</strong> {fb.date || "Chưa cập nhật"}</p>
+                    <p><strong>📝 Nội dung:</strong> {fb.content || "Không có"}</p>
                   </div>
                 ))
               )}
@@ -456,21 +493,23 @@ export default function Profile() {
               ) : (
                 campaignSubmissions.map((submission, idx) => (
                   <div key={idx} className="survey-item">
-                    <h3>🧾 Lần làm số {submission.attemptNumber}</h3>
+                    <h3>🧾 Lần làm số {submission.attemptNumber || idx + 1}</h3>
                     <p>
                       <strong>📅 Ngày gửi:</strong>{" "}
-                      {new Date(submission.submittedAt).toLocaleString()}
+                      {submission.submittedAt
+                        ? new Date(submission.submittedAt).toLocaleString()
+                        : "Chưa cập nhật"}
                     </p>
-                    <p><strong>🧮 Tổng điểm:</strong> {submission.totalScore}</p>
+                    <p><strong>🧮 Tổng điểm:</strong> {submission.totalScore || 0}</p>
                     <details>
                       <summary>📋 Chi tiết câu trả lời</summary>
                       {submission.answers && submission.answers.length > 0 ? (
                         <ul>
                           {submission.answers.map((ans, i) => (
                             <li key={i}>
-                              <strong>❓ {ans.question}</strong>
+                              <strong>❓ {ans.question || "Câu hỏi không rõ"}</strong>
                               <br />
-                              <em>📝 Trả lời:</em> {ans.answer}
+                              <em>📝 Trả lời:</em> {ans.answer || "Chưa trả lời"}
                             </li>
                           ))}
                         </ul>
@@ -508,11 +547,13 @@ export default function Profile() {
                       {consultantSessions.map((session) => (
                         <li key={session.sessionId} className="course-item">
                           <h4>
-                            📘 Khóa học: {getCourseInfoById(session.courseId).tenKhoaHoc}
+                            📘 Khóa học: {getCourseInfoById(session.courseId).courseName || "Không rõ"}
                           </h4>
-                          <p>🧩 Buổi {session.sessionIndex}</p>
+                          <p>🧩 Buổi {session.sessionIndex || "Không rõ"}</p>
                           <p>
-                            📅 Ngày: {new Date(session.sessionDate).toLocaleString()}
+                            📅 Ngày: {session.sessionDate
+                              ? new Date(session.sessionDate).toLocaleString()
+                              : "Chưa cập nhật"}
                           </p>
                         </li>
                       ))}
@@ -525,12 +566,16 @@ export default function Profile() {
                     <ul>
                       {myCourses.map((course) => (
                         <li key={course.courseId} className="course-item">
-                          <h3>🎓 {course.courseName}</h3>
-                          <p><strong>📍 Địa điểm:</strong> {course.location}</p>
+                          <h3>🎓 {course.tenKhoaHoc || "Tên khóa học không xác định"}</h3>
+                          <p><strong>📍 Địa điểm:</strong> {course.diaDiem || "Không rõ"}</p>
                           <p>
                             <strong>📅 Thời gian:</strong>{" "}
-                            {new Date(course.startTime).toLocaleString()} →{" "}
-                            {new Date(course.endTime).toLocaleString()}
+                            {course.thoiGianBatDau
+                              ? new Date(course.thoiGianBatDau).toLocaleString()
+                              : "Không rõ"} →{" "}
+                            {course.thoiGianKetThuc
+                              ? new Date(course.thoiGianKetThuc).toLocaleString()
+                              : "Không rõ"}
                           </p>
                           <p>
                             <strong>👨‍⚕️ Tư vấn viên:</strong>{" "}
@@ -542,10 +587,15 @@ export default function Profile() {
                               <p className="text-red-600 font-semibold">
                                 ⚠️ Vui lòng đợi nhân viên xác nhận.
                               </p>
-                              <button className="btn-update">Vui lòng đợi</button>
+                              <button className="btn-update" disabled>
+                                Vui lòng đợi
+                              </button>
                             </>
                           ) : (
-                            <button onClick={() => fetchSessionsForCourse(course.courseId)}>
+                            <button
+                              className="btn-update"
+                              onClick={() => fetchSessionsForCourse(course.courseId)}
+                            >
                               📖 Chi tiết buổi học
                             </button>
                           )}
@@ -555,17 +605,19 @@ export default function Profile() {
                               <ul>
                                 {courseSessions[course.courseId].map((session) => (
                                   <li key={session.sessionId}>
-                                    <p>🧩 Buổi {session.sessionIndex}</p>
+                                    <p>🧩 Buổi {session.sessionIndex || "Không rõ"}</p>
                                     <p>
-                                      📅 Ngày: {new Date(session.sessionDate).toLocaleString()}
+                                      📅 Ngày: {session.sessionDate
+                                        ? new Date(session.sessionDate).toLocaleString()
+                                        : "Chưa cập nhật"}
                                     </p>
                                     <p>
                                       ✅ Điểm danh:{" "}
                                       {session.isPresent === true
                                         ? "Có mặt"
                                         : session.isPresent === false
-                                        ? "Vắng"
-                                        : "Chưa điểm danh"}
+                                          ? "Vắng"
+                                          : "Chưa điểm danh"}
                                     </p>
                                   </li>
                                 ))}

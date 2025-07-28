@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./css/CrafftSurvey.css";
-import apiEndpoint from "../APIconfig";
+import API_ENDPOINTS from "../APIconfig";
 
 function CrafftSurvey() {
   const [surveyId, setSurveyId] = useState(null);
@@ -61,7 +61,7 @@ function CrafftSurvey() {
 
   const fetchSurvey = async () => {
     try {
-      const res = await fetch(apiEndpoint.START_CRAFFT_SURVEY(), {
+      const res = await fetch(API_ENDPOINTS.START_CRAFFT_SURVEY(), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -110,7 +110,7 @@ function CrafftSurvey() {
     };
 
     try {
-      const res = await fetch(apiEndpoint.SUBMIT_CRAFFT_SURVEY(surveyId), {
+      const res = await fetch(API_ENDPOINTS.SUBMIT_CRAFFT_SURVEY(surveyId), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -70,7 +70,9 @@ export default function XuLyYeuCau() {
               <td>{req.userId}</td>
               <td>{req.reason}</td>
               <td>{new Date(req.requestDate).toLocaleString()}</td>
-              <td className={`status ${req.status.toLowerCase()}`}>{req.status}</td>
+              <td className={`status ${req.status.toLowerCase()}`}>
+                {req.status === "PENDING" ? "Chờ xử lý" : "Đã xử lý"}
+              </td>
               <td>
                 {req.status === "PENDING" ? (
                   <div className="action-buttons">

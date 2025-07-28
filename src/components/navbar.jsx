@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import logo from "../assets/logo01.png";
-import API_ENDPOINTS from "../APIconfig.jsx"; 
+import API_ENDPOINTS from "../APIconfig.jsx";
 import "./cssCom/navbar.css";
 
 export default function Navbar({ onLogin, onRegister, isLoggedIn, onLogout }) {
@@ -85,41 +85,51 @@ export default function Navbar({ onLogin, onRegister, isLoggedIn, onLogout }) {
             <Link to="/chiendich">Chiến dịch</Link>
             <Link to="/feedbackform">Đánh giá</Link>
 
-            {roleName === "ADMIN" && (
-              <>
-                <div
-                  className="dropdown"
-                  onMouseEnter={() => setIsDropdownOpen(true)}
-                  onMouseLeave={() => setIsDropdownOpen(false)}
-                >
-                  <span className="dropdown-toggle cursor-pointer">Quản lý</span>
-                  {isDropdownOpen && (
-                    <div className="dropdown-menu bg-white shadow-md absolute z-50 p-2 rounded">
-                      <Link to="/quanlykhoahoc">Quản lý Khóa Học</Link>
+            {/* Quản lý cho ADMIN hoặc MANAGER */}
+            {(roleName === "ADMIN" || roleName === "MANAGER") && (
+              <div
+                className="dropdown"
+                onMouseEnter={() => setIsDropdownOpen(true)}
+                onMouseLeave={() => setIsDropdownOpen(false)}
+              >
+                <span className="dropdown-toggle cursor-pointer">Quản lý</span>
+                {isDropdownOpen && (
+                  <div className="dropdown-menu bg-white shadow-md absolute z-50 p-2 rounded">
+                    {roleName === "MANAGER" && (
+                      <>
+                        <Link to="/quanlykhoahoc">Quản lý Khóa Học</Link>
+                        <Link to="/quanlykhaosat">Quản lý Khảo Sát</Link>
+                        <Link to="/quanlychiendich">Quản lý Chiến Dịch</Link>
+                      </>
+                    )}
+                    {roleName === "ADMIN" && (
                       <Link to="/quanly">Quản lý Người Dùng</Link>
-                      <Link to="/quanlykhaosat">Quản lý Khảo Sát</Link>
-                      <Link to="/quanlychiendich">Quản lý Chiến Dịch</Link>
-                    </div>
-                  )}
-                </div>
-
-                <div
-                  className="dropdown"
-                  onMouseEnter={() => setIsDashboardOpen(true)}
-                  onMouseLeave={() => setIsDashboardOpen(false)}
-                >
-                  <span className="dropdown-toggle cursor-pointer">Báo cáo</span>
-                  {isDashboardOpen && (
-                    <div className="dropdown-menu bg-white shadow-md absolute z-50 p-2 rounded">
-                      <Link to="/dashboard-survey">Báo Cáo Khảo Sát</Link>
-                      <Link to="/dashboard-campaign">Báo Cáo Chiến Dịch</Link>
-                      <Link to="/dashboard-request">Báo Cáo Yêu Cầu</Link>
-                      <Link to="/dashboard-feedback">Báo Cáo Phản Hồi</Link>
-                    </div>
-                  )}
-                </div>
-              </>
+                    )}
+                  </div>
+                )}
+              </div>
             )}
+
+            {/* Báo cáo chỉ cho MANAGER */}
+            {roleName === "MANAGER" && (
+              <div
+                className="dropdown"
+                onMouseEnter={() => setIsDashboardOpen(true)}
+                onMouseLeave={() => setIsDashboardOpen(false)}
+              >
+                <span className="dropdown-toggle cursor-pointer">Báo cáo</span>
+                {isDashboardOpen && (
+                  <div className="dropdown-menu bg-white shadow-md absolute z-50 p-2 rounded">
+                    <Link to="/dashboard-survey">Báo Cáo Khảo Sát</Link>
+                    <Link to="/dashboard-campaign">Báo Cáo Chiến Dịch</Link>
+                    <Link to="/dashboard-request">Báo Cáo Yêu Cầu</Link>
+                    <Link to="/dashboard-feedback">Báo Cáo Phản Hồi</Link>
+                  </div>
+                )}
+              </div>
+            )}
+
+
 
             {roleName === "STAFF" && (
               <div

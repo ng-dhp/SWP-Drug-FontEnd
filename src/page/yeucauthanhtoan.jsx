@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./css/yeucauthanhtoan.css";
+import API_ENDPOINTS from "../APIconfig";
 
 export default function XuLyThanhToan() {
     const [danhSachThanhToan, setDanhSachThanhToan] = useState([]);
@@ -14,13 +15,13 @@ export default function XuLyThanhToan() {
         const fetchDuLieu = async () => {
             try {
                 const [resThanhToan, resNguoiDung, resKhoaHoc] = await Promise.all([
-                    fetch("http://localhost:8080/api/v1.0/payments/all", {
+                    fetch(API_ENDPOINTS.PAYMENTS, {
                         headers: { Authorization: `Bearer ${token}` },
                     }),
-                    fetch("http://localhost:8080/api/v1.0/profileAllUser", {
+                    fetch(API_ENDPOINTS.PROFILE_ALL_USERS, {
                         headers: { Authorization: `Bearer ${token}` },
                     }),
-                    fetch("http://localhost:8080/api/v1.0/khoahoc/all", {
+                    fetch(API_ENDPOINTS.ALL_COURSES, {
                         headers: { Authorization: `Bearer ${token}` },
                     }),
                 ]);
@@ -39,9 +40,8 @@ export default function XuLyThanhToan() {
 
                 const mapKhoaHocTam = {};
                 danhSachKhoaHoc.forEach(k => {
-                    mapKhoaHocTam[k.id] = k.courseName; // Dùng đúng tên field từ API mới
+                    mapKhoaHocTam[k.id] = k.courseName;
                 });
-
 
                 setDanhSachThanhToan(Array.isArray(dataThanhToan) ? dataThanhToan : []);
                 setMapHocVien(mapHocVienTam);
@@ -57,7 +57,7 @@ export default function XuLyThanhToan() {
     }, [token]);
 
     const xuLyXacNhan = (paymentId) => {
-        fetch(`http://localhost:8080/api/v1.0/payments/${paymentId}/status?status=COMPLETED`, {
+        fetch(API_ENDPOINTS.UPDATE_PAYMENT_STATUS(paymentId), {
             method: "PUT",
             headers: { Authorization: `Bearer ${token}` },
         })
@@ -69,7 +69,7 @@ export default function XuLyThanhToan() {
                 alert(`✅ ${msg}`);
                 setDanhSachThanhToan(prev =>
                     prev.map(p =>
-                        p.paymentId === paymentId ? { ...p, status: "COMPLETED" } : p
+                        p.paymentId === paymentId ? { ...p, status: "SUCCESS" } : p
                     )
                 );
             })
@@ -107,18 +107,19 @@ export default function XuLyThanhToan() {
                                 <td>{mapKhoaHoc[thanhToan.courseId] || "Không rõ"}</td>
                                 <td>{mapHocVien[thanhToan.userId] || "Không rõ"}</td>
                                 <td>
-                                    {thanhToan.createdAt
-                                        ? new Date(thanhToan.createdAt).toLocaleString()
+                                    {thanhToan.paymentDate
+                                        ? new Date(thanhToan.paymentDate).toLocaleDateString("vi-VN")
                                         : "N/A"}
                                 </td>
                                 <td>{thanhToan.amount?.toLocaleString()} VNĐ</td>
                                 <td>
-                                    <span className={thanhToan.status === "COMPLETED" ? "trang-thai-hoan-tat" : "trang-thai-cho"}>
-                                        {thanhToan.status}
+                                    <span className={thanhToan.status === "SUCCESS" ? "trang-thai-hoan-tat" : "trang-thai-cho"}>
+                                        {thanhToan.status === "SUCCESS" ? "Thành công" : "Đang xử lý"}
                                     </span>
+
                                 </td>
                                 <td>
-                                    {thanhToan.status !== "COMPLETED" && (
+                                    {thanhToan.status !== "SUCCESS" && (
                                         <button
                                             className="nut-xac-nhan"
                                             onClick={() => xuLyXacNhan(thanhToan.paymentId)}

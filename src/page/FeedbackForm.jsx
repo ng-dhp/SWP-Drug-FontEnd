@@ -4,6 +4,7 @@ import "./css/FeedbackForm.css";
 import Navbar from "../components/navbar";
 import LoginModal from "../components/Login";
 import Register from "../components/Register";
+import API_ENDPOINTS from "../APIconfig";
 
 export default function FeedbackForm() {
   const navigate = useNavigate();
@@ -33,7 +34,7 @@ export default function FeedbackForm() {
 
   const fetchUserId = async () => {
     try {
-      const res = await fetch("http://localhost:8080/api/v1.0/profile", {
+      const res = await fetch(API_ENDPOINTS.PROFILE, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -56,7 +57,7 @@ export default function FeedbackForm() {
   useEffect(() => {
     const fetchConsultants = async () => {
       try {
-        const res = await fetch("http://localhost:8080/api/v1.0/consultant/getAllConsultant", {
+        const res = await fetch(API_ENDPOINTS.ALL_CONSULTANTS, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -86,7 +87,7 @@ export default function FeedbackForm() {
     }
 
     try {
-      const res = await fetch("http://localhost:8080/api/v1.0/feedback/consultant/create", {
+      const res = await fetch(API_ENDPOINTS.FEEDBACK_CONSULTANT_CREATE, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -160,7 +161,6 @@ export default function FeedbackForm() {
         </form>
 
         {message && <p className="feedback-message">{message}</p>}
-
       </div>
 
       {/* ✅ Modal đăng nhập */}

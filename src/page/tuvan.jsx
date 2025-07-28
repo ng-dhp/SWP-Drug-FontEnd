@@ -1,14 +1,13 @@
-// TuVan.jsx
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./css/tuvan.css";
 import LoginModal from "../components/Login";
 import TimePicker from "react-time-picker";
 import "react-time-picker/dist/TimePicker.css";
-import "react-clock/dist/Clock.css"; // nếu cần đồng hồ
+import "react-clock/dist/Clock.css";
 import Navbar from "../components/navbar";
-import Register from "../components/Register"; // ✅ Đổi lại tên đúng
-
+import Register from "../components/Register";
+import API_ENDPOINTS from "../APIconfig";
 
 export default function TuVan() {
   const navigate = useNavigate();
@@ -27,9 +26,6 @@ export default function TuVan() {
   const [formError, setFormError] = useState("");
   const [formSuccess, setFormSuccess] = useState("");
 
-
-
-
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("userEmail");
@@ -47,7 +43,7 @@ export default function TuVan() {
     const token = localStorage.getItem("token");
     if (!token) return;
 
-    fetch("http://localhost:8080/api/v1.0/profile", {
+    fetch(API_ENDPOINTS.PROFILE, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -66,7 +62,7 @@ export default function TuVan() {
   useEffect(() => {
     const token = localStorage.getItem("token");
 
-    fetch("http://localhost:8080/api/v1.0/consultant/getAllConsultant", {
+    fetch(API_ENDPOINTS.ALL_CONSULTANTS, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -102,9 +98,8 @@ export default function TuVan() {
   };
 
   const handleSubmit = async (e) => {
-
     e.preventDefault();
-    setFormError(""); 
+    setFormError("");
     setFormSuccess("");
 
     if (!isLoggedIn) return setShowLoginModal(true);
@@ -113,15 +108,20 @@ export default function TuVan() {
 
     const token = localStorage.getItem("token");
     if (!token) return setFormError("❗ Token không hợp lệ!");
+
     const hour = parseInt(formData.time?.split(":")[0]);
     if (hour < 8 || hour > 15) {
       return setFormError("❗ Vui lòng chọn giờ trong khoảng từ 08:00 đến 15:00.");
     }
 
-
     const { date, time } = formData;
 
-    const checkUrl = `http://localhost:8080/api/v1.0/appointment/check-slot-availability?consultantId=${selectedDoctor.consultantId}&date=${date}&startTime=${time}`;
+    const checkUrl = API_ENDPOINTS.CHECK_SLOT_AVAILABILITY(
+      selectedDoctor.consultantId,
+      date,
+      time
+    );
+
     try {
       const checkRes = await fetch(checkUrl, {
         method: "GET",
@@ -138,9 +138,10 @@ export default function TuVan() {
 
       const isAvailable = await checkRes.json();
       if (!isAvailable) {
-        return setFormError("❌ Khung giờ này đã có người đặt. Vui lòng chọn thời gian khác."+
-          " ⏰ Mỗi lượt đặt cách nhau 2 tiếng, khung giờ áp dụng từ 08:00 đến 17:00.");
-
+        return setFormError(
+          "❌ Khung giờ này đã có người đặt. Vui lòng chọn thời gian khác." +
+            " ⏰ Mỗi lượt đặt cách nhau 2 tiếng, khung giờ áp dụng từ 08:00 đến 17:00."
+        );
       }
 
       const payload = {
@@ -153,7 +154,7 @@ export default function TuVan() {
         location: "Phòng 203 - Tòa B",
       };
 
-      const res = await fetch("http://localhost:8080/api/v1.0/appointment/create", {
+      const res = await fetch(API_ENDPOINTS.CREATE_APPOINTMENT, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -165,17 +166,15 @@ export default function TuVan() {
       const text = await res.text();
       if (res.ok) {
         setFormSuccess("🎉 Đặt lịch thành công!");
-        setFormError(""); // clear lỗi nếu có
+        setFormError("");
       } else {
         setFormError(`❌ Lỗi: ${text}`);
-        setFormSuccess(""); // clear thành công nếu có
+        setFormSuccess("");
       }
-
     } catch (err) {
       setFormError("❌ Lỗi không xác định: " + err.message);
     }
   };
-
 
   return (
     <>
@@ -200,14 +199,24 @@ export default function TuVan() {
           {consultants.map((doctor) => (
             <div
               key={doctor.consultantId}
-              className={`doctor-card ${selectedDoctor?.consultantId === doctor.consultantId ? "selected" : ""
-                }`}
+              className={`doctor-card ${
+                selectedDoctor?.consultantId === doctor.consultantId
+                  ? "selected"
+                  : ""
+              }`}
               onClick={() => setSelectedDoctor(doctor)}
             >
               <h3>{doctor.name}</h3>
-              <p><strong>Chuyên ngành:</strong> {doctor.specialization}</p>
-              <p><strong>Email:</strong> {doctor.email}</p>
-              <p><strong>Trạng thái:</strong> {doctor.availability ? "🟢 Có sẵn" : "🔴 Không có sẵn"}</p>
+              <p>
+                <strong>Chuyên ngành:</strong> {doctor.specialization}
+              </p>
+              <p>
+                <strong>Email:</strong> {doctor.email}
+              </p>
+              <p>
+                <strong>Trạng thái:</strong>{" "}
+                {doctor.availability ? "🟢 Có sẵn" : "🔴 Không có sẵn"}
+              </p>
             </div>
           ))}
         </div>
@@ -228,7 +237,9 @@ export default function TuVan() {
             Giờ hẹn:
             <TimePicker
               name="time"
-              onChange={(value) => setFormData((prev) => ({ ...prev, time: value }))}
+              onChange={(value) =>
+                setFormData((prev) => ({ ...prev, time: value }))
+              }
               value={formData.time}
               format="HH:mm"
               disableClock
@@ -237,7 +248,6 @@ export default function TuVan() {
             />
           </label>
 
-
           <button type="submit" disabled={!selectedDoctor || !userId}>
             {isLoggedIn ? "📥 Đặt Lịch" : "🔐 Vui lòng đăng nhập"}
           </button>
@@ -245,11 +255,9 @@ export default function TuVan() {
             {formSuccess && <p className="form-success">{formSuccess}</p>}
             {formError && <p className="form-error">{formError}</p>}
           </div>
-
         </form>
       </div>
 
-      {/* Modal hiển thị */}
       {showLoginModal && (
         <LoginModal
           onClose={() => setShowLoginModal(false)}
@@ -262,5 +270,4 @@ export default function TuVan() {
       )}
     </>
   );
-
 }

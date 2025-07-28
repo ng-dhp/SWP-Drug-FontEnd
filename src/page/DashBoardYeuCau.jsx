@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./css/DashBoardYeuCau.css";
-import API_ENDPOINTS from "../APIconfig"; 
+import API_ENDPOINTS from "../APIconfig";
 
 export default function DashboardYeuCau() {
   const [requests, setRequests] = useState([]);
@@ -43,8 +43,13 @@ export default function DashboardYeuCau() {
               <td>{req.reason}</td>
               <td>{new Date(req.requestDate).toLocaleString()}</td>
               <td className={`status ${req.status.toLowerCase()}`}>
-                {req.status}
+                {req.status === "APPROVED"
+                  ? "Đã Xử Xý"
+                  : req.status === "REJECTED"
+                    ? "Đã Từ Chối"
+                    : req.status}
               </td>
+
               <td>{req.rejectionReason || "-"}</td>
             </tr>
           ))}

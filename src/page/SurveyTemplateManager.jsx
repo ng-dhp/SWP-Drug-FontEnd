@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./css/SurveyTemplateManager.css";
+import API_ENDPOINTS from "../APIconfig";
 
 const SurveyTemplateManager = () => {
   const [templates, setTemplates] = useState([]);
@@ -9,19 +10,14 @@ const SurveyTemplateManager = () => {
     const token = localStorage.getItem("token");
 
     try {
-      const response = await fetch(
-        "http://localhost:8080/api/v1.0/admin/dashboard/getAll-templates-admin",
-        {
-          headers: {
-            "Authorization": `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await fetch(API_ENDPOINTS.GET_ALL_TEMPLATES_ADMIN, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
 
-      if (!response.ok) {
-        throw new Error("Lỗi khi fetch templates");
-      }
+      if (!response.ok) throw new Error("Lỗi khi fetch templates");
 
       const data = await response.json();
       setTemplates(data);
@@ -33,30 +29,27 @@ const SurveyTemplateManager = () => {
     }
   };
 
-  useEffect(() => {
-    fetchTemplates();
-  }, []);
-
   const toggleActive = async (templateId, currentActive) => {
     const token = localStorage.getItem("token");
 
     try {
-      await fetch(
-        `http://localhost:8080/api/v1.0/admin/dashboard/template-toggle/${templateId}`,
-        {
-          method: "PUT",
-          headers: {
-            "Authorization": `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ active: !currentActive }),
-        }
-      );
+      await fetch(API_ENDPOINTS.TOGGLE_TEMPLATE_ACTIVE(templateId), {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ active: !currentActive }),
+      });
       fetchTemplates();
     } catch (error) {
       console.error("❌ Lỗi khi cập nhật trạng thái:", error);
     }
   };
+
+  useEffect(() => {
+    fetchTemplates();
+  }, []);
 
   if (loading) return <p>Đang tải danh sách khảo sát...</p>;
 
@@ -82,9 +75,7 @@ const SurveyTemplateManager = () => {
           </div>
           <button
             onClick={() => toggleActive(template.templateId, template.active)}
-            className={`nut-chucnang ${
-              template.active ? "nut-ngung" : "nut-kichhoat"
-            }`}
+            className={`nut-chucnang ${template.active ? "nut-ngung" : "nut-kichhoat"}`}
           >
             {template.active ? "Ngưng hoạt động" : "Kích hoạt"}
           </button>

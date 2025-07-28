@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./css/guiyeucau.css";
+import API_ENDPOINTS from "../APIconfig";
 
 function GuiYeuCauCrafft() {
   const [reason, setReason] = useState("");
@@ -17,16 +18,14 @@ function GuiYeuCauCrafft() {
     setMessage("");
 
     try {
-      const res = await fetch(
-        `http://localhost:8080/api/v1.0/my-requests/retake-survey?templateId=2&reason=${encodeURIComponent(reason)}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      const url = API_ENDPOINTS.REQUEST_RETAKE_SURVEY(2, reason); // 2 là templateId CRAFFT
+      const res = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
 
       if (!res.ok) {
         const text = await res.text();

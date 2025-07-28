@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import "./css/lichhen.css";
+import API_ENDPOINTS from "../APIconfig";
 
 export default function Lichhen() {
   const [appointments, setAppointments] = useState([]);
@@ -19,7 +20,7 @@ export default function Lichhen() {
     const token = localStorage.getItem("token");
     if (!token) return;
 
-    fetch("http://localhost:8080/api/v1.0/profileAllUser", {
+    fetch(API_ENDPOINTS.PROFILE_ALL_USERS, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
@@ -42,7 +43,7 @@ export default function Lichhen() {
     if (!token) return;
 
     try {
-      const profileRes = await fetch("http://localhost:8080/api/v1.0/profile", {
+      const profileRes = await fetch(API_ENDPOINTS.PROFILE, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -52,7 +53,7 @@ export default function Lichhen() {
       const fullName = profile.fullName;
       console.log("👤 Tư vấn viên hiện tại:", fullName);
 
-      const consultantsRes = await fetch("http://localhost:8080/api/v1.0/consultant/getAllConsultant", {
+      const consultantsRes = await fetch(API_ENDPOINTS.CONSULTANTS, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -67,12 +68,15 @@ export default function Lichhen() {
         setConsultantId(matched.consultantId);
         console.log("✅ consultantId tìm được:", matched.consultantId);
 
-        const apptRes = await fetch(`http://localhost:8080/api/v1.0/appointment/consultant/${matched.consultantId}`, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const apptRes = await fetch(
+          API_ENDPOINTS.APPOINTMENTS_BY_CONSULTANT(matched.consultantId),
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         const apptData = await apptRes.json();
         if (Array.isArray(apptData)) {
           console.log("📆 Danh sách cuộc hẹn:", apptData);
@@ -106,36 +110,35 @@ export default function Lichhen() {
     }));
   };
 
- const handleUpdateStatus = (appt) => {
-  const token = localStorage.getItem("token");
-  if (!token) return alert("Vui lòng đăng nhập lại.");
+  const handleUpdateStatus = (appt) => {
+    const token = localStorage.getItem("token");
+    if (!token) return alert("Vui lòng đăng nhập lại.");
 
-  const newStatus = editStatus[appt.appointmentId] || appt.status;
+    const newStatus = editStatus[appt.appointmentId] || appt.status;
 
-  fetch(`http://localhost:8080/api/v1.0/appointment/consultant/update-status/${appt.appointmentId}?status=${newStatus}`, {
-    method: "PUT",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  })
-    .then((res) => {
-      if (!res.ok) throw new Error("Cập nhật thất bại");
-
-      const contentType = res.headers.get("content-type");
-      return contentType && contentType.includes("application/json")
-        ? res.json()
-        : res.text();
+    fetch(API_ENDPOINTS.UPDATE_APPOINTMENT_STATUS(appt.appointmentId, newStatus), {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     })
-    .then(() => {
-      alert("✅ Cập nhật thành công!");
-      loadConsultantsAndAppointments();
-    })
-    .catch((err) => {
-      console.error("❌ Lỗi cập nhật:", err);
-      alert("❌ Cập nhật thất bại.");
-    });
-};
+      .then((res) => {
+        if (!res.ok) throw new Error("Cập nhật thất bại");
 
+        const contentType = res.headers.get("content-type");
+        return contentType && contentType.includes("application/json")
+          ? res.json()
+          : res.text();
+      })
+      .then(() => {
+        alert("✅ Cập nhật thành công!");
+        loadConsultantsAndAppointments();
+      })
+      .catch((err) => {
+        console.error("❌ Lỗi cập nhật:", err);
+        alert("❌ Cập nhật thất bại.");
+      });
+  };
 
   if (loading) return <div className="text-center mt-10">Đang tải dữ liệu...</div>;
 
@@ -175,18 +178,23 @@ export default function Lichhen() {
                   <select
                     value={editStatus[appt.appointmentId] ?? appt.status}
                     onChange={(e) => handleStatusChange(appt.appointmentId, e.target.value)}
+                    disabled={["Completed", "Cancel"].includes(appt.status)}
                   >
-                    <option value="Pending">Pending</option>
-                    <option value="Completed">Completed</option>
-                    <option value="Cancel">Cancel</option>
+                    <option value="Pending">Chuẩn bị diễn ra</option>
+                    <option value="Completed">Đã hoàn thành</option>
+                    <option value="Cancel">Từ chối</option>
                   </select>
+
                 </td>
                 <td>{getUserName(appt.userId)}</td>
                 <td>{getConsultantName(appt.consultantId)}</td>
                 <td>
-                  <button className="btn-update" onClick={() => handleUpdateStatus(appt)}>
-                    💾 Lưu
-                  </button>
+                  {!["Completed", "Cancel"].includes(appt.status) && (
+                    <button className="btn-update" onClick={() => handleUpdateStatus(appt)}>
+                      💾 Lưu
+                    </button>
+                  )}
+
                 </td>
               </tr>
             ))}

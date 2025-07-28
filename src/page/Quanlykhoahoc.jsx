@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import CreateCourse from "./CreateCourse";
-import "./css/Quanlykhoahoc.css"; // ✅ CSS riêng cho trang này
+import "./css/Quanlykhoahoc.css";
+import API_ENDPOINTS from "../APIconfig"; 
 
 export default function Quanlykhoahoc() {
     const [courses, setCourses] = useState([]);
@@ -15,7 +16,7 @@ export default function Quanlykhoahoc() {
             return;
         }
 
-        fetch("http://localhost:8080/api/v1.0/khoahoc/all", {
+        fetch(API_ENDPOINTS.ALL_COURSES, {
             headers: { Authorization: `Bearer ${token}` },
         })
             .then((res) => {
@@ -28,7 +29,7 @@ export default function Quanlykhoahoc() {
 
     const handleToggleActive = async (courseId, currentActive) => {
         try {
-            const res = await fetch("http://localhost:8080/api/v1.0/khoahoc/update-active", {
+            const res = await fetch(API_ENDPOINTS.COURSE_UPDATE_ACTIVE, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
@@ -37,7 +38,7 @@ export default function Quanlykhoahoc() {
                 body: JSON.stringify({ courseId, active: !currentActive }),
             });
 
-            const result = await res.text(); // Đọc phản hồi dạng text
+            const result = await res.text();
 
             if (!res.ok) throw new Error(result || "Lỗi cập nhật");
 
@@ -53,10 +54,9 @@ export default function Quanlykhoahoc() {
         }
     };
 
-
     const handleCourseCreated = () => {
         setShowCreateCourse(false);
-        fetch("http://localhost:8080/api/v1.0/khoahoc/all", {
+        fetch(API_ENDPOINTS.ALL_COURSES, {
             headers: { Authorization: `Bearer ${token}` },
         })
             .then((res) => res.json())
@@ -79,7 +79,10 @@ export default function Quanlykhoahoc() {
 
             {showCreateCourse && (
                 <div className="form-container">
-                    <CreateCourse onClose={() => setShowCreateCourse(false)} onCourseCreated={handleCourseCreated} />
+                    <CreateCourse
+                        onClose={() => setShowCreateCourse(false)}
+                        onCourseCreated={handleCourseCreated}
+                    />
                 </div>
             )}
 

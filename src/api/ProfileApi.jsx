@@ -23,9 +23,10 @@ export const fetchSurveyHistory = (token) =>
   });
 
 export const fetchRetakeRequests = (token) =>
-  fetch(API_ENDPOINTS.REQUEST_RETAKE_SURVEY, {
+  fetch(API_ENDPOINTS.VIEW_RETAKE_REQUESTS, {
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
   });
+
 
 export const fetchAppointments = (token) =>
   fetch(API_ENDPOINTS.MY_APPOINTMENTS, {

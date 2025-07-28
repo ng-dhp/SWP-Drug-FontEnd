@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./css/guiyeucau.css";
+import API_ENDPOINTS from "../APIconfig";
 
 function GuiYeuCau() {
   const [reason, setReason] = useState("");
@@ -18,7 +19,7 @@ function GuiYeuCau() {
 
     try {
       const res = await fetch(
-        `http://localhost:8080/api/v1.0/my-requests/retake-survey?templateId=1&reason=${encodeURIComponent(reason)}`,
+        API_ENDPOINTS.REQUEST_RETAKE_SURVEY(1, reason),
         {
           method: "POST",
           headers: {
@@ -40,37 +41,36 @@ function GuiYeuCau() {
     } finally {
       setLoading(false);
     }
-  }
+  };
 
   return (
     <div className="assist-survey-container">
       <div className="survey-box">
         <h2 className="question-title">Gửi yêu cầu hỗ trợ làm lại khảo sát</h2>
-       <form onSubmit={handleSubmit}>
-  <div className="input-group">
-    <label className="label-title">Lý do bạn muốn làm lại khảo sát:</label>
-    <textarea
-      rows="4"
-      value={reason}
-      onChange={(e) => setReason(e.target.value)}
-      placeholder="Nhập lý do tại đây..."
-    ></textarea>
-  </div>
+        <form onSubmit={handleSubmit}>
+          <div className="input-group">
+            <label className="label-title">Lý do bạn muốn làm lại khảo sát:</label>
+            <textarea
+              rows="4"
+              value={reason}
+              onChange={(e) => setReason(e.target.value)}
+              placeholder="Nhập lý do tại đây..."
+            ></textarea>
+          </div>
 
-  <div className="button-group">
-    <button className="submit-button" type="submit" disabled={loading}>
-      {loading ? "Đang gửi..." : "📨 Gửi yêu cầu"}
-    </button>
-    <button
-      type="button"
-      className="submit-button"
-      onClick={() => (window.location.href = "/")}
-    >
-      🏠 Quay lại trang chủ
-    </button>
-  </div>
-</form>
-
+          <div className="button-group">
+            <button className="submit-button" type="submit" disabled={loading}>
+              {loading ? "Đang gửi..." : "📨 Gửi yêu cầu"}
+            </button>
+            <button
+              type="button"
+              className="submit-button"
+              onClick={() => (window.location.href = "/")}
+            >
+              🏠 Quay lại trang chủ
+            </button>
+          </div>
+        </form>
 
         {message && (
           <p className={`status-message ${message.includes("✅") ? "success" : "error"}`}>

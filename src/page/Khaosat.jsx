@@ -8,6 +8,7 @@ import anh_crafft from "../assets/anh_crafft.png";
 import Navbar from "../components/navbar";
 import LoginModal from "../components/Login";
 import Register from "../components/Register";
+import API from "../APIconfig";
 
 export default function KhaoSat() {
   const [templates, setTemplates] = useState([]);
@@ -25,7 +26,7 @@ export default function KhaoSat() {
       return;
     }
 
-    fetch("http://localhost:8080/api/v1.0/admin/dashboard/getAll-templates-admin", {
+    fetch(API.GET_ALL_TEMPLATES_ADMIN, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -37,7 +38,7 @@ export default function KhaoSat() {
         return res.json();
       })
       .then((data) => {
-        const activeTemplates = data.filter((t) => t.active); // 🔥 Chỉ lấy những khảo sát đang hoạt động
+        const activeTemplates = data.filter((t) => t.active);
         setTemplates(activeTemplates);
         setLoading(false);
       })
@@ -126,7 +127,6 @@ export default function KhaoSat() {
                             )}
                           </div>
                         ))
-
                       )}
                     </div>
                   </>
@@ -134,8 +134,6 @@ export default function KhaoSat() {
               </div>
             }
           />
-
-          {/* Route khảo sát */}
           <Route path="assist" element={<AssistSurvey />} />
           <Route path="crafft" element={<CrafftSurvey />} />
         </Routes>

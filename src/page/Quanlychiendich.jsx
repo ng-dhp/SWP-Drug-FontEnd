@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./css/QuanLyChiendich.css";
+import API_ENDPOINTS from "../APIconfig";
 
 const QuanLyChiendich = () => {
   const [campaigns, setCampaigns] = useState([]);
@@ -9,7 +10,7 @@ const QuanLyChiendich = () => {
 
   const fetchCampaigns = async () => {
     try {
-      const res = await fetch("http://localhost:8080/api/v1.0/campaigns/all", {
+      const res = await fetch(API_ENDPOINTS.CAMPAIGN.ALL, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -28,7 +29,7 @@ const QuanLyChiendich = () => {
 
   const toggleCampaign = async (campaignId) => {
     try {
-      const res = await fetch(`http://localhost:8080/api/v1.0/campaigns/${campaignId}/toggle`, {
+      const res = await fetch(API_ENDPOINTS.CAMPAIGN.TOGGLE(campaignId), {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -37,9 +38,9 @@ const QuanLyChiendich = () => {
 
       if (!res.ok) throw new Error("Không thể cập nhật trạng thái chiến dịch");
 
-      await fetchCampaigns(); // Cập nhật lại danh sách
+      await fetchCampaigns(); // reload lại sau khi toggle
     } catch (err) {
-      console.error("Lỗi khi toggle chiến dịch:", err);
+      console.error("Lỗi khi cập nhật trạng thái chiến dịch:", err);
     }
   };
 
@@ -62,8 +63,8 @@ const QuanLyChiendich = () => {
               <p><strong>Mô tả:</strong> {camp.description}</p>
               <p><strong>Thời gian:</strong> {camp.startDate} - {camp.endDate}</p>
               <p><strong>Trạng thái:</strong> {camp.active ? "🟢 Đang hoạt động" : "🔴 Tạm ngưng"}</p>
-              <p><strong>Số lượng câu hỏi:</strong> {camp.questions.length}</p>
-              <p><strong>Tỷ lệ cải thiện:</strong> {camp.successRatePercent}%</p>
+              <p><strong>Số lượng câu hỏi:</strong> {camp.questions?.length ?? 0}</p>
+              <p><strong>Tỷ lệ cải thiện:</strong> {camp.successRatePercent ?? 0}%</p>
 
               <button
                 className={`toggle-btn ${camp.active ? "disable" : "enable"}`}

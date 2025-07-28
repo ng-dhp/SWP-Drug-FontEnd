@@ -1,49 +1,49 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import API from "../APIconfig"; 
 import "./css/HistoryPayment.css";
 
 export default function HistoryPayment() {
     const [paymentList, setPaymentList] = useState([]);
     const [courseMap, setCourseMap] = useState({});
     const navigate = useNavigate();
+
     const formatStatus = (status) => {
         switch (status) {
             case "PENDING":
                 return "Đang xử lý";
-            case "COMPLETED":
+            case "SUCCESS":
                 return "Đã thanh toán";
             default:
                 return status;
         }
     };
 
-
     useEffect(() => {
         const token = localStorage.getItem("token");
         if (!token) return;
 
-        // B1: Lấy thông tin user
-        fetch("http://localhost:8080/api/v1.0/profile", {
+        fetch(API.PROFILE, {
             headers: { Authorization: `Bearer ${token}` },
         })
             .then((res) => res.json())
             .then((profile) => {
                 const userId = profile.userId;
 
-                // B2: Lấy danh sách khóa học để ánh xạ courseId -> courseName
-                fetch("http://localhost:8080/api/v1.0/khoahoc/all", {
+                // Lấy danh sách khóa học
+                fetch(API.ALL_COURSES, {
                     headers: { Authorization: `Bearer ${token}` },
                 })
                     .then((res) => res.json())
                     .then((courses) => {
                         const map = {};
                         courses.forEach((course) => {
-                            map[course.id] = course.courseName; // ✅ Sửa tại đây
+                            map[course.id] = course.courseName;
                         });
                         setCourseMap(map);
 
-                        // B3: Lấy tất cả payment và lọc theo userId
-                        return fetch("http://localhost:8080/api/v1.0/payments/all", {
+                        // Lấy tất cả payment
+                        return fetch(API.PAYMENTS, {
                             headers: { Authorization: `Bearer ${token}` },
                         });
                     })
